@@ -1,0 +1,1 @@
+${appointmentDiv}-${appointmentService}: ${appointmentDate} ${appointmentTime} [${appointmentValDireccion} ${appointmentValPoblacion}]

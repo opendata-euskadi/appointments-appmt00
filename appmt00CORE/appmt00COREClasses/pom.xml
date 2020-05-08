@@ -1,0 +1,206 @@
+<?xml version="1.0"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+		xmlns="http://maven.apache.org/POM/4.0.0"
+			 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+
+<!-- ====================================================================== -->
+<!-- PARENT                                                                 -->
+<!-- ====================================================================== -->
+	<parent>
+		<groupId>appmt00.core</groupId>
+		<artifactId>appmt00CORE</artifactId>
+		<version>${revision}</version>
+	</parent>
+
+<!-- ====================================================================== -->
+<!-- ARTIFACT                                                               -->
+<!-- ====================================================================== -->
+	<name>appmt00COREClasses</name>
+	<artifactId>appmt00COREClasses</artifactId>
+
+<!-- ====================================================================== -->
+<!-- DEPENDENCIES                                                           -->
+<!-- ====================================================================== -->
+	<dependencies>
+		<!-- ///////////////////////////////////////// -->
+		<!-- APPMT00: API                              -->
+		<!-- ///////////////////////////////////////// -->
+		<dependency>
+			<groupId>appmt00.api</groupId>
+			<artifactId>appmt00APIClasses</artifactId>
+			<version>${revision}</version>
+		</dependency>
+
+		<!-- ///////////////////////////////////////// -->
+		<!-- R01: Base                                 -->
+		<!-- ///////////////////////////////////////// -->
+		<dependency>
+			<groupId>r01.r01f.httpclient</groupId>
+			<artifactId>r01fHttpClientClasses</artifactId>
+			<version>${r01f.version}</version>
+		</dependency>
+
+		<!-- ///////////////////////////////////////// -->
+		<!-- R01: BusinessServices                     -->
+		<!-- ///////////////////////////////////////// -->
+		<dependency>
+			<groupId>r01.r01f.businessservices.core.persistence.db</groupId>
+			<artifactId>r01fBusinessServicesCoreDBGuiceClasses</artifactId>
+			<version>${r01f.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>r01.r01f.businessservices.guice.core</groupId>
+			<artifactId>r01fBusinessServicesCoreSearchPersistenceGuiceClasses</artifactId>
+			<version>${r01f.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>r01.r01f.businessservices.core.persistence.search</groupId>
+			<artifactId>r01fSearchDBClasses</artifactId>
+			<version>${r01f.version}</version>
+		</dependency>
+
+		<!-- ///////////////////////////////////////// -->
+		<!-- R01: COREServices                         -->
+		<!-- ///////////////////////////////////////// -->
+		<dependency>
+			<groupId>r01.r01f.coreservices.notifier</groupId>
+			<artifactId>r01fNotifierClasses</artifactId>
+			<version>${r01f.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>r01.r01f.coreservices.notifier</groupId>
+			<artifactId>r01fNotifierGuiceClasses</artifactId>
+			<version>${r01f.version}</version>
+		</dependency>
+
+		<!-- ///////////////////////////////////////// -->
+		<!-- R01: Notifier impls                       -->
+		<!-- ///////////////////////////////////////// -->
+		<!-- EMail notifier (coment out aws ses if not used) -->
+		<!-- see the profiles section for EJIE-dependent deps -->
+		<dependency>
+			<groupId>r01.r01f.coreservices.email</groupId>
+			<artifactId>r01fEMailSpringClasses</artifactId>
+			<version>${r01f.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>r01.r01f.coreservices.cloud.aws.ses</groupId>
+			<artifactId>r01fAWSSESClasses</artifactId>
+			<version>${r01f.version}</version>
+		</dependency>
+
+		<!-- SMS notifier (coment out the one not used) -->
+		<dependency>
+			<groupId>r01.r01f.coreservices.cloud.aws.sns</groupId>
+			<artifactId>r01fAWSSNSClasses</artifactId>
+			<version>${r01f.version}</version>
+		</dependency>
+
+		<!-- Voice notifier -->
+		<dependency>
+			<groupId>r01.r01f.coreservices.cloud.twilio</groupId>
+			<artifactId>r01fTwilioClasses</artifactId>
+			<version>${r01f.version}</version>
+		</dependency>
+
+		<!-- ///////////////////////////////////////// -->
+		<!-- R01: Scheduler                            -->
+		<!-- ///////////////////////////////////////// -->
+		<dependency>
+			<groupId>r01.r01f.coreservices.scheduler</groupId>
+			<artifactId>r01fSchedulerClasses</artifactId>
+			<version>${r01f.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>r01.r01f.coreservices.scheduler</groupId>
+			<artifactId>r01fSchedulerGuiceClasses</artifactId>
+			<version>${r01f.version}</version>
+		</dependency>
+
+		<!-- ///////////////////////////////////////// -->
+		<!-- Velocity                                  -->
+		<!-- ///////////////////////////////////////// -->
+		<dependency>
+			<groupId>org.apache.velocity</groupId>
+		  	<artifactId>velocity-engine-core</artifactId>
+		  	<version>2.1</version>
+		</dependency>
+	</dependencies>
+
+<!-- ====================================================================== -->
+<!-- PROFILES                                                               -->
+<!-- ====================================================================== -->
+<!--
+	When used internally at EJIE, the notifier uses [Latinia] (a legacy product used by EJIE to send SMSs)
+	... but anyone OUTSIDE EJIE do NOT need [Latinia] dependency (this dependency is NOT public)
+
+	A Maven PROFILE is used so the 'private' project `[Latinia]` is only required if `PROFILE=env_profile`
+	If a Maven PROFILE is **NOT** set (the default _'public'_ case), the `[Latinia]` dependency is NOT required
+
+	This way, the EJIE private [Latinia] project is 'secret' while anyone from the 'outside' (public) still
+	can build the app without the EJIE private config artifact dependency
+-->
+	<profiles>
+		<!-- Used when a profile is NOT set [mvn clean install] (public) -->
+		<profile>
+			<id>default_profile</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+		</profile>
+		<!-- Used when setting a profile like [mvn clean install -Penv_profile] (ejie internal) -->
+		<profile>
+			<id>env_profile</id>
+			<dependencies>
+				<dependency>
+					<groupId>r01.r01f.ejie</groupId>
+					<artifactId>r01fLatiniaClasses</artifactId>
+					<version>${r01f.version}</version>
+				</dependency>
+			</dependencies>
+		</profile>
+	</profiles>
+
+<!-- ====================================================================== -->
+<!-- BUILD                                                                  -->
+<!-- ====================================================================== -->
+	<build>
+		<pluginManagement>
+			<plugins>
+				<!--
+				ECLIPSE (see main pom.xml for further info) ===================
+				This plugin has NO effects in maven build:
+					m2e ONLY runs some 'standard' goals of the maven pom.xml since the aim of m2e is NOT to be a complete CI tool
+					... in order to include 'non-standard' goals in m2e execution and avoid [plugin execution not covered by the eclipse m2e plugin project build lifecycle mapping]
+						the 'non-standard' plugin MUST be explicitly included in m2e execution
+				-->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<!-- flatten plugin -->
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>org.codehaus.mojo</groupId>
+										<artifactId>flatten-maven-plugin</artifactId>
+										<versionRange>[1.1.0,)</versionRange>
+										<goals>
+											<goal>flatten</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+</project>

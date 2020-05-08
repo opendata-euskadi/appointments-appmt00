@@ -1,0 +1,47 @@
+<table style="${tableStyle}">
+	<thead style="${theadStyle}">
+		<tr style="${trStyle}">
+			<th colspan="2" style="${thStyle}">
+				${textPersonalData}
+			</th>
+		</tr>
+	</thead>
+	<tbody style="display: table-row-group; vertical-align: middle;border-color: inherit;">
+		<tr style="${trStyle}">
+			<td style="${tdLabelStyle}">${textDNI}</td>
+			<td style="${tdValueStyle}">${appointmentDNI}</td>
+		</tr>
+		<tr style="${trStyle}">
+			<td style="${tdLabelStyle}">${textName}</td>
+			<td style="${tdValueStyle}">${appointmentName}</td>
+		</tr>
+		<tr style="${trStyle}">
+			<td style="${tdLabelStyle}">${textSurName}</td>
+			<td style="${tdValueStyle}">${appointmentSurName}</td>
+		</tr>
+		#if ( ${appointmentExpID} || ${appointmentExpDescription})
+		<tr style="${trStyle}">
+			<td style="${tdLabelStyle}">${textDetails}</td>
+			<td style="${tdValueStyle}">
+				#if ( ${appointmentExpID} )
+					<p>
+						${textAppointmentExpID}: ${appointmentExpID}
+					</p>
+				#end
+				#if ( ${appointmentExpDescription} ) 
+					<pre style="text-align:left">${appointmentExpDescription}</pre>
+				#end
+			</td>
+		</tr>
+		#end
+		
+		<tr style="${trStyle}">
+			<td style="${tdLabelStyle}">${textPhone}</td>
+			<td style="${tdValueStyle}">${appointmentPhone}</td>
+		</tr>
+		<tr style="${trStyle}">
+			<td style="${tdLabelStyle}">${textEmail}</td>
+			<td style="${tdValueStyle}">${appointmentEmail}</td>
+		</tr>
+	</tbody>
+</table>

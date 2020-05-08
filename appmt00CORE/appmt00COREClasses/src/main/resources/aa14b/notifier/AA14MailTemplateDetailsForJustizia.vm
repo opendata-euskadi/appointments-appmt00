@@ -1,0 +1,35 @@
+<table style="${tableStyle}">
+	<thead style="${theadStyle}">
+		<tr style="${trStyle}">
+			<th colspan="2" style="${thStyle}">
+				${textPersonalData}
+			</th>
+		</tr>
+	</thead>
+	<tbody style="display: table-row-group; vertical-align: middle;border-color: inherit;">
+		<tr style="${trStyle}">
+			<td style="${tdLabelStyle}">${textDNI}</td>
+			<td style="${tdValueStyle}">${appointmentDNI}</td>
+		</tr>
+		<tr style="${trStyle}">
+			<td style="${tdLabelStyle}">${textLocator}</td>
+			<td style="${tdValueStyle}">${locator}</td>
+		</tr>
+		<tr style="${trStyle}">
+			<td style="${tdLabelStyle}">${textName}</td>
+			<td style="${tdValueStyle}">${appointmentName}</td>
+		</tr>
+		<tr style="${trStyle}">
+			<td style="${tdLabelStyle}">${textSurName}</td>
+			<td style="${tdValueStyle}">${appointmentSurName}</td>
+		</tr>
+		<tr style="${trStyle}">
+			<td style="${tdLabelStyle}">${textPhone}</td>
+			<td style="${tdValueStyle}">${appointmentPhone}</td>
+		</tr>
+		<tr style="${trStyle}">
+			<td style="${tdLabelStyle}">${textEmail}</td>
+			<td style="${tdValueStyle}">${appointmentEmail}</td>
+		</tr>
+	</tbody>
+</table>

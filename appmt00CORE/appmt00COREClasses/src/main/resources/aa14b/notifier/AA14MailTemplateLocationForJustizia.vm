@@ -1,0 +1,38 @@
+
+<table style="${tableStyle}">
+	<thead style="${theadStyle}">
+		<tr style="${trStyle}">
+			<th colspan="2" style="${thStyle}">
+				${textLocationData}
+			</th>
+		</tr>
+	</thead>
+	<tbody style="display: table-row-group; vertical-align: middle;border-color: inherit;">
+		
+		
+		<tr style="${trStyle}">
+			<td style="${tdLabelStyle}">${textServicio}</td>
+			<td style="${tdValueStyle}">${valServicio}</td>
+		</tr>
+		<tr style="${trStyle}">
+			<td style="${tdLabelStyle}">${textTramite}</td>
+			<td style="${tdValueStyle}">${valTramite}</td>
+		</tr>
+		<tr style="${trStyle}">
+			<td style="${tdLabelStyle}">${textDireccion}</td>
+			<td style="${tdValueStyle}">${appointmentValDireccion}</td>
+		</tr>
+		<tr style="${trStyle}">
+			<td style="${tdLabelStyle}">${textPoblacion}</td>
+			<td style="${tdValueStyle}">${appointmentValPoblacion}</td>
+		</tr>
+		<tr style="${trStyle}">
+			<td style="${tdLabelStyle}">${textTerritorio}</td>
+			<td style="${tdValueStyle}">${appointmentValTerritorio}</td>
+		</tr>
+		<tr style="${trStyle}">
+			<td style="${tdLabelStyle}">${textTelefono}</td>
+			<td style="${tdValueStyle}">${appointmentValTelefono}</td>
+		</tr>
+	</tbody>
+</table>

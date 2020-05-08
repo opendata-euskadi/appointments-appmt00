@@ -1,0 +1,12 @@
+<div style="clear: both; display: block;width: 100%; margin: 0px;">
+	<div style="background-color: rgb(18,115,170);font-size: 100%;border: 1px dotted #1273AA;margin-bottom: 5px;padding: 5px;float: left; display: block;width: 100%;">
+		<p style="color: white;padding: 5px;padding-bottom: 0px!important;display: block;-webkit-margin-before: 1em;-webkit-margin-after: 1em;-webkit-margin-start: 0px;-webkit-margin-end: 0px;">
+			${textCancel}:
+		</p>
+		<ul style="color: white">
+			<li>${cancelPhone}</li>
+			<li>${cancelLocation} (<a href="${cancelUrlLoc}" target="_blank" style="color:white">${cancelLocList}</a>)</li>
+			<li>${cancelWebText} <a href="${cancelUrlWeb}" target="_blank" style="color:white">${cancelWebTextLink}</a>${cancelWebTextTail}</li>
+		</ul>
+	</div>
+</div>
