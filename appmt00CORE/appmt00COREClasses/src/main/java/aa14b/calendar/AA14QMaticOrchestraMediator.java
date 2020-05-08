@@ -45,7 +45,6 @@ import r01f.locale.Language;
 import r01f.mime.MimeTypes;
 import r01f.model.persistence.PersistenceRequestedOperation;
 import r01f.model.persistence.PersistenceServiceErrorTypes;
-import r01f.types.IsPath;
 import r01f.types.Path;
 import r01f.types.contact.ContactInfo;
 import r01f.types.contact.NIFPersonID;
@@ -348,7 +347,7 @@ public class AA14QMaticOrchestraMediator {
 	public AA14OrchestraBranchList listBranches() {
 		// http://txandak.jakina.ejgvdns/calendar-backend/public/api/v1/branches
 		Url branchesUrl = Url.from(_host,_port,
-			   				        UrlPath.from((IsPath)_endpointBaseUrl.joinedWith("branches")));
+			   				        UrlPath.from(_endpointBaseUrl.<Path>joinedWith("branches")));
 		String branchesJson = _get(branchesUrl,	
 						   		   _userCode,_password);
 		return _jsonToOrchestraModelObject(_jsonObjectsMapper,
@@ -364,8 +363,8 @@ public class AA14QMaticOrchestraMediator {
 	public AA14OrchestraBranchServicesList listBranchServices(final AA14OrchestraBranchID branchId) {
 		//  http://txandak.jakina.ejgvdns/calendar-backend/public/api/v1/branches/{BranchPublicID}/services
 		Url branchServicesUrl = Url.from(_host,_port,
-					 				      UrlPath.from((IsPath)_endpointBaseUrl.joinedWith("branches",branchId,				
-					 						   					   	  			           "services")));
+					 				      UrlPath.from(_endpointBaseUrl.<Path>joinedWith("branches",branchId,				
+					 						   					   	  			         "services")));
 		String branchServicesJson = _get(branchServicesUrl,
 										 _userCode,_password);
 		return _jsonToOrchestraModelObject(_jsonObjectsMapper,
@@ -382,9 +381,9 @@ public class AA14QMaticOrchestraMediator {
 	public AA14OrchestraAvailableSlotDates listBranchServiceAvailableDates(final AA14OrchestraBranchID branchId,final AA14OrchestraBranchServiceID serviceId) {
 		//  http://txandak.jakina.ejgvdns/calendar-backend/public/api/v1/branches/{BranchPublicID}/services/{ServicePublicID}/dates
 		Url branchServiceDatesUrl = Url.from(_host,_port,
-									   	     UrlPath.from((IsPath)_endpointBaseUrl.joinedWith("branches",branchId,				
-									   			   					     			  		  "services",serviceId,
-									   	    		 										  "dates")));
+									   	     UrlPath.from(_endpointBaseUrl.<Path>joinedWith("branches",branchId,				
+									   			   					     			  		"services",serviceId,
+									   	    		 										"dates")));
 		String branchServiceDatesJson = _get(branchServiceDatesUrl,
 										 	 _userCode,_password);
 		return _jsonToOrchestraModelObject(_jsonObjectsMapper,
@@ -405,11 +404,11 @@ public class AA14QMaticOrchestraMediator {
 																			 final int year,final int monthOfYear,final int dayOfMonth) {
 		//  http://txandak.jakina.ejgvdns/calendar-backend/public/api/v1/branches/{BranchPublicID}/services/{ServicePublicID}/dates/yyyy-MM-dd/times
 		Url branchServiceDateSlotsUrl = Url.from(_host,_port,
-							 				      UrlPath.from((IsPath)_endpointBaseUrl.joinedWith("branches",branchId,			
-							 						   					   	  			   		   "services",serviceId,	
-							 						   					   	  			   		   "dates",Dates.format(new LocalDate(year,monthOfYear,dayOfMonth).toDate(),
-							 						   					   	  					   						"yyyy-MM-dd"),	// (ensure this date is within the previously returned available dates)
-							 						   				       	  			   		   "times")));
+							 				      UrlPath.from(_endpointBaseUrl.<Path>joinedWith("branches",branchId,			
+							 						   					   	  			   		 "services",serviceId,	
+							 						   					   	  			   		 "dates",Dates.format(new LocalDate(year,monthOfYear,dayOfMonth).toDate(),
+							 						   					   	  					   					  "yyyy-MM-dd"),	// (ensure this date is within the previously returned available dates)
+							 						   				       	  			   		 "times")));
 		String branchServiceDateSlotsJson = _get(branchServiceDateSlotsUrl,
 										 	 	 _userCode,_password);
 		return _jsonToOrchestraModelObject(_jsonObjectsMapper,
@@ -439,23 +438,23 @@ public class AA14QMaticOrchestraMediator {
 								  			   final AA14BookedSlot slot) {
 		//  http://txandak.jakina.ejgvdns/calendar-backend/public/api/v1/branches/{BranchPublicID}/services/{ServicePublicID}/dates/yyyy-MM-dd/times/09:00/book
 		Url branchServiceDateSlotsBookUrl = Url.from(_host,_port,
-												      UrlPath.from((IsPath)_endpointBaseUrl.joinedWith("branches",branchId,			
-																	   					   	   		   "services",serviceId,	
-																	   					   	   		   "dates",Dates.format(new LocalDate(slot.getYear().asInteger(),
-																	   					   			   							  		  slot.getMonthOfYear().asInteger(),
-																	   					   			   							  		  slot.getDayOfMonth().asInteger())
+												      UrlPath.from(_endpointBaseUrl.<Path>joinedWith("branches",branchId,			
+																	   					   	   		 "services",serviceId,	
+																	   					   	   		 "dates",Dates.format(new LocalDate(slot.getYear().asInteger(),
+																	   					   			   							  		slot.getMonthOfYear().asInteger(),
+																	   					   			   							  		slot.getDayOfMonth().asInteger())
 																	   					   			   								.toDate(),
-																	   					   	   				   				"yyyy-MM-dd"),		// (ensure this date is within the previously returned available dates)
-																			   					   	   "times",Strings.customized("{}:{}",
-																	   													          String.format("%02d",slot.getHourOfDay()),
-																	   													          String.format("%02d",slot.getMinuteOfHour())),// (ensure this time is within the previously returned available slots)
-										 	 											       			"book")));
+																	   					   	   				   			  "yyyy-MM-dd"),		// (ensure this date is within the previously returned available dates)
+																			   					   	 "times",Strings.customized("{}:{}",
+																	   													        String.format("%02d",slot.getHourOfDay()),
+																	   													        String.format("%02d",slot.getMinuteOfHour())),// (ensure this time is within the previously returned available slots)
+										 	 											       		 "book")));
 //		String slotBookJsonMessage = _composeNewAppointmentJson(_velocityEngine,_appointmentBookJsonMessageTemplatePath, 
 //																appointmentTitle,appointmentNotes,
 //																customer,customerContact);
 		
-		String newSlotJson =	_composeSlotJson(_jsonObjectsMapper,
-												 slot);
+		String newSlotJson = _composeSlotJson(_jsonObjectsMapper,
+											  slot);
 		String bookedSlotJsonResponse = _post(_charset,
 											  branchServiceDateSlotsBookUrl,
 											  _userCode,_password,
@@ -467,7 +466,7 @@ public class AA14QMaticOrchestraMediator {
 	@SuppressWarnings("cast")
 	public AA14OrchestraBookedSlot updateSlot(final AA14BookedSlot slot) {
 		Url slotUrl = Url.from(_host,_port,
-							   UrlPath.from((IsPath)_endpointBaseUrl.joinedWith("appointments",slot.getId())));
+							   UrlPath.from(_endpointBaseUrl.<Path>joinedWith("appointments",slot.getId())));
 		String slotJson =	_composeSlotJson(_jsonObjectsMapper,
 											 slot);
 		String updatedSlotJsonResponse = _put(_charset,
@@ -486,7 +485,7 @@ public class AA14QMaticOrchestraMediator {
 	@SuppressWarnings("cast")
 	public boolean releaseSlot(final AA14SlotID slotId) {
 		Url slotUrl = Url.from(_host,_port,
-							   UrlPath.from((IsPath)_endpointBaseUrl.joinedWith("appointments",slotId)));
+							   UrlPath.from(_endpointBaseUrl.<Path>joinedWith("appointments",slotId)));
 		boolean appointmentCancelResult = _delete(slotUrl,
 												  _userCode,_password);
 		return appointmentCancelResult;		
@@ -495,7 +494,7 @@ public class AA14QMaticOrchestraMediator {
 //  RAW GET / PUT / POST / DELETE
 /////////////////////////////////////////////////////////////////////////////////////////
 	private static String _get(final Url url,
-					    	   final UserCode userCode,Password password) {
+					    	   final UserCode userCode,final Password password) {
 		log.debug("GET: {}",url);
 		String outJson = null;
 		try {
@@ -518,7 +517,7 @@ public class AA14QMaticOrchestraMediator {
 	}
 	private static String _post(final Charset charset,
 								final Url url,
-						 		final UserCode userCode,Password password,
+						 		final UserCode userCode,final Password password,
 						 		final String jsonToBePosted) { 
 		log.debug("POST: {}",url);
 		log.debug("Content: {}",Strings.removeNewlinesOrCarriageRetuns(jsonToBePosted));
@@ -553,7 +552,7 @@ public class AA14QMaticOrchestraMediator {
 	}
 	private static String _put(final Charset charset,
 							   final Url url,
-						 	   final UserCode userCode,Password password,
+						 	   final UserCode userCode,final Password password,
 						 	   final String jsonToBePosted) { 
 		log.debug("PUT: {}",url);
 		log.debug("Content: {}",Strings.removeNewlinesOrCarriageRetuns(jsonToBePosted));
@@ -587,7 +586,7 @@ public class AA14QMaticOrchestraMediator {
 		return outJson;
 	}
 	private static boolean _delete(final Url url,
-					    	   	   final UserCode userCode,Password password) {
+					    	   	   final UserCode userCode,final Password password) {
 		log.debug("DELETE: {}",url);
 		boolean outDeleted = false;
 		try {

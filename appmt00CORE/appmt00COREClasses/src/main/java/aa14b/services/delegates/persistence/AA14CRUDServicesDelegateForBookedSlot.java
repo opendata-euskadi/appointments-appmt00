@@ -37,7 +37,6 @@ import aa14f.model.oids.AA14OIDs.AA14ScheduleOID;
 import aa14f.model.oids.AA14OIDs.AA14SlotOID;
 import lombok.extern.slf4j.Slf4j;
 import r01f.bootstrap.services.config.core.ServicesCoreBootstrapConfigWhenBeanExposed;
-import r01f.exceptions.ExceptionSeverity;
 import r01f.guids.CommonOIDs.UserCode;
 import r01f.model.persistence.CRUDError;
 import r01f.model.persistence.CRUDOnMultipleResult;
@@ -46,8 +45,7 @@ import r01f.model.persistence.CRUDResultBuilder;
 import r01f.model.persistence.PersistenceOperationExecError;
 import r01f.model.persistence.PersistenceOperationExecResultBuilder;
 import r01f.model.persistence.PersistenceRequestedOperation;
-import r01f.model.services.COREServiceErrorOrigin;
-import r01f.model.services.COREServiceErrorType;
+import r01f.model.persistence.PersistenceServiceErrorTypes;
 import r01f.model.services.COREServiceMethod;
 import r01f.model.services.COREServiceMethodExecError;
 import r01f.model.services.COREServiceMethodExecResult;
@@ -231,11 +229,7 @@ public class AA14CRUDServicesDelegateForBookedSlot
 			return CRUDResultBuilder.using(securityContext)
 									.on(AA14BookedSlot.class)
 									.not(reqOp)
-									.becauseClientError(COREServiceErrorType.originatedAt(COREServiceErrorOrigin.SERVER)
-																			.withName("entity already exists")
-																			.noCodes()
-																			.severity(ExceptionSeverity.RECOVERABLE)
-																			.build(),
+									.becauseClientError(PersistenceServiceErrorTypes.ENTITY_ALREADY_EXISTS,
 														"The requested slot range {}-{} in schedule oid={} is NOT available at {}",
 														slot.getStartTime(),slot.getEndTime(),
 														slot.getScheduleOid(),
@@ -492,7 +486,7 @@ public class AA14CRUDServicesDelegateForBookedSlot
 														 			 loc,sch,
 														 			 slot);
 			if (calendarSlotPersistResult.hasFailed() 
-			 && calendarSlotPersistResult.asCOREServiceMethodExecError().getErrorCode() == AA14CalendarServiceException.SLOT_OCCUPIED_EXT_ERROR_CODE
+			 && calendarSlotPersistResult.asCOREServiceMethodExecError().getErrorType() == PersistenceServiceErrorTypes.ENTITY_ALREADY_EXISTS
 			 && calendarSlotPersistResult.asCOREServiceMethodExecError().getErrorAs(AA14CalendarServiceException.class)
 			 											 				.wasBecauseSlotIsOccupied()) {
 				// the slot is occupied...

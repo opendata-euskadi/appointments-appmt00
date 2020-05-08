@@ -1,0 +1,25 @@
+ {
+ 	    "serviceList": [
+ 	    	{
+ 	    	"publicId": "23",
+ 	    	"updated": 1434610613102,
+ 	    	"created": 1434530657641,
+ 	    	"active": true,
+ 	    	"publicEnabled": true,
+ 	    	"name": "Trafiko",
+ 	    	"duration": 1,
+ 	    	"additionalCustomerDuration": 0,
+ 	    	"custom": null
+ 	    	}
+        ],
+ 	    "notifications": [],
+ 	    "meta": {
+ 	    	"totalResults": 1,
+ 	    	"start": "",
+ 	    	"end": "",
+ 	    	"offset": null,
+ 	    	"limit": null,
+ 	    	"fields": "",
+ 	    	"arguments": { }
+ 	    }
+ }

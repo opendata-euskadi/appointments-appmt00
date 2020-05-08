@@ -74,8 +74,8 @@ public class AA14CalendarGuiceModule
 		Host host = props.propertyAt("calendar/service/host").asHost(Host.of("txandak.jakina.ejgvdns"));
 		int port = props.propertyAt("calendar/service/post").asInteger(80);
 		Charset charset = props.propertyAt("calendar/service/charset").asCharset(Charset.forName("UTF-8"));
-		UserCode userCode = props.propertyAt("calendar/service/user").asUserCode(UserCode.forId("superadmin"));
-		Password password = props.propertyAt("calendar/service/password").asPassword(Password.forId("ulan"));
+		UserCode userCode = props.propertyAt("calendar/service/user").asUserCode(UserCode.forId("qmatic-user"));
+		Password password = props.propertyAt("calendar/service/password").asPassword(Password.forId("qmatic-password"));
 		
 		Path endpointBaseUrl = props.propertyAt("calendar/service/endpointBaseUrl").asPath();
 		

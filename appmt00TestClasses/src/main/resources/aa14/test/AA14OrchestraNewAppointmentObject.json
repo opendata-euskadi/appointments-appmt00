@@ -1,0 +1,11 @@
+{
+	"title": "Test appointment",
+	"notes": "Test notes",
+	"customer": {
+		"externalId": "30639781D",
+		"firstName": "Alex",
+		"lastName": "Lara Garachana",
+		"email": "futuretelematics@gmail.com",
+		"phone": "688671967"
+	}
+}
