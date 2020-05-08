@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xlnets token='mockFile' 
+		login='user'>	
+	<!--
+	Token types:
+		n38api			: use the http request cookies and N38 API
+		mockFile 		: use a classpath-stored file with the xlnets session / user / auth / etc data 
+									> the [sessionToken] element contains the session token's path (use https://xlnets.servicios.jakina.ejiedes.net/xlnets/servicios.htm to generate a token)
+									> the [userDataToken] element contains the user info token's path (use https://xlnets.servicios.jakina.ejiedes.net/xlnets/servicios.htm to generate a token)
+									> the [authToken] element contains the auth token's path (use https://xlnets.servicios.jakina.ejiedes.net/xlnets/servicios.htm to generate a token)
+									> the [workplaceDataToken] element contains the workplace (puesto) token's path (use https://xlnets.servicios.jakina.ejiedes.net/xlnets/servicios.htm to generate a token)
+		httpProvided	: Using a service that provides xlnets session tokens
+									> the [loginAppCode] attribute is mandatory
+									> the [sessionToken] element contains the url of the service that provides tokens (ie: http://svc.intra.integracion.jakina.ejiedes.net/ctxapp/Y31JanoServiceXlnetsTokenCreatorServlet?login_app=appId)
+	-->
+	<!--
+	Login types:
+		user			: user login
+		app				: app login
+								the [loginAppCode] attribute is mandatory
+	-->
+	
+	<!-- mock tokens (see aa14uiWar) -->
+	<mockFiles>
+		<userSessionToken for='theUserCode'>aa14a/xlnets/mock/aa14a-xlnetsSession.xml</userSessionToken>
+		<userDataToken for='theUserCode'>aa14a/xlnets/mock/aa14a-xlnetsItemObtenerPersonas.xml</userDataToken>
+		<authToken for='AA14A-FN-0001'>aa14a/xlnets/mock/aa14a-xlnetsItemAutorizacion.xml</authToken>
+		<workplaceDataToken for='thePuestoUID'>aa14a/xlnets/mock/aa14a-xlnetsItemObtenerPuestos.xml</workplaceDataToken>
+	</mockFiles>
+
+</xlnets>

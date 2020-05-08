@@ -1,0 +1,24 @@
+<!-- Recover person locator -->
+<div id="recoverForm" class="aa14a_inline">
+ 	<form action="" method="get" name="formRemindPersonLocator" id="formRemindPersonLocator" class='aa14a_form aa14aclearfix'>
+		<p class="aa14a_comentario"><span class="fa fa-commenting"></span><fmt:message key="comun.datospersonales.localizador.recordar.msg" /></p>
+		<p>
+			<label for="personId"><fmt:message key="comun.datospersonales.nif" />:</label>
+			<input class="aa14a_input" type="text" name="personId" placeholder="<fmt:message key='comun.datospersonales.nif.placeholder' />" />
+		</p>
+		<p>
+			<label for="email"><fmt:message key="comun.datospersonales.correo" />:</label>
+			<input class="aa14a_input" type="text" name="email" placeholder="<fmt:message key='comun.recuperar.mail.placeholder' />" />
+		</p>
+		<!-- button -->
+		<div id="aa14a_btn_remind_locator" class="aa14a_boton aa14a_boton_right">
+			<p><span class="fa fa-inbox"></span><fmt:message key="comun.recuperar" /></p>
+		</div>
+	</form>
+</div>
+<div id="aa14_recover_response_dialog" class="ocultar">
+	<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span><span id="recoverMessage"></span>.</p>
+	<div id="aa14a_btn_close_locator" class="aa14a_boton aa14a_boton_right">
+		<p></span><fmt:message key="comun.cerrar" /></p>
+	</div>
+</div>

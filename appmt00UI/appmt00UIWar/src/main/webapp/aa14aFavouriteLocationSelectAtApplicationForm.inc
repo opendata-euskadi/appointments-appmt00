@@ -1,0 +1,46 @@
+<%@page import="aa14f.model.config.business.AA14BusinessConfigForBizilagun"%>
+<%--
+Selects the favourite location using the XLNets data
+--%>
+<script>
+	// if the user has a favorite schid select this
+	<% if (xlnetsAuthCtx.getFavoriteSheduleId() != null) { %>
+	<% 
+		Collection<AA14OrgDivisionServiceLocationID> favSchLocs = api.configAPI()
+																	 .getLocationsIdsFor(xlnetsAuthCtx.getFavoriteSheduleId());
+		AA14OrgDivisionServiceLocationID locId = CollectionUtils.pickOneElement(favSchLocs); 
+	
+		if (locId.getId().equals(AA14BusinessConfigForBizilagun.LOC_FIANZAS_DEPOSITO_CONTRATOS_AR_ID.getId())){
+	%>
+		
+		console.log("Favourite location: <%=locId%> closed for new appointments");
+	<%	
+		}
+		else{
+	%>			
+		console.log("Favourite location: <%=locId%>");
+	
+		var locRadios = $('input:radio[name=serviceLocId]');
+	    if (locRadios.is(':checked') === false) {
+	        locRadios.filter('[value=<%=locId%>]').prop('checked',true);
+	    }
+	    // triger the click event
+	   	pintarDatosLocalizacionById('<%=locId%>');
+	   	$("#servicio").show();
+	    
+        // update booking config (see aa14a-main.js)
+        _loadBookingConfigForLocation('<%=locId%>');
+	    
+	    <% if (xlnetsAuthCtx.getFavoriteSheduleId() != null
+	    	&& xlnetsAuthCtx.getAllowedScheduleIds().size() == 1) { %>
+		// goto step 2
+		gotoFormStep('#aa14a_step1',	// from
+					 '#aa14a_step2');	// to
+		// set the focus on the form
+		$("#aa14a_createAppointment_form #aa14a_personal_info_frm").find("input:not([value]):first, textarea:empty:first").first().focus();
+		<% } else { %>
+		$("#aa14a_step1_next").show();	// mostrar el botón siguiente			
+		<% } 
+		  }	 //End deposito contratos if %>
+	<% } %>
+</script>

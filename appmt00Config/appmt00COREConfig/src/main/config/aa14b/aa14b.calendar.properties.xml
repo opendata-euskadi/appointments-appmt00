@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<calendar>
+	<service>
+		<host>[HOST]</host>
+		<port>[PORT]</port>
+		<user>[USER]</user>
+		<password>[PASSWORD]</password>
+		<endpointBaseUrl>[ENDPOINT]</endpointBaseUrl>
+		<charset>UTF-8</charset>
+	</service>	
+</calendar>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+================================================================================
+	 AA14A LOGBACK CONFIGURATION
+================================================================================
+-->
+<included>
+	<logger name="aa14a" level="debug">
+		<appender-ref ref="app_log" />
+		<appender-ref ref="STDOUT" />
+	</logger>
+</included>
+

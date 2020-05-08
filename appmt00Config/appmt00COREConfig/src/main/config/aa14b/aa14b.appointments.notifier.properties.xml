@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<notifier>
+	<!-- Proxy settings (needed for Google & Twilio REST APIs) -->
+	<proxy enabled='true'>
+		<host>[PROXY_HOST]</host>
+		<user>[PROXY_USER]</user>
+		<password>[PROXY_PASSWORD]</password>
+	</proxy>
+	
+	<!-- scheduler config -->
+	<remindScheduler>
+		<!-- CRON: see http://www.cronmaker.com/ -->
+		<!--
+		Usual expressions:
+				- Every 15 min   		>  0 0/15 * 1/1 * ? *
+				- Every 2 hours  		>  0 0 0/2 1/1 * ? 
+				- Once a day     		>  0 0 12 1/1 * ? *
+				- Every monday   		>  0 0 12 ? * MON *		// MON / TUE / WEB / THU / FRI / SAT / SUN
+				- Every month (day 1)   >  0 0 12 1 1/1 ? *
+		-->
+		<cron>
+			<tomorrow expr="0 0 0 1/1 * ? *">every day at 00:00</tomorrow>
+			<today expr="0 0 8 1/1 * ? *">every day at 08:00</today>
+		</cron>
+		
+		<!-- scheduler -->
+		<scheduler id='aa14.reminder' 
+				   enabled='false'>
+			<!-- quartz properties (see AB72RenderSchedulerConfig) -->
+			<quartz>	
+				<!--  Configure Main Scheduler Properties  -->
+				<org.quartz.scheduler.instanceName>AA14ClusteredScheduler</org.quartz.scheduler.instanceName>
+				<org.quartz.scheduler.instanceId>AUTO</org.quartz.scheduler.instanceId>
+				<org.quartz.scheduler.skipUpdateCheck>true</org.quartz.scheduler.skipUpdateCheck>
+				<!-- Configure ThreadPool -->  
+				<org.quartz.threadPool.class>org.quartz.simpl.SimpleThreadPool</org.quartz.threadPool.class>
+				<org.quartz.threadPool.threadCount>25</org.quartz.threadPool.threadCount>
+				<org.quartz.threadPool.threadPriority>5</org.quartz.threadPool.threadPriority>
+				<!-- Configure JobStore -->  
+				<org.quartz.jobStore.misfireThreshold></org.quartz.jobStore.misfireThreshold>
+				<org.quartz.jobStore.class>org.quartz.impl.jdbcjobstore.JobStoreTX</org.quartz.jobStore.class>
+				<!-- JobStore impls: -->
+				<!-- 	org.quartz.simpl.RAMJobStore -->
+				<!-- 	org.quartz.impl.jdbcjobstore.StdJDBCDelegate -->
+				<org.quartz.jobStore.driverDelegateClass>org.quartz.simpl.RAMJobStore</org.quartz.jobStore.driverDelegateClass><!-- vanilla -->
+				<org.quartz.jobStore.useProperties>false</org.quartz.jobStore.useProperties>
+				<org.quartz.jobStore.dataSource>myDS</org.quartz.jobStore.dataSource> <!-- use mySQLds or oracleds -->
+				<org.quartz.jobStore.tablePrefix>AA14Q</org.quartz.jobStore.tablePrefix> 
+				<org.quartz.jobStore.isClustered>false</org.quartz.jobStore.isClustered>
+				<org.quartz.jobStore.clusterCheckinInterval>20000</org.quartz.jobStore.clusterCheckinInterval>
+				
+				<!-- Configure Datasources  -->
+				<!-- MySQL -->
+				<org.quartz.dataSource.mySQLds.driver>com.mysql.jdbc.Driver</org.quartz.dataSource.mySQLds.driver>
+				<org.quartz.dataSource.mySQLds.URL>jdbc:mysql://[HOST]:[PORT]/[SERVICE_NAME]</org.quartz.dataSource.mySQLds.URL> 
+				<org.quartz.dataSource.mySQLds.user>[USER]</org.quartz.dataSource.mySQLds.user>
+				<org.quartz.dataSource.mySQLds.password>[PASSWORD]</org.quartz.dataSource.mySQLds.password>
+				<!-- Oracle 11 -->
+				<org.quartz.dataSource.oracleds.driver>oracle.jdbc.driver.OracleDriver</org.quartz.dataSource.oracleds.driver>
+				<org.quartz.dataSource.oracleds.URL>jdbc:oracle:thin:@//[HOST]:[PORT]/[SERVICE_NAME]</org.quartz.dataSource.oracleds.URL> 
+				<org.quartz.dataSource.oracleds.user>[USER]</org.quartz.dataSource.oracleds.user>
+				<org.quartz.dataSource.oracleds.password>[PASSWORD]</org.quartz.dataSource.oracleds.password>
+			</quartz>
+		</scheduler>
+	</remindScheduler>
+	
+	<!-- Notifiers config -->
+	<notifiers>
+		<log enabled="true" simulated="false"/>
+		<mail enabled="true" simulated="false">
+			<from>Zuzenean-No-Reply@euskadi.eus</from>
+		</mail>
+		<messaging enabled="true" simulated="true">
+			<impl>latinia</impl>	<!-- latinia / twilio -->
+		</messaging>
+	</notifiers>
+	
+	<!-- JavaMail sender config -->
+	<javaMailSenderImpls active="google_API">
+		<javaMailSenderImpl id='microsoft_exchange' combine.id="javaMailSenderImpl.microsoft_exchange">
+			<host>[PROXY_HOST]</host>
+		</javaMailSenderImpl>
+		<javaMailSenderImpl id='google_API' combine.id="javaMailSenderImpl.google_API">
+			<!--
+			 A google API [Service Account] is used in order to avoid end-user interaction (server-to-server)
+ 			 To set-up a [Service Account] client ID: (see http://stackoverflow.com/questions/29327846/gmail-rest-api-400-bad-request-failed-precondition/29328258#29328258)
+ 				1.- Using a google apps user open the developer console
+ 				2.- Create a new project (ie MyProject)
+ 				3.- Go to [Apis & auth] > [Credentials] and create a new [Service Account] client ID
+ 				4.- Copy the [service account]'s [Client ID] (the one like xxx.apps.googleusercontent.com) for later use
+ 				5.- Now you have to Delegate domain-wide authority to the service account in order to authorize your appl to access user data on behalf of users in the Google Apps domain 
+ 					... so go to your google apps domain admin console
+				6.- Go to the [Security] section and find the [Advanced Settings] (it might be hidden so you'd have to click [Show more..])
+ 				7.- Click on [Manage API Client Access]
+ 				8.- Paste the [Client ID] you previously copied at [4] into the [Client Name] text box.
+ 				9.- To grant your app full access to gmail, at the [API Scopes] text box enter: https://mail.google.com, https://www.googleapis.com/auth/gmail.compose, https://www.googleapis.com/auth/gmail.modify, https://www.googleapis.com/auth/gmail.readonly
+ 					(it's very important that you enter ALL the scopes)
+			-->
+			<serviceAccountClientID>[SERVICE_ACCOUNT_ID]</serviceAccountClientID>
+			<serviceAccountEmailAddress>[SERVICE_ACCOUNT_EMAIL]</serviceAccountEmailAddress>
+			<!-- <p12Key loadedUsing='classPath'>aa14b/notifier/googleServiceAccount.p12</p12Key> -->	<!-- change to fileSystem if the p12 file is found at the fileSystem -->
+			<googleAppsUser>[GOOGLE_USER]</googleAppsUser>
+		</javaMailSenderImpl>
+		<!-- DEPRECATED!! -->
+		<javaMailSenderImpl id='google_SMTP' combine.id="javaMailSenderImpl.google_SMTP">
+			<!-- 
+			How to create an app password:
+				1.- Login to the account settings: https://myaccount.google.com/
+				2.- Find the [Signing in] section and click on [App passwords]
+				3.- Select [Other(custom name)] and give it a name (ie AA14B)
+				4.- Copy the generated password and put it here
+			-->
+			<user>[USER]</user>
+			<password>[PASSWORD]</password>	
+		</javaMailSenderImpl>
+	</javaMailSenderImpls>
+	
+	<!-- LATINIA Notifier -->
+	<latinia>
+		<wsURL>[LATINIA_URL]</wsURL>
+		<authentication>
+			<enterprise>
+				<login>[LOGIN]</login>
+				<user>[USER]</user>
+				<password>[PASSWORD]</password>
+			</enterprise>
+			<clientApp>
+				<productId>[ID]</productId>
+				<contractId>[CONTRACT]</contractId>
+				<password>[PASSWORD]</password>
+			</clientApp>
+		</authentication>
+	</latinia>
+	
+	<!-- Twilio notifier -->
+	<twilio>
+		<accountSID>[ACCOUNT_ID]</accountSID>
+		<authToken>[AUTH_TOKEN]</authToken>
+		<voicePhoneNumber>[VOICE_NUMBER]</voicePhoneNumber>
+		<!-- <messagingPhoneNumber>[SMS_NUMBER]</messagingPhoneNumber> -->	<!-- no messaging phone number available -->
+	</twilio>
+</notifier>

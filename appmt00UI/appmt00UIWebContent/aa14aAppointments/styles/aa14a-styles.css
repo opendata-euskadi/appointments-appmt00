@@ -1,0 +1,804 @@
+body {font-family: Verdana, Helvetica, Arial, sans-serif;}
+h1{margin: 5px;}
+
+/* When the body has the loading class, we turn
+   the scrollbar off with overflow:hidden */
+body.loading {
+    overflow: hidden;   
+}
+
+/* Anytime the body has the loading class, our
+   modal element will be visible */
+body.loading .modal {
+    display: block;
+}
+
+/* Estilos con la fuente font-awesome para imagenes */
+.fa {padding-right: 20px;}
+.fa-asterisk {color: red; font-size: 75%; vertical-align: top;}
+
+.fullwidth {
+	width:100%;	
+}
+.block {
+	display: block;
+}
+.centered {
+	display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+.aa14a_contenido a.fc-time-grid-event {	
+	cursor: pointer;	
+}
+
+.aa14aclearfix:after {
+    clear: both;
+    content: ".";
+    display: block;
+    height: 0;
+    visibility: hidden;
+}
+
+/* Barra de botones */
+.aa14_button_bar {
+	width: 100%;
+	float: left;
+}
+
+/* Estilos de texto */
+.aa14a_noSubrayado {text-decoration: none;}
+.aa14a_titulo_azul {	font-weight: bold;}
+.mostrar {display:block;}
+.ocultar {display:none;}
+.aa14a_comentario {font-size: 80%; font-style: italic; color: #6F6F6F;}
+.aa14a_warning {color: red; font-size: 90%;}
+.aa14a_gris {color: #808080;}
+
+.aa14a_cabecera {
+	background-color: #1273AA; 
+	color:	#fff;	
+	text-indent: -20px;
+	padding: 10px 10px 10px 46px;
+	display: block;
+}
+.aa14a_contenido {
+	padding: 10px;
+	display: block;
+	min-height: 350px;
+	clear: both;
+}
+#aa14a_titulo_pagina, #aa14a_titulo_pagina_imprimir, #aa14a_titulo_pagina_anular {
+	color: #1273AA;
+	margin: 1% 0;
+}
+
+/* Estilos de los botones */
+.aa14a_btn,
+.aa14a_btn_anterior_siguiente {
+	width: 100%;
+	margin: 0px;
+	text-align: right;
+}
+.aa14a_boton {	
+	margin: 0 20px;
+	display: inline-block;
+}
+.aa14a_boton p {
+	background-color: #1273AA;
+	color: white;
+	padding: 10px;
+	min-width: 95px;
+	text-align: center;
+	cursor: pointer;
+	font-size: 90%;
+}
+.aa14a_bton_warn p {
+	background-color: red;	
+}
+.aa14a_bton_cancel p {
+	background-color: grey;	
+}
+.aa14a_boton p span {
+	padding-right: 10px;
+}
+.aa14a_boton_left {float: left; margin-left: 0;}
+.aa14a_boton_right {float: right; margin-right: 0;}
+.aa14a_boton_salir > p {background-color: #7b7b7b;}
+
+
+/* Estilos pagina inicio */
+.aa14a_introduccion {
+	color: #1273AA;
+	font-size: 95%;
+	display: block;
+	clear: none;
+}
+div#aa14a_calendar_instructions p {
+	font-weight: bold;
+}
+div.aa14a_calendar_location {
+	margin-bottom: 20px;
+}
+#aa14a_box {	
+	margin-top: 1.3em;
+	margin-bottom: 1.3em;
+}
+#aa14a_left, #aa14a_right {
+	text-align: center; 
+	background-color: #D9F1FF;
+	padding-top: 25px;
+	padding-bottom: 25px;
+	margin-bottom: 15px;
+}
+#aa14a_solicitar, #aa14a_consulta_cancelacion {color: #1273AA;}
+#aa14a_left:hover, #aa14a_right:hover {
+	background-color:#1273AA;
+}
+#aa14a_left:hover #aa14a_solicitar, #aa14a_right:hover #aa14a_consulta_cancelacion {
+	color: #ffffff;
+}
+#aa14a_print_appointments_form div.aa14a_left_float {
+	float :left;
+}
+
+/* Estilos pagina solicitud */
+section.aa14a_step {
+	border: 1px dotted #1273AA;
+	margin-bottom: 5px;
+	padding: 10px;
+	float: left;
+	display: block;
+	width: 97%;
+}
+.aa14a_titulo_paso {
+	margin: 0;
+	padding: 5px 0px;
+	background-color: #1273AA;
+	color: white;
+	height: auto;
+	min-height: 38px;
+}
+.aa14a_titulo_paso > h3 {
+	margin: 7px 0px;
+	/* float: left; */
+}
+span.aa14a_numero_paso {
+	float: left;
+	font-family: Arial;
+	font-size: 200%;
+	font-weight: bold;
+	margin: 0px 10px;
+	background-color: white;
+	color: #1273AA;
+	padding: 0 5px;
+}
+.aa14a_titulo_paso_gris {
+	background-color: #B9B9B9;
+	color: white;
+}
+.aa14a_titulo_paso_gris span.aa14a_numero_paso {
+	background-color: white;
+	color: #B9B9B9;
+}
+.aa14a_bloque {	
+	float: left;
+	margin: 20px 0px 0px 4.2%;
+	width: 95.5%;
+}
+.aa14a_servicio {
+	float: left;
+	margin-bottom: 20px;
+	width: 35%;
+	color: #606060;
+	font-size: 90%;
+	margin-right: 6%;
+}
+.aa14a_servicio table { 
+	width: 100%;
+	border-collapse: collapse;
+}
+.aa14a_servicio th { 
+	background-color: #c5c5c5; 
+	font-weight: bold;
+	text-align: left;
+	padding: 15px 20px;
+	border: none;
+}
+.aa14a_servicio hr {
+	margin: 20px;
+}
+.aa14a_servicio tbody {background-color: #f2f2f2;}
+.aa14a_servicio td {padding: 10px 0px 10px 20px;}
+
+.aa14a_grupo_delegaciones {
+	margin-left:20px;
+}
+.aa14a_detalle {
+	font-size: 90%;
+	color: #606060;
+	display: block;
+	float: right;
+	clear: none;
+	width: 58.83%;
+}
+
+.aa14a_detalle table { 
+	border-collapse: collapse;
+	width: 100%;
+}
+.aa14a_detalle th { 
+	background-color: #c5c5c5; 
+	font-weight: bold;
+	text-align: left;
+	padding: 15px 20px;
+	border: none;
+}
+.aa14a_detalle td { 
+	background-color: #ffffff; 
+	color: #606060; 
+	text-align: left;
+	padding: 5px 20px;
+	border-top: 0px;
+	border-left: 0px;
+	border-right: 0px;
+	border-bottom: 1px dotted #606060;
+}
+.aa14a_detalle td.aa14a_etiquetas {}
+	background-color: #F2F2F2;
+	font-weight: bold;
+	width: 35%;
+}
+.aa14a_detalle th.aa14a_datos-cita {
+	background-color: #3c3c3c;
+	font-size: 150%;
+}
+.aa14a_datos-cita {
+	background-color: #3c3c3c;
+	color: white; 
+	font-size: 150%;
+	margin-top: 10px;
+    padding: 20px;
+    text-align: center;
+	font-weight: bold;
+}
+.aa14a_form {
+	width: 100%;
+}
+.aa14a_input {
+	width: 60%;
+    line-height: 1.42857143;
+    color: #555;
+    background-color: #fff;
+    background-image: none;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
+    box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
+    -webkit-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+    transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+	padding: 5px;
+}
+
+.aa14a_input#date,
+input.aa14a_input[name='dateNonBookable'],
+input.aa14a_input[name='dateNonBookablePeriodicStart'],input.aa14a_input[name='dateNonBookablePeriodicEnd'],
+input.aa14a_input[name$='_start_date'],input.aa14a_input[name$='_end_date'],
+input.aa14a_input[type="checkbox"]{
+	width: 100px;
+}
+.aa14a_input#COD_EXP, .aa14a_input#NIF {
+	width: 20%;
+}
+
+div.aa14a_inline > input.aa14a_input#locator{
+	width: 30%;
+}
+
+input.aa14a_input:disabled, option:disabled{
+	 background: #f2f2f2;
+}
+
+select.aa14a_input{
+	width:61%;
+}
+
+.aa14a_input:disabled option[value=""][disabled] {
+  display: none;
+}
+
+.aa14a_nonBookable {
+	width: 100%;
+}
+.aa14a_nonBookableRange {
+	width: 100%;
+}
+.aa14a_nonBookableRepeat {
+	border:1px solid #ccc;
+	padding:5px;
+}
+.aa14a_selector_fecha {
+	float: left;
+}
+
+#aa14a_bloque_seleccion_fecha {
+	margin-bottom: 16px;
+}
+.aa14a_form label  {
+	color: #1273AA;
+	font-weight: bold;
+	font-size: 90%;
+	margin-right: 10px;
+	display: inline-block;
+    min-width: 185px;
+}
+.aa14a_form label[for='locator'] {
+	min-width: 165px !important;
+}
+.aa14a_form label[for='locator'].search {
+	margin-left:30px;
+	min-width: 120px !important;
+}
+
+.aa14a_form label.search_range, .aa14a_print_appointments label {
+	color: #1273AA;
+	font-weight: bold;
+	font-size: 90%;
+	margin-right: 10px;
+	display: inline;
+    min-width: 185px;
+}
+.aa14a_form label.search_range#search_range_right, .aa14a_form input.aa14a_input#search_range_right {
+	margin-left: 30px;
+}
+.aa14a_form label#periodicNonBookable  {
+	color: #1273AA;
+	font-weight: bold;
+	font-size: 90%;
+	margin-right: 10px;
+	display: inline-block;
+    min-width: 30px;
+}
+label.aa14aPrivate {
+	color: red;	
+	font-weight: bold;
+}
+.aa14aPrivateDetails {
+	width: 100%;
+	display: block;
+	margin-top: 50px;
+	border: 1px solid #ccc;
+	clear:both;
+	background-color: #FFFBD1;
+}
+.aa14a_nonBookableRange label,
+.aa14a_nonBookable label {
+	min-width: 0;
+}
+
+.aa14a_selector_fecha button,
+.aa14a_nonBookableRange button,
+.aa14a_nonBookable button,
+.aa14a_print_appointments button {
+	padding: 0;
+    background-color: white;
+    border: 0px;
+	margin: 0;
+	vertical-align: bottom;
+	height: 30px;
+	cursor: pointer;
+}
+.aa14a_solicitud_warn {
+	margin-top: 40px;
+	margin-bottom: 40px;
+}
+.aa14a_solicitud_bloqueAzul {
+	float: left;
+	margin-top: 40px;
+	background-color: #1273AA;
+	font-size: 110%;
+	width: 100%;
+}
+.aa14a_solicitud_bloqueAzul p {
+	color: white;
+	padding: 10px;
+    margin: 10px 10px 15px 10px;
+}
+
+.aa14a_solicitud_bloqueAzul ul li {
+	color:white;
+	margin-left:20px;
+	
+}
+
+.aa14a_solicitud_bloqueAzul h2{
+	color: white;
+	text-align: center;
+}
+
+/* =============================================================================================
+	DETALLE DE LA CITA
+	============================================================================================ */
+#aa14a_appointmentDetail-left {
+	width: 45% !important;
+	float: left !important;
+	margin-bottom: 10px !important;
+}
+#aa14a_appointmentDetail-left table {
+	width: 100%;
+}
+#aa14a_appointmentDetail-right {
+	width: 45% !important;
+	float: right !important;
+	margin-bottom: 10px !important;
+} 
+#aa14a_appointmentDetail-right table {
+	width: 100%;
+}
+
+
+/* =============================================================================================
+	TABLA DE LA AGENDA DE HUECOS LIBRES/OCUPADOS
+	============================================================================================ */
+#page-wrap {
+    width: 99%;
+    float: left;
+    margin: 15px 0px;
+    display: block;
+    clear: both;
+}
+#page-wrap table {
+	border-collapse: collapse;
+	font-size: 0.80em;
+}
+/* Zebra striping */
+#page-wrap tr:nth-of-type(odd) { 
+	background-color: #eee; 
+}
+#page-wrap th { 
+	background-color: #1273AA; 
+	color: white; 
+	font-weight: bold; 
+}
+
+#page-wrap th.dateRange { 
+	background-color: black; 
+	color: white; 
+	font-weight: bold; 
+}
+#page-wrap th.notAvailable { 
+	background-color: #B9B9B9; 
+	color: white; 
+	font-weight: bold; 
+}
+
+#page-wrap td, #page-wrap th { 
+	padding: 6px; 
+	border: 1px solid #ccc; 
+	text-align: center;
+}
+#page-wrap td.ocupado {
+	background-color: #E27171;
+	color: #ffffff;
+}
+#page-wrap td.libre {
+	background-color: #8CC78C;
+	color: #327D32;
+}
+#page-wrap td.today {
+	background-color: #DECC59 !important;
+	color: #327D32;
+}
+#page-wrap th.aa14a_menos_dias, #page-wrap th.aa14a_mas_dias {
+	font-size: 90%;
+	cursor: pointer;
+	background-color: #fff;
+	color: #1273AA;
+	text-decoration: underline;
+	padding: 15px 8px;
+	border-top: none;
+	border-right: none;
+	border-left: none;
+	border-bottom: 1px solid #1273AA;
+}
+
+#page-wrap th.aa14a_menos_dias_disabled, #page-wrap th.aa14a_mas_dias_disabled {
+	font-size: 90%;
+	cursor: default;
+	background-color: #fff;
+	color: #c5c5c5;
+	text-decoration: underline;
+	padding: 15px 8px;
+	border-top: none;
+	border-right: none;
+	border-left: none;
+	border-bottom: 1px solid #1273AA;
+}
+
+#page-wrap th.aa14a_menos_dias a, #page-wrap th.aa14a_mas_dias a,
+#page-wrap th.aa14a_menos_dias a:visited, #page-wrap th.aa14a_mas_dias a:visited {
+	color: #ffffff;
+	text-decoration: none;
+}
+#page-wrap th.aa14a_menos_dias  span.fa, #page-wrap th.aa14a_mas_dias span.fa {
+	padding-right: 10px;
+	font-size: 1.5em;
+}
+#page-wrap td.aa14a_menos_dias, #page-wrap td.aa14a_mas_dias {
+	background-color: #ffffff; /*#3f3f3f;*/
+	color: #ffffff;
+	border: none;
+}
+.aa14a_navegacion_dias_movil {display:none;}
+
+/* Estilos para el justificante de consulta */
+.aa14a_resumen_cita {
+	display: block;
+	clear: none;
+	float: left;
+	width: 100%;
+	margin: 0px;
+}
+.aa14a_resumen_cita p.aa14a_etiquetas {
+	font-weight: bold;
+}
+.aa14a_resumen_cita span.aa14a_valores {
+	font-weight: normal;
+}
+.aa14a_bloqueAzul{
+	background-color: #1273AA;
+	font-size:110%;
+	border: 1px dotted #1273AA;
+	margin-bottom: 5px;
+	padding: 10px;
+	float: left;
+	width: 98.3%;
+}
+.aa14a_bloqueAzul p {
+	color:white;
+	padding: 30px;
+}
+.aa14a_sinSpanDebajo {
+	padding-bottom: 0px !important;	
+}
+.aa14a_bloqueAzul p a {
+	color: white;
+	text-decoration: underline;
+}
+
+.aa14a_titulo_consulta {
+	margin: 0;
+	padding: 5px 0px;
+	background-color: #1273AA;
+	color: white;
+}
+.aa14a_titulo_consulta > h3 {
+	margin: 5px 10px;
+}
+
+.aa14a_tabla_datos_resumen th {
+	padding-bottom: 10px;	
+}
+
+#aa14_appointment_search section {
+	width: 100%;
+	border: 1px solid #ccc; 
+}
+#aa14_appointment_search form,
+#aa14a_search_results {
+	margin : 1em;
+}
+#aa14a_realizar_busqueda {margin-left: 15px;}
+
+/* Estilos de la lista de resultados */
+#aa14a_search_results table { 
+	width: 100%; 
+	border-collapse: collapse;
+	font-size: 80%;
+}
+/* Zebra striping */
+#aa14a_search_results table tr:nth-of-type(odd) {
+	background-color: #eee; 
+	color: #6f6f6f;
+	font-weight: normal;
+}
+#aa14a_search_results table tr:nth-of-type(even) {
+	color: #6f6f6f;
+	font-weight: normal;
+}
+#aa14a_search_results table th { 
+	background-color: #1273AA; 
+	color: white; 
+	font-weight: bold;
+}
+#aa14a_search_results table th.aa14_srchItemSrvc {
+	width: 25%;
+}
+#aa14a_search_results table th.aa14_srchItemName {
+	width: 25%;
+}
+#aa14a_search_results table th.aa14_srchItemSurname {
+	width: 25%;
+}
+#aa14a_search_results table th.aa14_srchItemID {
+	width: 10%;
+}
+#aa14a_search_results table th.aa14_srchItemDate {
+	width: 15%;
+}
+#aa14a_search_results table th.aa14_srchItemEdit {
+}
+#aa14a_search_results table .aa14a_th-center {
+	text-align: center;
+} 
+#aa14a_search_results table td,
+#aa14a_search_results table th {
+	padding: 3px;
+	border: 1px solid #ccc;
+	text-align: left;
+}
+#aa14a_search_results table td a, 
+#aa14a_search_results table td a:visited {
+	color: #1273AA;
+}
+#aa14a_search_results table td:before {content: none;}
+.aa14a_table_edit {font-size: 20px;}
+.aa14a_table_edit .fa {padding: 0;}
+
+
+/* =============================================================================================
+	RESPONSIVE
+	============================================================================================ */
+/* Estilos para resolucion hasta 480px... */
+@media all and (max-width: 479px) {
+	.aa14a_cabecera {font-size: 50%;}
+	.aa14a_contenido {font-size: 90%;}
+	.aa14a_titulo_paso > h3 {font-size: 90%;}
+	.aa14a_paso {width: 96%;}
+}
+/* Estilos para resolucion desde 601px hasta 800px... */
+@media all and (min-width: 601px) and (max-width: 800px) {
+	#page-wrap th.aa14a_menos_dias, #page-wrap th.aa14a_mas_dias {font-size: 85%; padding: 10px 3px;}
+	#page-wrap td, #page-wrap th {font-size: 85%; padding: 2px;}
+}
+/* Estilos para resolucion hasta 600px... */
+@media all and (max-width: 600px) {
+	/* =============================================================================================
+		TABLA DE LA AGENDA DE HUECOS LIBRES/OCUPADOS
+		============================================================================================ */
+	#page-wrap table, #page-wrap thead, #page-wrap tbody, #page-wrap th, #page-wrap td, #page-wrap tr {display: block;}
+
+	#page-wrap thead tr {position: absolute; top: -9999px; left: -9999px;}		
+	#page-wrap td {border: none; border-bottom: 1px solid #eee; position: relative; padding-left: 50%;}	
+	#page-wrap td:before {position: absolute; top: 6px; left: 6px; width: 45%; padding-right: 10px; white-space: nowrap; content: attr(data-title);}
+	#page-wrap td.ocupado {display: none;}
+
+	#page-wrap tr:nth-of-type(odd) {background-color: #1273AA; color: #fff; font-weight: bold;}
+	#page-wrap tr:nth-of-type(even) {background-color: #1273AA; color: #fff; font-weight: bold;}
+	
+	#page-wrap th.aa14_menos_dias_movil, #page-wrap th.aa14_mas_dias_movil {display:none;}
+	#page-wrap td.aa14a_menos_dias, #page-wrap td.aa14a_mas_dias{display:none;}
+	
+	#page-wrap tr.aa14a_navegacion_dias_movil{display:none;}
+	/* #page-wrap tr.aa14a_navegacion_dias_movil{display:block; background-color: #000000;}
+	#page-wrap tr.aa14a_navegacion_dias_movil td {padding-left:0% !important;}
+	#page-wrap tr.aa14a_navegacion_dias_movil td .aa14a_anterior_dia_movil {width:50%; float:left;}
+	#page-wrap tr.aa14a_navegacion_dias_movil td .aa14a_siguiente_dia_movil span.fa {color:white !important; font-size:1.5em;}
+	#page-wrap tr.aa14a_navegacion_dias_movil td .aa14a_anterior_dia_movil span.fa {color:white !important; font-size:1.5em;} */
+
+	/* =============================================================================================
+		TABLA DE LA LISTA DE RESULTADOS
+		============================================================================================ */
+	#aa14a_search_results {
+		margin-left: 5px;
+	}
+	#aa14a_search_results table, 
+	#aa14a_search_results thead, 
+	#aa14a_search_results tbody, 
+	#aa14a_search_results th, 
+	#aa14a_search_results td, 
+	#aa14a_search_results tr {
+		display: block;
+	}
+	#aa14a_search_results thead tr {position: absolute; top: -9999px; left: -9999px;}
+	#aa14a_search_results table tr {border: 1px solid #ccc;}
+	#aa14a_search_results table td {border: none; position: relative; padding-left: 50%; font-size: 12px !important; }
+	#aa14a_search_results table td:before {position: absolute; top: 3px; left: 6px; width: 45%; padding-right: 10px; white-space: nowrap; content: attr(data-title); color: #1273AA; font-size: 12px !important; text-align: right;}
+	#aa14a_search_results table, 
+	#aa14a_search_results table .aa14a_table_edit {font-size: 16px !important;text-align:left;}
+}
+/* Estilos para resolucion hasta 768px... */
+@media all and (max-width: 768px) {
+	.aa14a_cabecera {font-size: 70%;}
+	#aa14a_titulo_pagina, #aa14a_titulo_pagina_imprimir, #aa14a_titulo_pagina_anular  {font-size: 1.2em;}
+	.aa14a_bloque {float: left; margin-left: 0; 	width: 100%;}
+	.aa14a_detalle {float: left; font-size: 80%; width: 100%;}
+	.aa14a_servicio {font-size: 80%; margin-right: 0; width: 100%;}
+	.aa14a_input {width: 80%;}
+	#aa14a_paso4_detalle-izda , #aa14a_paso4_detalle-dcha {font-size: 75%;}
+	#aa14a_paso4_detalle-izda {width: 99%;}
+	#aa14a_paso4_detalle-dcha {width: 99%;}
+}
+/* Estilos para resolución mayor que 768px... */
+@media all and (min-width: 768px) {
+	#aa14a_left, #aa14a_right {width: 48%;}
+	#aa14a_left {float: left; margin-right: 20px;}
+	#aa14a_right {float: right;}
+}
+/* Start by setting display:none to make this hidden.
+   Then we position it in relation to the viewport window
+   with position:fixed. Width, height, top and left speak
+   for themselves. Background we set to 80% white with
+   our animation centered, and no-repeating */
+.modal {
+    display:    none;
+    position:   fixed;
+    z-index:    1000;
+    top:        0;
+    left:       0;
+    height:     100%;
+    width:      100%;
+    background: rgba( 255, 255, 255, .8 ) 
+                url('../images/aa14a-cargando.gif') 
+                50% 50% 
+                no-repeat;
+}
+
+#aa14a_capa_imprimir {
+	width		: 100%;
+}
+
+#aa14a_personal_info_frm .aa14a_formData_requestor,
+						 .aa14a_formData_appointmentDetails,
+						 .aa14a_formData_contactInfo {
+	background-color: lightgrey;
+    font-size: x-large;
+    margin: 0 0 18px 0 !important;
+    padding: 0 0 0 0 !important;
+}
+
+label.subjectDetail {
+    vertical-align: top;
+}
+
+
+/* Estilos para la impresión por pantalla */
+@media print  {
+    .aa14a_btn_anterior_siguiente, 
+    .aa14aPrivateDetails,
+    body.r01PrintablePage div.r01gContainer div.aa14a_boton,
+    .aa14a_boton, .aa14a_boton_salir, .aa14a_btn_anterior_siguiente{
+    	display:none !important;
+    }
+}
+
+/* medical service styles */
+ .ui-autocomplete {
+    max-height: 200px;
+    overflow-y: auto;
+    /* prevent horizontal scrollbar */
+    overflow-x: hidden;
+  }
+  /* IE 6 doesn't support max-height
+   * we use height instead, but this forces the menu to always be this tall
+   */
+  * html .ui-autocomplete {
+    height: 200px;
+  }
+  
+.aa14a_justificante_firma {
+   clear: both;
+   float:right;
+   width: 100%;
+   text-align: center;
+   padding-top: 180px;
+}
+
+#subjectDetailsSection #datosubjectDetail {
+	white-space: pre-wrap;
+	padding-left: 20px;
+}
+.aa14_justificante_datos_fecha {
+	text-align: left;
+	padding-left: 50px;
+}

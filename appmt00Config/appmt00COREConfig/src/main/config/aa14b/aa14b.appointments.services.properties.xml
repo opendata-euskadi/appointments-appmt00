@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<services>
+	<!-- The way the CRUD events (create, read, update, delete) are handled -->
+	<!-- 		ASYNC uses background jobs so the CRUD thread can continue without waiting to the event to be handled -->
+	<!-- 		SYNC handles events synchronously in the same thread as the CRUD event -->
+	<crudEventsHandling mode='ASYNC'>	<!-- SYNC / ASYNC -->
+		<numberOfThreadsInPool>5</numberOfThreadsInPool>
+	</crudEventsHandling>
+</services>
+

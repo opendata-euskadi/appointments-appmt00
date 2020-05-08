@@ -1,0 +1,52 @@
+
+	<!-- slot selection calendar -->
+	<%@include file="/aa14aSolicitudDateTime.inc" %>
+</form>
+
+<!-- Buttons -->	
+<div class='aa14_button_bar'>	
+	<!-- Print -->
+	<div id="aa14_booked_slot_print_btn" class="aa14a_btn">
+		<a><div class="aa14a_boton aa14a_boton_right">
+				<p><span class="fa fa-print"></span><fmt:message key="comun.imprimir" /></p>
+		   </div>
+		 </a>					
+	</div>
+	<!-- Date / time change button -->
+	<div id="aa14_fecha_hora_cita_change_btn" class="aa14a_btn">
+		<a><div class="aa14a_boton aa14a_boton_right">
+				<p><span class="fa fa-calendar"></span><fmt:message key="comun.cambiar" /></p>
+		   </div>
+		 </a>					
+	</div>
+	<!-- Customer details change button -->
+	<div id="aa14_change_customer_details_btn" class="aa14a_btn">
+		<a><div class="aa14a_boton aa14a_boton_right">
+				<p><span class="fa fa-pencil"></span><fmt:message key="comun.cambiar.datospersonales" /></p>
+		   </div>
+		</a>					
+	</div>	
+	<!-- Customer details change UPDATE button -->
+	<div id="aa14a_change_customer_details_btn" class="aa14a_btn_anterior_siguiente ocultar">
+		<a><div class="aa14a_boton aa14a_boton_right">
+				<p><span class="fa fa-forward"></span><fmt:message key="comun.siguiente" /></p>
+		   </div>
+		</a>					
+	</div>	
+	<!-- Date / time change UPDATE button -->
+	<div id="aa14a_change_booked_slot_date_time_btn" class="aa14a_btn_anterior_siguiente ocultar">
+		<a><div class="aa14a_boton aa14a_boton_right">
+				<p><span class="fa fa-forward"></span><fmt:message key="comun.siguiente" /></p>
+		   </div>
+		</a>					
+	</div>
+	
+	<!-- Release slot -->
+	<div id="aa14_booked_slot_release_btn" class="aa14a_btn aa14a_bton_warn">
+		<a><div class="aa14a_boton aa14a_boton_right">
+				<p><span class="fa fa-trash"></span><fmt:message key="comun.anular" /></p>
+		   </div>
+		 </a>					
+	</div>
+</div>
+

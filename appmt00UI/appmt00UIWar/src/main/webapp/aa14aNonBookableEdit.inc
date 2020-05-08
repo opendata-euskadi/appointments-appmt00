@@ -1,0 +1,160 @@
+<!-- Errors -->
+<div id="aa14a_nonBookableEdit_error" class='ocultar'>
+	<p class='aa14a_warning fa fa-warning'></p>
+</div>
+
+
+<!-- Details -->
+<div id='aa14a_existingReservedSlot'>
+	<div id='aa14a_reservedSlot_details'><!-- here comes the booked slot details --></div>
+		
+	<!-- Button bar -->
+	<div class='aa14_button_bar'>
+		<!-- actualizar -->
+		<!-- <div id="aa14a_edit_reservedSlot_btn" class="aa14a_btn_anterior_siguiente">
+			<a><div class="aa14a_boton aa14a_boton_right">
+					<p><span class="fa fa-pencil"></span><fmt:message key="comun.modificar" /></p>
+			   </div>
+			</a>					
+		</div> -->
+		<!-- Anular -->
+		<div id="aa14a_remove_reservedSlot_btn" class="aa14a_btn aa14a_bton_warn">
+			<a><div class="aa14a_boton aa14a_boton_right">
+				 	<p><span class="fa fa-trash"></span><fmt:message key="comun.anular" /></p>
+			   </div>
+			 </a>					
+		</div>
+	</div>
+</div>
+
+<!-- Delete Form -->
+<form id='aa14a_reservedSlot_delete_form' class='aa14a_form ocultar'>
+	<input type="hidden" name="op" value="LIBERAR_SLOT" />
+	<input type="hidden" name="lang" value="<%=langCode%>" />
+	<input type="hidden" name="slotOid" />
+	<input type="hidden" name="periodicSerieOid" />
+	<input type="hidden" name="schId" />
+	
+	<!-- periodic reserves -->
+	<div id='aa14a_removePeriodicNonBookable'>
+		<p><input type="radio" id="radio1" name="removePeriodicNonBookable" value="removeAllSerieRelatedBookedSlots" /><label for="mondayNonBookablePeriodic"><fmt:message key="comun.serie" /></label></p>
+		<p><input type="radio" id="radio2" name="removePeriodicNonBookable" value="removeThisBookedSlot" checked="checked"/><label for="tuesdayNonBookablePeriodic"><fmt:message key="comun.instancia" /></label></p>
+	</div>
+	
+	<!-- Button bar -->
+	<div class='aa14_button_bar'>
+		<!-- delete -->
+		<div id="aa14_reserved_slot_release_btn" class="aa14a_btn aa14a_bton_warn">
+			<a><div class="aa14a_boton aa14a_boton_right">
+				 	<p><span class="fa fa-trash"></span><fmt:message key="comun.anular" /></p>
+			   </div>
+			 </a>					
+		</div>
+		<!-- Cancel -->
+		<div id="aa14a_cancel_remove_reservedSlot_btn" class="aa14a_btn aa14a_bton_cancel">
+			<a><div class="aa14a_boton aa14a_boton_right">
+				 	<p><span class="fa fa-times"></span><fmt:message key="comun.cancelar" /></p>
+			   </div>
+			 </a>					
+		</div>
+	</div>
+</form>
+
+<!-- Edit Form -->
+<form id='aa14a_reservedSlot_edit_form' class='aa14a_form ocultar'>
+	<input type="hidden" name="op" value="RESERVAR_SLOT" />
+	<input type="hidden" name="lang" value="<%=langCode%>" />
+	<input type="hidden" name="slotOid" />
+	<input type="hidden" name="periodicSerieOid" />
+	<input type="hidden" name="schId" />
+<% if(xlnetsAuthCtx != null && xlnetsAuthCtx.getUserCode() != null) { %>
+	<input type="hidden" id="userCode" name="userCode" value="<%=xlnetsAuthCtx.getUserCode()%>"/>
+<% } %>	
+	<p class="aa14a_nonBookable">
+		<label for="dateNonBookable"><fmt:message key="comun.dia" /></label>
+		<input name="dateNonBookable" class="aa14a_input" value="">
+		
+		<% if (lang == Language.SPANISH) { %>
+			<label for="timeStartNonBookable"><fmt:message key="comun.desde" /></label>
+		<% } %>
+		<input type="text" name="timeStartNonBookable" class="time ui-timepicker-input" autocomplete="off"/>
+		<% if (lang == Language.BASQUE) { %>
+			<label for="timeStartNonBookable"><fmt:message key="comun.desde" /></label>
+		<% } %>
+		
+		<% if (lang == Language.SPANISH) { %>
+			<label for="timeEndNonBookable"><fmt:message key="comun.hasta" /></label>
+		<% } %>
+		<input type="text" name="timeEndNonBookable"  class="time ui-timepicker-input" autocomplete="off"/>
+		<% if (lang == Language.BASQUE) { %>
+			<label for="timeEndNonBookable"><fmt:message key="comun.hasta" /></label>
+		<% } %>
+		
+		<input type="checkbox" name="reserveAllDay" value="reserveAllDay" /><label for="reserveAllDay"><fmt:message key="comun.allDayLong" /></label>
+	</p>
+	
+	<!-- periodic non-bookable -->
+	<div class="aa14a_nonBookableRepeat" id="aa14a_nonBookableRepeat">
+		<input type="checkbox" name="periodicNonBookable" value="periodicNonBookable" /><label id="periodicNonBookable" for="periodicNonBookable"><fmt:message key="comun.repeatDay" /></label>
+		<span class="aa14a_nonBookableRange ocultar">
+			<%--
+			<% if (lang == Language.SPANISH) { %>
+			<label for="dateNonBookablePeriodicStart"><fmt:message key="comun.desdeUpper" /></label>
+			<% } %>
+			<input id="dateNonBookablePeriodicStart" name="dateNonBookablePeriodicStart" class="aa14a_input" value="">
+			<% if (lang == Language.BASQUE) { %>
+			<label for="dateNonBookablePeriodicStart"><fmt:message key="comun.desdeUpper" /></label>
+			<% } %>
+		 	--%>
+			<% if (lang == Language.SPANISH) { %>
+			<label for="dateNonBookablePeriodicEnd"><fmt:message key="comun.hasta" /></label>
+			<% } %>
+			<input name="dateNonBookablePeriodicEnd" class="aa14a_input" value="">
+			<% if (lang == Language.BASQUE) { %>
+			<label for="dateNonBookablePeriodicEnd"><fmt:message key="comun.hasta" /></label>
+			<% } %>
+		</span>
+		<div class="aa14a_nonBookableRange ocultar">
+			<input type="checkbox" class="nonBookableWeekDay" name="mondayNonBookablePeriodic" value="mondayReserve" /><label for="mondayNonBookablePeriodic"><fmt:message key="comun.monday" /></label>
+			<input type="checkbox" class="nonBookableWeekDay" name="tuesdayNonBookablePeriodic" value="tuesdayReserve" /><label for="tuesdayNonBookablePeriodic"><fmt:message key="comun.tuesday" /></label>
+			<input type="checkbox" class="nonBookableWeekDay" name="wednesdayNonBookablePeriodic" value="wednesdayReserve" /><label for="wednesdayNonBookablePeriodic"><fmt:message key="comun.wednesday" /></label>
+			<input type="checkbox" class="nonBookableWeekDay" name="thursdayNonBookablePeriodic" value="thursdayReserve" /><label for="thursdayNonBookablePeriodic"><fmt:message key="comun.thursday" /></label>
+			<input type="checkbox" class="nonBookableWeekDay" name="fridayNonBookablePeriodic" value="fridayReserve" /><label for="fridayNonBookablePeriodic"><fmt:message key="comun.friday" /></label>
+		</div>
+	</div>
+	
+	<!-- Text -->
+	<p class="aa14a_nonBookable">
+		<label><fmt:message key="comun.motivo" /></label>
+		<input type="text" name="subject" class="aa14a_input"   
+			   placeholder="<fmt:message key="comun.motivo" />" />
+	</p>
+	
+	<!-- Text -->
+	<p class="aa14a_nonBookable">
+		<label><fmt:message key="comun.numResources" /></label>
+		<select name="numResources">
+			<!-- no options (set by js at openReserveSlotDialog func -->
+		</select>
+	</p>
+	
+	
+	<!-- Button bar -->
+	<div class='aa14_button_bar'>
+		<!-- guardar / actualizar -->
+		<div id="aa14a_update_reservedSlot_btn" class="aa14a_btn_anterior_siguiente">
+			<a><div id="aa14a_nonBookableSave" class="aa14a_boton aa14a_boton_right">
+					<p><span class="fa fa-forward"></span><fmt:message key="comun.reservar" /></p>
+			   </div>
+			</a>					
+		</div>
+		<!-- cancel -->
+		<div id="aa14a_cancel_edit_reservedSlot_btn" class="aa14a_btn aa14a_bton_cancel">
+			<a><div class="aa14a_boton aa14a_boton_right">
+				 	<p><span class="fa fa-times"></span><fmt:message key="comun.cancelar" /></p>
+			   </div>
+			 </a>					
+		</div>
+	</div>
+</form>
+

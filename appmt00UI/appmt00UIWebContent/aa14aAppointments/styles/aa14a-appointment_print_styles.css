@@ -1,0 +1,59 @@
+body {font-family: Verdana, Helvetica, Arial, sans-serif;}
+
+h1{
+	 background-color: #1273AA;
+    -webkit-text-fill-color: white;
+}
+span {
+    background-color: darkgrey;
+    -webkit-text-fill-color: white;
+    font-size: 23;
+    font-weight: 600;
+    margin-right: 200px;
+}
+input#aa14_appointment_list_print{
+    background-color: #1273AA;
+    color: white;
+    padding: 10px;
+    min-width: 95px;
+    text-align: center;
+    cursor: pointer;
+    font-size: 90%;
+}
+
+div.aa14SlotListing h2 {
+	font-size: 23;
+    font-weight: 600;
+}
+
+div.aa14SlotListing table {
+	width : 100%;
+}
+div.aa14SlotListing table th,
+div.aa14SlotListing table td {
+	border : 1px solid;
+	padding : 5px;
+	background-color: lightgrey;
+}
+div.aa14SlotListing table tr td.aa14_date {
+	width:10%;
+}
+div.aa14SlotListing table tr td.aa14_time {
+	width:10%;
+}
+div.aa14SlotListing table tr td.aa14_duration {
+	width:12%;
+}
+div.aa14SlotListing table tr td.aa14_person_id {
+	width:10%;
+}
+div.aa14SlotListing table tr td.aa14_person_name {
+}
+@media print  {
+    #aa14_appointment_list_print {
+    	display:none !important;
+    }
+    h1 {
+    	    -webkit-text-fill-color: black;
+    }
+}
