@@ -24,6 +24,15 @@
 <!-- ====================================================================== -->
 	<dependencies>
 		<!-- ///////////////////////////////////////// -->
+		<!-- APPMT00 API Config                        -->
+		<!-- ///////////////////////////////////////// -->
+		<dependency>
+			<groupId>appmt.appmt00.config</groupId>
+			<artifactId>appmt00APIConfig</artifactId>
+			<version>${revision}</version>
+		</dependency>
+		
+		<!-- ///////////////////////////////////////// -->
 		<!-- APPMT00 Model                             -->
 		<!-- ///////////////////////////////////////// -->
 		<dependency>

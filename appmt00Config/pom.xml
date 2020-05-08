@@ -1,8 +1,9 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-			 
+<?xml version="1.0"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+		xmlns="http://maven.apache.org/POM/4.0.0"
+			 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
-
+	
 <!-- ====================================================================== -->
 <!-- PARENT                                                                 -->
 <!-- ====================================================================== -->
@@ -15,17 +16,17 @@
 <!-- ====================================================================== -->
 <!-- ARTIFACT                                                               -->
 <!-- ====================================================================== -->
-	<groupId>appmt00.ui</groupId>
-	<name>appmt00UI</name>
-	<artifactId>appmt00UI</artifactId>
+	<groupId>appmt.appmt00.config</groupId>
+	<name>appmt00Config</name>
+	<artifactId>appmt00Config</artifactId>
 	<packaging>pom</packaging>				<!-- it's a parent project -->
 	
+
 <!-- ====================================================================== -->
 <!-- MODULES                                                                -->
 <!-- ====================================================================== -->
 	<modules>
-		<module>appmt00UIClasses</module>
-		<module>appmt00UIWar</module>
-    <module>apmt00UIWebContent</module>
-  </modules>
+		<module>appmt00APIConfig</module>
+		<module>appmt00COREConfig</module>
+  	</modules>
 </project>

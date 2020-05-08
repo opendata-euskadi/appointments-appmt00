@@ -20,6 +20,7 @@
 		<revision>0.0.1-SNAPSHOT</revision>
 		
 		<!-- Dependencies versions -->
+		<appmt.config.byenv.version>0.0.1-SNAPSHOT</appmt.config.byenv.version>
 		<r01f.version>0.0.1-SNAPSHOT</r01f.version>
 		<plateaweb.version>0.0.1-SNAPSHOT</plateaweb.version>
 	</properties>
@@ -27,7 +28,7 @@
 <!-- ====================================================================== -->
 <!-- ARTIFACT                                                               -->
 <!-- ====================================================================== -->
-	<groupId>appmt00</groupId>
+	<groupId>appmt</groupId>
 	<name>appmt00</name>
 	<artifactId>appmt00</artifactId>
 	<version>${revision}</version>
@@ -40,6 +41,7 @@
 		<module>appmt00API</module>
 		<module>appmt00CORE</module>
 		<module>appmt00UI</module>
+		<module>appmt00Config</module>
 		<module>appmt00TestClasses</module>
 	</modules>
 

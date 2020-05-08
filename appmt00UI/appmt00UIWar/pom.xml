@@ -58,8 +58,6 @@
 <!-- PLUGINS                                                                -->
 <!-- ====================================================================== -->
   	<build>
-    	<finalName>aa14uiWar</finalName>
-		
 		<pluginManagement>
 			<plugins>
 				<!--
@@ -141,14 +139,14 @@
 			<id>env_profile</id>
 			<dependencies>
 				<dependency>
-					<groupId>aa14.config.core</groupId>
-					<artifactId>aa14cConfigByEnv</artifactId>
-					<version>${revision}</version>
+					<groupId>appmt.appmt00.config</groupId>
+					<artifactId>appmt00APIConfigByEnv</artifactId>
+					<version>${appmt.config.byenv.version}</version>
 				</dependency>	
 				<dependency>
-					<groupId>aa14.config.api</groupId>
-					<artifactId>aa14aConfigByEnv</artifactId>
-					<version>${revision}</version>
+					<groupId>appmt.appmt00.config</groupId>
+					<artifactId>appmt00COREConfigByEnv</artifactId>
+					<version>${appmt.config.byenv.version}</version>
 				</dependency>
 			</dependencies>
 		</profile> 

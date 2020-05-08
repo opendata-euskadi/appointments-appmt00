@@ -8,69 +8,16 @@
 <!-- PARENT                                                                 -->
 <!-- ====================================================================== -->
 	<parent>
-		<groupId>appmt</groupId>
-		<artifactId>appmt00</artifactId>
+		<groupId>appmt.appmt00.config</groupId>
+		<artifactId>appmt00Config</artifactId>
 		<version>${revision}</version>
 	</parent>
 	
 <!-- ====================================================================== -->
 <!-- ARTIFACT                                                               -->
 <!-- ====================================================================== -->
-	<name>appmt00TestClasses</name>
-	<artifactId>appmt00TestClasses</artifactId>
-	
-<!-- ====================================================================== -->
-<!-- DEPENDENCIES                                                           -->
-<!-- ====================================================================== -->
-	<dependencies>
-		<!-- ///////////////////////////////////////// -->
-		<!-- TEST                                      -->
-		<!-- ///////////////////////////////////////// -->
-		<dependency>
-			<groupId>r01.r01f.businessservices</groupId>
-			<artifactId>r01fBusinessServicesTestClasses</artifactId>
-			<version>${r01f.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.12</version>
-			<!-- <scope>test</scope> --> <!-- test deps are NOT transitive! -->
-		</dependency>
-		
-		<!-- ///////////////////////////////////////// -->
-		<!-- APPMT00: API                              -->
-		<!-- ///////////////////////////////////////// -->
-		<dependency>
-			<groupId>appmt00.api</groupId>
-			<artifactId>appmt00APIClasses</artifactId>
-			<version>${revision}</version>
-		</dependency>
-
-		<!-- ///////////////////////////////////////// -->
-		<!-- APPMT00: CORE (stand-alone run)           -->
-		<!-- ///////////////////////////////////////// -->
-		<dependency>
-			<groupId>appmt00.core</groupId>
-			<artifactId>appmt00COREClasses</artifactId>
-			<version>${revision}</version>
-		</dependency>
-		
-		<!-- ///////////////////////////////////////// -->
-		<!-- R01F: BusinessServices                    -->
-		<!-- ///////////////////////////////////////// -->
-		<dependency>
-			<groupId>r01.r01f.businessservices.guice.core</groupId>
-			<artifactId>r01fBusinessServicesCoreGuiceClasses</artifactId>
-			<version>${r01f.version}</version>
-		</dependency>
-		
-		<dependency>
-			<groupId>r01.r01f.businessservices.guice.core</groupId>
-			<artifactId>r01fBusinessWebServicesCoreGuiceClasses</artifactId>
-			<version>${r01f.version}</version>
-		</dependency>
-	</dependencies>
+	<name>appmt00COREConfig</name>
+	<artifactId>appmt00COREConfig</artifactId>
 
 <!-- ====================================================================== -->
 <!-- BUILD                                                                  -->

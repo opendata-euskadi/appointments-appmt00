@@ -24,11 +24,25 @@
 <!-- ====================================================================== -->
 	<dependencies>
 		<!-- ///////////////////////////////////////// -->
+		<!-- APPMT00: CORE CONFIG                      -->
+		<!-- ///////////////////////////////////////// -->
+		<dependency>
+			<groupId>appmt.appmt00.config</groupId>
+			<artifactId>appmt00COREConfig</artifactId>
+			<version>${revision}</version>
+		</dependency>
+	
+		<!-- ///////////////////////////////////////// -->
 		<!-- APPMT00: API                              -->
 		<!-- ///////////////////////////////////////// -->
 		<dependency>
 			<groupId>appmt00.api</groupId>
 			<artifactId>appmt00APIClasses</artifactId>
+			<version>${revision}</version>
+		</dependency>
+		<dependency>
+			<groupId>appmt.appmt00.config</groupId>
+			<artifactId>appmt00APIConfig</artifactId>
 			<version>${revision}</version>
 		</dependency>
 
