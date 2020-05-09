@@ -80,7 +80,7 @@ public class AA14ClientAPIForBusinessConfigs
 		_configCache = CacheBuilder.newBuilder()
 							.maximumSize(10)							
 							//	.expireAfterWrite(60,TimeUnit.MINUTES)	// for 60 minutes		BEWARE!!! do NOT use both expireAfterWrite and refreshAfterWrite
-							.refreshAfterWrite(10,TimeUnit.SECONDS)		// refresh after 2 minutes
+							.refreshAfterWrite(2,TimeUnit.MINUTES)		// refresh after 2 minutes
 							.removalListener(cacheRemovalListener)
 							.build(new CacheLoader<String,AA14CacheEntry>() {
 											@Override

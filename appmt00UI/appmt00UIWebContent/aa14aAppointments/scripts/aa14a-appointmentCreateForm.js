@@ -193,7 +193,7 @@ function saveAppointment() {
 	}
 	console.log("...reserve slot at " + getAvailableSlotsCalendarSelectedSlotDate() + ": " + $("#aa14a_createAppointment_form").serialize());
 	$.ajax({
-		  url		: '/aa14aUIWar/AA14ControllerServlet?R01HNoPortal=true&numberOfAdjacentSlots='
+		  url		: '/' + appmt01UIWar + '/AA14ControllerServlet?R01HNoPortal=true&numberOfAdjacentSlots='
 			  			+ numberOfAdjacentSlots, //default 1
 		  data		: $("#aa14a_createAppointment_form").serialize(),
 		  type		: "post",

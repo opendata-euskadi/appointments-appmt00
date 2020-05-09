@@ -8,7 +8,7 @@
 <!-- PARENT                                                                 -->
 <!-- ====================================================================== -->
 	<parent>
-		<groupId>appmt00.ui</groupId>
+		<groupId>appmt.appmt00.ui</groupId>
 		<artifactId>appmt00UI</artifactId>
 		<version>${revision}</version>
 	</parent>
@@ -32,12 +32,88 @@
 <!-- ====================================================================== -->
 	<dependencies>
 		<!-- ///////////////////////////////////////// -->
-		<!-- APPMT00: WebApp common classes            -->
+		<!-- APPMT00: Web Services                     -->
+		<!-- ///////////////////////////////////////// -->
+<!-- 
+		<dependency>
+			<groupId>appmt00.core</groupId>
+			<artifactId>appmt00COREWebProfileClasses</artifactId>
+			<version>${revision}</version>
+		</dependency>
+-->
+		<!-- ///////////////////////////////////////// -->
+		<!-- APPMT00: API                              -->
 		<!-- ///////////////////////////////////////// -->
 		<dependency>
-			<groupId>appmt00.ui</groupId>
-			<artifactId>appmt00UIClasses</artifactId>
+			<groupId>appmt.appmt00.api</groupId>
+			<artifactId>appmt00APIClasses</artifactId>
 			<version>${revision}</version>
+		</dependency>
+
+		<!-- ///////////////////////////////////////// -->
+		<!-- APPMT00: CORE (stand-alone run)           -->
+		<!-- ///////////////////////////////////////// -->
+		<dependency>
+			<groupId>appmt.appmt00.core</groupId>
+			<artifactId>appmt00COREClasses</artifactId>
+			<version>${revision}</version>
+		</dependency>
+		
+		<!-- ///////////////////////////////////////// -->
+		<!-- R01F: BusinessServices                    -->
+		<!-- ///////////////////////////////////////// -->
+		<dependency>
+			<groupId>r01.r01f.businessservices.guice.core</groupId>
+			<artifactId>r01fBusinessServicesCoreGuiceClasses</artifactId>
+			<version>${r01f.version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>r01.r01f.businessservices.guice.core</groupId>
+			<artifactId>r01fBusinessWebServicesCoreGuiceClasses</artifactId>
+			<version>${r01f.version}</version>
+		</dependency>
+
+		<!-- ///////////////////////////////////////// -->
+		<!-- R01F: EJIE                                -->
+		<!-- ///////////////////////////////////////// -->
+		<dependency>
+			<groupId>r01.r01f.ejie</groupId>
+			<artifactId>r01fXLNetsClasses</artifactId>
+			<version>${r01f.version}</version>
+		</dependency>
+
+		
+		<!-- ///////////////////////////////////////// -->
+		<!-- PLATEAWeb: AppEmbd                        -->
+		<!-- ///////////////////////////////////////// -->
+		<dependency>
+			<groupId>r01.plateaweb.portal.appembed</groupId>
+			<artifactId>r01PLATEAWebAppEmbedClasses</artifactId>
+			<version>${plateaweb.version}</version>
+		</dependency>
+
+		<!-- ============================================================================================================================== -->
+		<!-- OWASP: Form input sanitize >                                                                                                   -->
+		<!-- ============================================================================================================================== -->
+		<!-- AntiSamy: https://www.owasp.org/index.php/Category:OWASP_AntiSamy_Project -->
+		<!--<dependency org="org.owasp.antisamy" name="antisamy" rev="1.5.5"
+					conf="compile->compile,master;runtime->runtime"/>-->
+
+		<!-- HTML Sanitizer: https://www.owasp.org/index.php/OWASP_Java_HTML_Sanitizer_Project -->
+		<dependency>
+			<groupId>com.googlecode.owasp-java-html-sanitizer</groupId>
+			<artifactId>owasp-java-html-sanitizer</artifactId>
+			<version>r239</version>
+			<exclusions>
+				<exclusion>
+					<groupId>com.google.guava</groupId>
+					<artifactId>guava</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.google.code.findbugs</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		
 		<!-- ///////////////////////////////////////// -->
@@ -51,6 +127,11 @@
 			<artifactId>javax.servlet-api</artifactId>
 			<version>4.0.1</version>
 			<scope>provided</scope>		<!-- BEWARE!!! -->
+		</dependency>
+		<dependency>
+		    <groupId>javax.servlet</groupId>
+		    <artifactId>jstl</artifactId>
+		    <version>1.2</version>
 		</dependency>
 	</dependencies>
 

@@ -103,7 +103,7 @@ function obtenerCitasLibres(fecha,
 	var yyyy = fecha.getFullYear();
 	console.log("...get free slots: " + serviceLocId);
 	$.ajax({
-		  url		: '/aa14aUIWar/AA14ControllerServlet?R01HNoPortal=true',
+		  url		: '/' + appmt01UIWar + '/AA14ControllerServlet?R01HNoPortal=true',
 		  data		: "op=OBTENERCITAS&year=" + yyyy + "&month=" + mm + "&day=" + dd + 
 		  			    "&serviceLocId=" + serviceLocId + 
 		  			    "&prefSchId=" + prefSchId +			// preferred schedule id

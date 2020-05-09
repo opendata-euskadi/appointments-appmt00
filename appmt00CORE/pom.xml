@@ -15,7 +15,7 @@
 <!-- ====================================================================== -->
 <!-- ARTIFACT                                                               -->
 <!-- ====================================================================== -->
-	<groupId>appmt00.core</groupId>
+	<groupId>appmt.appmt00.core</groupId>
 	<name>appmt00CORE</name>
 	<artifactId>appmt00CORE</artifactId>
 	<packaging>pom</packaging>				<!-- it's a parent project -->

@@ -201,7 +201,7 @@ function _loadBookingConfigForLocation(locId,
 									   action) {
 	console.log("...getting booking config for loc id=" + locId);
 	$.ajax({
-		  url		: '/aa14aUIWar/AA14ModelObjectsLoadServlet?R01HNoPortal=true',
+		  url		: '/' + appmt01UIWar + '/AA14ModelObjectsLoadServlet?R01HNoPortal=true',
 		  data		: "op=OBTENERCONFIGCALENDARBYLOCATIONID&locId=" + locId,
 		  type		: "get",
 		  success	: function(bookingCfg) {
@@ -218,7 +218,7 @@ function _loadBookingConfigForSchedule(schId,
 									   action) {
 	console.log("[Booking Config]: getting booking config for schedule id=" + schId + " (used to paint the calendar and non-bookable slot selection)");
 	$.ajax({
-		  url		: '/aa14aUIWar/AA14ModelObjectsLoadServlet?R01HNoPortal=true',
+		  url		: '/' + appmt01UIWar + '/AA14ModelObjectsLoadServlet?R01HNoPortal=true',
 		  data		: "op=OBTENERCONFIGCALENDARBYSCHEDULEID&schId=" + schId,
 		  type		: "get",
 		  success	: function(bookingCfg) {
@@ -238,7 +238,7 @@ function _loadBookingConfigForSchedule(schId,
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 function paintAppointmentDetails(slotOid) {
 $.ajax({
-	  url		: '/aa14aUIWar/AA14ModelObjectsLoadServlet?R01HNoPortal=true',
+	  url		: '/' + appmt01UIWar + '/AA14ModelObjectsLoadServlet?R01HNoPortal=true',
 	  data		: "op=OBTENERCITABYOID&appointmentOid=" + slotOid,
 	  type		: "get",
 	  success	: function(appointment) {
@@ -336,7 +336,7 @@ $.ajax({
 function pintarDatosLocalizacionById(locId) {
 	var lang = (idioma == "eu" ? "BASQUE" : "SPANISH");
 	$.ajax({
-		  url		: '/aa14aUIWar/AA14ModelObjectsLoadServlet?R01HNoPortal=true',
+		  url		: '/' + appmt01UIWar + '/AA14ModelObjectsLoadServlet?R01HNoPortal=true',
 		  data		: "op=OBTENERJERARQUIALOCALIZACIONBYID&locId=" + locId + "&lang=" + lang,
 		  type		: "get",
 		  success	: function(responseText) {
@@ -350,7 +350,7 @@ function pintarDatosLocalizacionById(locId) {
 function pintarDatosLocalizacionByOid(locOid) {
 	var lang = (idioma == "eu" ? "BASQUE" : "SPANISH");
 	$.ajax({
-		  url		: '/aa14aUIWar/AA14ModelObjectsLoadServlet?R01HNoPortal=true',
+		  url		: '/' + appmt01UIWar + '/AA14ModelObjectsLoadServlet?R01HNoPortal=true',
 		  data		: "op=OBTENERJERARQUIALOCALIZACIONBYOID&locOid=" + locOid + "&lang=" + lang,
 		  type		: "post",
 		  success	: function(responseText) {

@@ -1,5 +1,6 @@
 package aa14b.services.delegates.notifier;
 
+import javax.inject.Inject;
 import javax.mail.internet.MimeMessage;
 
 import org.apache.velocity.app.VelocityEngine;
@@ -33,6 +34,7 @@ public class AA14NotifierServicesForPersonLocator {
 /////////////////////////////////////////////////////////////////////////////////////////
 //	CONSTRUCTORS
 /////////////////////////////////////////////////////////////////////////////////////////
+	@Inject
 	public AA14NotifierServicesForPersonLocator(// needed to send emails
 											 	final NotifierConfigForEMail notifierConfig,final NotifierServiceForEMail notifier,
 												final VelocityEngine templateEngine) {

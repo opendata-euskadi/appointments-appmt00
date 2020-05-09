@@ -439,7 +439,7 @@ function updateOrCreateReservedSlot(reservedSlotData) {
 	$("#aa14a_reservedSlot_edit_form input[name='dateNonBookable']").datepicker('enable');	// enable the date picker (if not enabled, it's not serialized!!)
 	console.log("...update the date/time for reserved slot id=" + reservedSlotData.oid + ": " + $("#aa14a_reservedSlot_edit_form").serialize());
 	$.ajax({
-		  url		: '/aa14aUIWar/AA14ControllerServlet?R01HNoPortal=true',
+		  url		: '/' + appmt01UIWar + '/AA14ControllerServlet?R01HNoPortal=true',
 		  data		: $("#aa14a_reservedSlot_edit_form").serialize(),
 		  type		: "post",
 		  success	: function(responseText) {			  				

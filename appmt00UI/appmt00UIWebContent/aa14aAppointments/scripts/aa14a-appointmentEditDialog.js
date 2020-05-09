@@ -138,7 +138,7 @@ function updateAppointmentDateTime(appointmentData) {
 	
 	console.log("...update the date/time for slot " + appointmentData.oid + " to " + getAvailableSlotsCalendarSelectedSlotDate() + ": " + $("#aa14a_editAppointment_form").serialize());
 	$.ajax({
-		  url		: '/aa14aUIWar/AA14ControllerServlet?R01HNoPortal=true',
+		  url		: '/' + appmt01UIWar + '/AA14ControllerServlet?R01HNoPortal=true',
 		  data		: $("#aa14a_editAppointment_form").serialize(),
 		  type		: "post",
 		  success	: function(responseText) {
@@ -201,7 +201,7 @@ function updateAppointmentCustomerData(appointmentData) {
 	
 	console.log("...update the customer data for slot " + appointmentData.oid + ": " + $("#aa14a_editAppointment_form").serialize());
 	$.ajax({
-		  url		: '/aa14aUIWar/AA14ControllerServlet?R01HNoPortal=true',
+		  url		: '/' + appmt01UIWar + '/AA14ControllerServlet?R01HNoPortal=true',
 		  data		: $("#aa14a_editAppointment_form").serialize(),
 		  type		: "post",
 		  success	: function(responseText) {

@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<persistence combine.id="persistence.driver_manager" 
-			 unitType='DRIVER_MANAGER'>		<!-- The persistence unit to use -->
+<persistence unitType='DRIVER_MANAGER'
+			 combine.keys='type'>	<!-- see https://github.com/atteo/xml-combiner -->
 	<!--
 	============================================================
 	PERSISTENCE UNIT
 	============================================================ 
 	-->
 	<!-- DataSource DB connection -->
-	<unit combine.id="unit.datasource"
-		  type='DATASOURCE'
+	<unit type='DATASOURCE'
 		  targetDB='MySQL 8.0'>
 		<properties>
 			<!--
@@ -18,29 +17,28 @@
 		</properties>
 	</unit>
 
-	<!-- DriverManager DB connection -->
-	<unit combine.id="unit.driver_manager" 
-		  type='DRIVER_MANAGER'
-		  targetDB='MySQL 8.0'>	<!-- The BBDD spec to use: MySQL 5.7 / Oracle 11.0 -->
+	<!-- DriverManager DB connection: targetDB=MySQL 8.0 / Oracle 11.0 -->
+	<unit type='DRIVER_MANAGER'
+		  targetDB='MySQL 8.0'
+		  combine.keys='vendor'>	<!-- see https://github.com/atteo/xml-combiner -->
 		  
 		<!-- Pool size: See more at: http://www.eclipse.org/eclipselink/documentation/2.5/jpa/extensions/p_connection_pool.htm -->
 		<!-- <connectionPool initial="1" min="16" max="16" /> --> 
 		
-		<connection combine.id="connection.oracle" 
-					vendor='ORACLE'>
+		<connection vendor='ORACLE'>
 			<eclipselink.jdbc.user>[USER]</eclipselink.jdbc.user>
 			<eclipselink.jdbc.password>[PASSWORD]</eclipselink.jdbc.password>
 			<eclipselink.jdbc.driver>oracle.jdbc.driver.OracleDriver</eclipselink.jdbc.driver>
 			<eclipselink.jdbc.url>jdbc:oracle:thin:@//[HOST]:[PORT]/[SERVICE_NAME]</eclipselink.jdbc.url>
 			<eclipselink.target-database>org.eclipse.persistence.platform.database.oracle.Oracle11Platform</eclipselink.target-database>
 		</connection>
-		<connection combine.id="connection.mysql" 
-					vendor='MySQL'>
+		<connection vendor='MySQL'>
 			<javax.persistence.jdbc.user>[USER]</javax.persistence.jdbc.user>
 			<javax.persistence.jdbc.password>[PASSWORD]</javax.persistence.jdbc.password>
 			<javax.persistence.jdbc.driver>com.mysql.cj.jdbc.Driver</javax.persistence.jdbc.driver>
 			<javax.persistence.jdbc.url><![CDATA[jdbc:mysql://[HOST]:[PORT]/[SCHEMA]?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC]]></javax.persistence.jdbc.url>
 		</connection>
+		
 		<properties>
 			<!-- Location of persistence unit -->
 			<eclipselink.persistencexml>META-INF/jpa/{APPCODE}.{APP_MODULE}.persistence.xml</eclipselink.persistencexml>
@@ -67,8 +65,9 @@
 																		SET unique_checks=0; 
 																		SET foreign_key_checks=0;
 																  before the drop table statements in order to tell mysql not to check the foreign key constraints -->
-		<writeDDLScriptTo>{R01_HOME}/data/DB/ddl_scripts/{APPCODE}</writeDDLScriptTo>
-		<properties vendor='MySQL'>
+		<writeDDLScriptTo>{R01_HOME}/db/ddl_scripts/{APPCODE}</writeDDLScriptTo>
+		<properties vendor='MySQL'
+					combine.keys='vendor'>	<!-- see https://github.com/atteo/xml-combiner -->
 			<!-- Enable full-text search in MySQL
 				 see 
 				 	- MySQLPlatformExtension.java type

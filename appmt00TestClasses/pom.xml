@@ -42,7 +42,7 @@
 		<!-- APPMT00: API                              -->
 		<!-- ///////////////////////////////////////// -->
 		<dependency>
-			<groupId>appmt00.api</groupId>
+			<groupId>appmt.appmt00.api</groupId>
 			<artifactId>appmt00APIClasses</artifactId>
 			<version>${revision}</version>
 		</dependency>
@@ -51,7 +51,7 @@
 		<!-- APPMT00: CORE (stand-alone run)           -->
 		<!-- ///////////////////////////////////////// -->
 		<dependency>
-			<groupId>appmt00.core</groupId>
+			<groupId>appmt.appmt00.core</groupId>
 			<artifactId>appmt00COREClasses</artifactId>
 			<version>${revision}</version>
 		</dependency>

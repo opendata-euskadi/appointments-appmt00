@@ -8,7 +8,8 @@
 									> the [sessionToken] element contains the session token's path (use https://xlnets.servicios.jakina.ejiedes.net/xlnets/servicios.htm to generate a token)
 									> the [userDataToken] element contains the user info token's path (use https://xlnets.servicios.jakina.ejiedes.net/xlnets/servicios.htm to generate a token)
 									> the [authToken] element contains the auth token's path (use https://xlnets.servicios.jakina.ejiedes.net/xlnets/servicios.htm to generate a token)
-									> the [workplaceDataToken] element contains the workplace (puesto) token's path (use https://xlnets.servicios.jakina.ejiedes.net/xlnets/servicios.htm to generate a token)
+									> the [buildingDataToken] element contains the building token's path (use https://xlnets.servicios.jakina.ejiedes.net/xlnets/servicios.htm ObtenerEdificios function to generate a token)
+									> the [workplaceDataToken] element contains the workplace token's path (use https://xlnets.servicios.jakina.ejiedes.net/xlnets/servicios.htm ObtenerPuestos function to generate a token)
 		httpProvided	: Using a service that provides xlnets session tokens
 									> the [loginAppCode] attribute is mandatory
 									> the [sessionToken] element contains the url of the service that provides tokens (ie: http://svc.intra.integracion.jakina.ejiedes.net/ctxapp/Y31JanoServiceXlnetsTokenCreatorServlet?login_app=appId)
@@ -20,12 +21,67 @@
 								the [loginAppCode] attribute is mandatory
 	-->
 	
-	<!-- mock tokens (see aa14uiWar) -->
+	<!-- mock tokens (see appmtXXUIWar) -->
 	<mockFiles>
 		<userSessionToken for='theUserCode'>aa14a/xlnets/mock/aa14a-xlnetsSession.xml</userSessionToken>
 		<userDataToken for='theUserCode'>aa14a/xlnets/mock/aa14a-xlnetsItemObtenerPersonas.xml</userDataToken>
 		<authToken for='AA14A-FN-0001'>aa14a/xlnets/mock/aa14a-xlnetsItemAutorizacion.xml</authToken>
 		<workplaceDataToken for='thePuestoUID'>aa14a/xlnets/mock/aa14a-xlnetsItemObtenerPuestos.xml</workplaceDataToken>
+		<buildingDataToken for='theEdificioUID'>aa14a/xlnets/mock/aa14a-xlnetsItemObtenerEdificios.xml</buildingDataToken>
+		<ldapFilterTestDataToken for='aa14'>aa14a/xlnets/mock/aa14a-xlnetsLDAPObtenerPersonas.xml</ldapFilterTestDataToken>
 	</mockFiles>
-
+	
+	<loginUrl>https://xlnets.servicios.des.ejgv.euskalsarea.eus/n38a/N38LoginInicioServlet</loginUrl>
+	
+	<authCfg useSession='true' override='false'>
+ 		<target id='trafikoa' kind='restrict'>
+ 			<uri>/appmt[0-9]{2}UIWar/trafikoa/.*</uri>
+ 			<resources>
+ 				<resource type='function' mandatory='true' oid='AA14A-FN-0001'>
+ 					<es>Cita Previa</es>
+ 					<eu>Hitzordua eskatzea</eu>
+ 				</resource>
+ 			</resources>
+ 		</target>
+ 		<target id='bizilagun' kind='restrict'>
+ 			<uri>/appmt[0-9]{2}UIWar/bizilagun/internal/.*</uri>
+ 			<resources>
+ 				<resource type='function' mandatory='true' oid='AA14A-FN-0001'>
+ 					<es>Cita Previa</es>
+ 					<eu>Hitzordua eskatzea</eu>
+ 				</resource>
+ 			</resources>
+ 		</target>
+ 		<target id='blooddonation' kind='restrict'>
+ 			<uri>/appmt[0-9]{2}UIWar/blooddonation/internal/.*</uri>
+ 			<resources>
+ 				<resource type='function' mandatory='true' oid='AA14A-FN-0001'>
+ 					<es>Cita Previa</es>
+ 					<eu>Hitzordua eskatzea</eu>
+ 				</resource>
+ 			</resources>
+ 		</target>
+ 		<target id='medicalservice' kind='restrict'>
+ 			<uri>/appmt[0-9]{2}UIWar/medicalservice/.*</uri>
+ 			<resources>
+ 				<resource type='function' mandatory='false' oid='AA14A-FN-0001'>
+ 					<es>Cita Previa</es>
+ 					<eu>Hitzordua eskatzea</eu>
+ 				</resource>
+ 			</resources>
+ 		</target>
+ 		<target id='justizia' kind='restrict'>
+ 			<uri>/appmt[0-9]{2}UIWar/justizia/internal/.*</uri>
+ 			<resources>
+ 				<resource type='function' mandatory='true' oid='AA14A-FN-0001'>
+ 					<es>Cita Previa</es>
+ 					<eu>Hitzordua eskatzea</eu>
+ 				</resource>
+ 			</resources>
+ 		</target>
+ 		<!-- allow access to any other url -->
+ 		<target id='other' kind='allow'>
+ 			<uri>.*</uri>
+ 		</target>
+	</authCfg>
 </xlnets>

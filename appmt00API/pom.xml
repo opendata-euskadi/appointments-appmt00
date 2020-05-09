@@ -15,7 +15,7 @@
 <!-- ====================================================================== -->
 <!-- ARTIFACT                                                               -->
 <!-- ====================================================================== -->
-	<groupId>appmt00.api</groupId>
+	<groupId>appmt.appmt00.api</groupId>
 	<name>appmt00API</name>
 	<artifactId>appmt00API</artifactId>
 	<packaging>pom</packaging>				<!-- it's a parent project -->

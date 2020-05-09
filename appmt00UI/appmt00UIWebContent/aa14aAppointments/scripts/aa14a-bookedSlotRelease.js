@@ -41,7 +41,7 @@ function intReleaseBookedSlotButton() {
 		        				dataToSend = $("#aa14a_reservedSlot_delete_form").serialize();
 		        			}
 				        	$.ajax({
-								  url			: '/aa14aUIWar/AA14ControllerServlet?R01HNoPortal=true',
+								  url			: '/' + appmt01UIWar + '/AA14ControllerServlet?R01HNoPortal=true',
 								  data			: dataToSend,
 								  type			: "get",
 								  success		: function(responseText) {

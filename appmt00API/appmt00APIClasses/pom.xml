@@ -8,7 +8,7 @@
 <!-- PARENT                                                                 -->
 <!-- ====================================================================== -->
 	<parent>
-		<groupId>appmt00.api</groupId>
+		<groupId>appmt.appmt00.api</groupId>
 		<artifactId>appmt00API</artifactId>
 		<version>${revision}</version>
 	</parent>
@@ -36,7 +36,7 @@
 		<!-- APPMT00 Model                             -->
 		<!-- ///////////////////////////////////////// -->
 		<dependency>
-			<groupId>appmt00.api</groupId>
+			<groupId>appmt.appmt00.api</groupId>
 			<artifactId>appmt00ModelClasses</artifactId>
 			<version>${revision}</version>
 		</dependency>

@@ -8,7 +8,7 @@
 <!-- PARENT                                                                 -->
 <!-- ====================================================================== -->
 	<parent>
-		<groupId>appmt00.ui</groupId>
+		<groupId>appmt.appmt00.ui</groupId>
 		<artifactId>appmt00UI</artifactId>
 		<version>${revision}</version>
 	</parent>

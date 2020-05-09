@@ -20,7 +20,7 @@ function validarDatosPersonales() {
 function validateNIF(nif) {
 	var success = false;
 	$.ajax({
-		  url		: '/aa14aUIWar/AA14ControllerServlet?R01HNoPortal=true',
+		  url		: '/' + appmt01UIWar + '/AA14ControllerServlet?R01HNoPortal=true',
 		  data		: "op=VALIDATE_PERSONID&personId=" + nif,
 		  type		: "get",
 		  async		: false,	// IMPORTANT!! the success info is needed SYNCHRONOUSLY!

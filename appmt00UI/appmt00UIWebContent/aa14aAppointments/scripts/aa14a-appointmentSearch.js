@@ -61,10 +61,10 @@ function initAppointmentSearch() {
     			function() {
     				$("#aa14a_btn_remind_locator").prop('disabled', true);
     				$.ajax({
-    					  url		: '/aa14aUIWar/AA14ControllerServlet?R01HNoPortal=true' +
-    					  												'&op=REMIND_PERSON_LOCATOR' +
-    					  												'&orgId=' + orgId + // see aa14aBusqueda.inc for each initiative
-    					  												'&lang=' + idioma,	// see aa14aJSDynamicVars.inc
+    					  url		: '/' + appmt01UIWar + '/AA14ControllerServlet?R01HNoPortal=true' +
+    					  														  '&op=REMIND_PERSON_LOCATOR' +
+    					  														  '&orgId=' + orgId + // see aa14aBusqueda.inc for each initiative
+    					  														  '&lang=' + idioma,	// see aa14aJSDynamicVars.inc
     					  data		: $("#formRemindPersonLocator").serialize(),
     					  type		: "get",
     					  success	: function(success) {
@@ -106,7 +106,7 @@ function buscarCitas() {
 	$("#lang").val(idioma);		// see aa14aJSDynamicVars.inc
 	console.log($("#formBuscarCitas").serialize());
 	$.ajax({
-		  url		: '/aa14aUIWar/AA14ControllerServlet?R01HNoPortal=true',
+		  url		: '/' + appmt01UIWar + '/AA14ControllerServlet?R01HNoPortal=true',
 		  data		: $("#formBuscarCitas").serialize(),
 		  type		: "get",
 		  success	: function(responseText) {

@@ -29,4 +29,18 @@
 		<module>appmt00APIConfig</module>
 		<module>appmt00COREConfig</module>
   	</modules>
+  	
+<!-- ====================================================================== -->
+<!-- DEPENDENCIES                                                           -->
+<!-- ====================================================================== -->
+	<dependencies>
+  		<!-- ///////////////////////////////////////// -->
+		<!-- R01: Config                               -->
+		<!-- ///////////////////////////////////////// -->
+		<dependency>
+			<groupId>r01.r01f.config</groupId>
+			<artifactId>r01fConfig</artifactId>
+			<version>${r01f.version}</version>
+		</dependency>
+	</dependencies>
 </project>

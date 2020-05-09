@@ -5,15 +5,17 @@
 	
 	<jmxConfigurator contextName="aa14f" />
 
-	<include resource="aa14f/aa14fEnvironment.xml"/>
+	<!-- <include resource="aa14f/aa14fEnvironment.xml"/> -->
 
 	<!-- Global -->
-	<include resource="r01fb/r01fbLogbackGlobal.xml"/>
-	<include resource="r01fb/r01fbLogback.xml"/>
+	<include resource="r01f/r01fLogbackGlobal.xml"/>
+	<include resource="r01f/r01fLogback.xml"/>
 
 	<!-- Specific -->
 	<include resource="aa14f/aa14fLogback.xml"/>	
 	<include resource="aa14a/aa14aLogback.xml"/>
 	<include resource="aa14b/aa14bLogback.xml"/>
+	
+	<include resource="r01p/r01pLogback.xml"/>	<!-- app include -->
 
 </configuration>
