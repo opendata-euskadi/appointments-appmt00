@@ -410,9 +410,9 @@ public class AA14BusinessConfig
 		return this.getNotifierFromConfigFor(org,div,srvc);
 	}
 	public AA14NotifierFromConfig getNotifierFromConfigFor(final AA14Organization org,final AA14OrgDivision div,final AA14OrgDivisionService srvc) {
-		AA14NotifierFromConfig outCfg = srvc.getNotifierFromConfig();;
-		if (outCfg == null) outCfg = div.getNotifierFromConfig();;
-		if (outCfg == null) outCfg = org.getNotifierFromConfig();
+		AA14NotifierFromConfig outCfg = srvc != null ? srvc.getNotifierFromConfig() : null;
+		if (outCfg == null) outCfg = div != null ? div.getNotifierFromConfig() : null;
+		if (outCfg == null) outCfg = org != null ? org.getNotifierFromConfig() : null;
 		return outCfg;
 	}
 	public AA14NotifierMessageComposingConfig getNotifierMessageComposingConfigFor(final AA14OrganizationOID orgOid,final AA14OrgDivisionOID divOid,final AA14OrgDivisionServiceOID srvcOid) {
@@ -430,9 +430,9 @@ public class AA14BusinessConfig
 		return this.getNotifierMessageComposingConfigFor(org,div,srvc);
 	}
 	public AA14NotifierMessageComposingConfig getNotifierMessageComposingConfigFor(final AA14Organization org,final AA14OrgDivision div,final AA14OrgDivisionService srvc) {
-		AA14NotifierMessageComposingConfig outCfg = srvc.getNotifierMessageComposingConfig();
-		if (outCfg == null) outCfg = div.getNotifierMessageComposingConfig();
-		if (outCfg == null) outCfg = org.getNotifierMessageComposingConfig();
+		AA14NotifierMessageComposingConfig outCfg = srvc != null ? srvc.getNotifierMessageComposingConfig() : null;
+		if (outCfg == null) outCfg = div != null ? div.getNotifierMessageComposingConfig() : null;
+		if (outCfg == null) outCfg = org != null ? org.getNotifierMessageComposingConfig() : null;
 		return outCfg;
 	}
 }

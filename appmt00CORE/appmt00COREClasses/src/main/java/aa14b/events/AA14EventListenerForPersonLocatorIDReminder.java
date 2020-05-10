@@ -10,8 +10,7 @@ import com.google.inject.Singleton;
 import aa14b.services.delegates.notifier.AA14NotifierServicesForPersonLocator;
 import aa14f.api.interfaces.AA14PersonLocatorServices;
 import r01f.bootstrap.services.config.core.ServicesCoreBootstrapConfigWhenBeanExposed;
-import r01f.events.COREServiceMethodExecEventListeners.COREServiceMethodExecOKEventListener;
-import r01f.events.COREServiceMethodExecEvents.COREServiceMethodExecOKEvent;
+import r01f.events.COREEventBusEventListener;
 import r01f.model.annotations.ModelObjectsMarshaller;
 import r01f.objectstreamer.Marshaller;
 import r01f.securitycontext.SecurityContext;
@@ -21,7 +20,7 @@ import r01f.securitycontext.SecurityContext;
  */
 @Singleton
 public class AA14EventListenerForPersonLocatorIDReminder 
-  implements COREServiceMethodExecOKEventListener {
+  implements COREEventBusEventListener {
 /////////////////////////////////////////////////////////////////////////////////////////
 //	FIELDS
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -52,12 +51,9 @@ public class AA14EventListenerForPersonLocatorIDReminder
 /////////////////////////////////////////////////////////////////////////////////////////
 //	
 /////////////////////////////////////////////////////////////////////////////////////////
-	@Override
 	@Subscribe		// subscribes this event listener at the EventBus
-	public void onPersistenceOperationOK(final COREServiceMethodExecOKEvent opOKEvent) {
-		if (!(opOKEvent instanceof AA14PersonLocatorIDRemindMessage)) return;		// not handled
-		
-		AA14PersonLocatorIDRemindMessage personLocatorIdRemindMessage = (AA14PersonLocatorIDRemindMessage)opOKEvent;
+	public void onPersonLocatorIDRemindMessage(final AA14PersonLocatorIDRemindMessage opOKEvent) {
+		AA14PersonLocatorIDRemindMessage personLocatorIdRemindMessage = opOKEvent;
 		// [1] - Get the data
 		SecurityContext securityContext = personLocatorIdRemindMessage.getSecurityContext();
 		

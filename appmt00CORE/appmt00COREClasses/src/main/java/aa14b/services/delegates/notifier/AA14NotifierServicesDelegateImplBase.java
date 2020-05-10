@@ -84,7 +84,7 @@ abstract class AA14NotifierServicesDelegateImplBase<C extends NotifierConfig>
     											   appointment.getBusinessId(),
     											   appointment.getOrganization().getId(),appointment.getDivision().getId(),appointment.getService().getId(),appointment.getLocation().getId(),
     											   lang);
-	    
+    	
 	    VelocityContext context = new VelocityContext(model);
 		StringWriter sw = new StringWriter();
 		_templateEngine.mergeTemplate(msgTemplatePath.asRelativeString(),

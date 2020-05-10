@@ -69,8 +69,8 @@ abstract class AA14ConfigBuilderBase
 												  			 	.withNameInLang(Language.SPANISH,"Bilbao")
 												  			 	.withNameInLang(Language.BASQUE,"Bilbao");
 	public static final GeoCounty ARABA_COUNTY = GeoCounty.create(ARABA_COUNTY_ID)
-												  		  .withNameInLang(Language.SPANISH,"Araba/�lava")
-												  		  .withNameInLang(Language.BASQUE,"Araba/�lava");
+												  		  .withNameInLang(Language.SPANISH,"Araba/Alava")
+												  		  .withNameInLang(Language.BASQUE,"Araba/Alava");
 	public static final GeoMunicipality GASTEIZ = GeoMunicipality.create()
 													  			 	.withNameInLang(Language.SPANISH,"Vitoria-Gasteiz")
 													  			 	.withNameInLang(Language.BASQUE,"Vitoria-Gasteiz");
@@ -78,8 +78,8 @@ abstract class AA14ConfigBuilderBase
 													  		  .withNameInLang(Language.SPANISH,"Gipuzkoa")
 													  		  .withNameInLang(Language.BASQUE,"Gipuzkoa");
 	public static final GeoMunicipality DONOSTIA = GeoMunicipality.create()
-													  			 	.withNameInLang(Language.SPANISH,"Donostia-San Sebasti�n")
-													  			 	.withNameInLang(Language.BASQUE,"Donostia-San Sebasti�n");
+													  			 	.withNameInLang(Language.SPANISH,"Donostia-San Sebastián")
+													  			 	.withNameInLang(Language.BASQUE,"Donostia-San Sebastián");
 /////////////////////////////////////////////////////////////////////////////////////////
 //	OBJECT FIND
 /////////////////////////////////////////////////////////////////////////////////////////

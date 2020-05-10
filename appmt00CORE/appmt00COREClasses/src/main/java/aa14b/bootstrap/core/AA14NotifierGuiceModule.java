@@ -103,8 +103,8 @@ implements Module {
 									public VelocityEngine get() {
 										Properties velocityProps = new Properties();
 										velocityProps.put(RuntimeConstants.DEFAULT_RUNTIME_LOG_NAME,"aa14velocity");
-										velocityProps.put(RuntimeConstants.RESOURCE_LOADER,"class");
-								        velocityProps.put(RuntimeConstants.RESOURCE_LOADER_CLASS,ClasspathResourceLoader.class.getName());
+										velocityProps.put(RuntimeConstants.RESOURCE_LOADER,"classpath");
+								        velocityProps.put("classpath.resource.loader.class",ClasspathResourceLoader.class.getName());
 
 										VelocityEngine outVelocityEngine = new VelocityEngine();
 										outVelocityEngine.setProperties(velocityProps);

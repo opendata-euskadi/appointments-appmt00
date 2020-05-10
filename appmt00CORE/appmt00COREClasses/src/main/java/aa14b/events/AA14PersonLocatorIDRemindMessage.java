@@ -8,7 +8,6 @@ import aa14f.model.oids.AA14IDs.AA14OrganizationID;
 import aa14f.model.oids.AA14IDs.AA14PersonLocatorID;
 import lombok.Getter;
 import lombok.experimental.Accessors;
-import r01f.events.COREServiceMethodExecEvents.COREServiceMethodExecOKEvent;
 import r01f.locale.Language;
 import r01f.securitycontext.SecurityContext;
 import r01f.types.contact.EMail;
@@ -19,13 +18,16 @@ import r01f.types.contact.PersonID;
  */
 @Accessors(prefix="_")
 public class AA14PersonLocatorIDRemindMessage 
-	 extends COREServiceMethodExecOKEvent
   implements Serializable {
 
 	private static final long serialVersionUID = -8566091973791177319L;
 /////////////////////////////////////////////////////////////////////////////////////////
 //	FIELDS
 /////////////////////////////////////////////////////////////////////////////////////////
+	/**
+	 * SecurityContext
+	 */
+	@Getter private final SecurityContext _securityContext; 
 	/**
 	 * The org for which the user is requesting the [person locator] 
 	 * (although the [person locator] is the same no matter the org)
@@ -54,9 +56,8 @@ public class AA14PersonLocatorIDRemindMessage
 										    final AA14OrganizationID orgId,
 										    final PersonID personId,final EMail contactEMail,final Language lang,
 										    final AA14PersonLocatorID personLocatorId) {
-		super(securityContext,
-			  null,
-			  null);
+		_securityContext = securityContext;
+		
 		_orgId = orgId;
 		
 		_personId = personId;
