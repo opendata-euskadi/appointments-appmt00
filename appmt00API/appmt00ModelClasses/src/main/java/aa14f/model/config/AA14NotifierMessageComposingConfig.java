@@ -69,23 +69,23 @@ public class AA14NotifierMessageComposingConfig
 //	MESSAGE COMPOSING
 /////////////////////////////////////////////////////////////////////////////////////////	
 	@MarshallField(as="commonMessageData",
-				   whenXml=@MarshallFieldAsXml(collectionElementName="data"))
+				   whenXml=@MarshallFieldAsXml(collectionElementName="commonMessageDataItem"))
 	@Getter @Setter private Collection<AA14NotificationMessageData> _commonMessageData;
 	
 	@MarshallField(as="createMessageData",
-				   whenXml=@MarshallFieldAsXml(collectionElementName="data"))
+				   whenXml=@MarshallFieldAsXml(collectionElementName="createMessageDataItem"))
 	@Getter @Setter private Collection<AA14NotificationMessageData> _createMessageData;
 	
 	@MarshallField(as="updateMessageData",
-				   whenXml=@MarshallFieldAsXml(collectionElementName="data"))
+				   whenXml=@MarshallFieldAsXml(collectionElementName="updateMessageDataItem"))
 	@Getter @Setter private Collection<AA14NotificationMessageData> _updateMessageData;
 	
 	@MarshallField(as="deleteMessageData",
-				   whenXml=@MarshallFieldAsXml(collectionElementName="data"))
+				   whenXml=@MarshallFieldAsXml(collectionElementName="deleteMessageDataItem"))
 	@Getter @Setter private Collection<AA14NotificationMessageData> _deleteMessageData;
 	
 	@MarshallField(as="remindMessageData",
-				   whenXml=@MarshallFieldAsXml(collectionElementName="data"))
+				   whenXml=@MarshallFieldAsXml(collectionElementName="remindMessageDataItem"))
 	@Getter @Setter private Collection<AA14NotificationMessageData> _remindMessageData;
 /////////////////////////////////////////////////////////////////////////////////////////
 //	METHODS
