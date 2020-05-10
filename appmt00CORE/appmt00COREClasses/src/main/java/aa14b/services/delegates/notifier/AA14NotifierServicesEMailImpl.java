@@ -112,7 +112,7 @@ public class AA14NotifierServicesEMailImpl
 													appointment,
 													emails,phones);
 		  // [2] - Send the message
-        _mailNotifier.notify(_config.getFrom(),to,
+        _mailNotifier.notify(from,to,
     						 // mime message factory
     						 new Factory<MimeMessage>() {
 									@Override @SneakyThrows
