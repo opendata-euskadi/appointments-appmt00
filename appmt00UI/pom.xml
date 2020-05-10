@@ -24,6 +24,7 @@
 <!-- MODULES                                                                -->
 <!-- ====================================================================== -->
 	<modules>
+		<module>appmt00UIClasses</module>
 		<module>appmt00UIWar</module>
    		<module>apmt00UIWebContent</module>
   </modules>

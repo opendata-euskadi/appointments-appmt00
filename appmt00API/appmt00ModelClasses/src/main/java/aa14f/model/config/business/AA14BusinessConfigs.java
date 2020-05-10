@@ -3,6 +3,8 @@ package aa14f.model.config.business;
 import java.util.Collection;
 import java.util.Map;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -12,6 +14,7 @@ import aa14f.model.config.AA14Schedule;
 import aa14f.model.config.AA14ScheduleBookingConfig;
 import aa14f.model.oids.AA14IDs.AA14BusinessID;
 import aa14f.model.oids.AA14IDs.AA14OrgDivisionServiceLocationID;
+import aa14f.model.oids.AA14IDs.AA14OrganizationID;
 import aa14f.model.oids.AA14IDs.AA14ScheduleID;
 import aa14f.model.oids.AA14OIDs.AA14OrgDivisionServiceLocationOID;
 import aa14f.model.oids.AA14OIDs.AA14ScheduleOID;
@@ -59,6 +62,18 @@ public class AA14BusinessConfigs
 	public AA14BusinessConfig getFor(final AA14BusinessID id) {
 		return _memoizedBusinessByOid.get()
 									 .get(id);
+	}
+	public AA14BusinessConfig getFor(final AA14OrganizationID orgId) {
+		return FluentIterable.from(_memoizedBusinessByOid.get()
+														 .values())
+							 .firstMatch(new Predicate<AA14BusinessConfig>() {
+												@Override
+												public boolean apply(final AA14BusinessConfig cfg) {
+													return cfg.getOrganization() != null 
+														&& cfg.getOrganization().getId().is(orgId);
+												}
+							 		 	 })
+							 .orNull();
 	}
 /////////////////////////////////////////////////////////////////////////////////////////
 //	LOCATION ACCESS
@@ -192,26 +207,5 @@ public class AA14BusinessConfigs
 			if (outHierarchy != null) break;
 		}
 		return outHierarchy;
-	}
-/////////////////////////////////////////////////////////////////////////////////////////
-//	BUSINESS
-/////////////////////////////////////////////////////////////////////////////////////////	
-	public AA14BusinessConfigForTrafikoa getForTrafikoa() {
-		return AA14BusinessConfigForTrafikoa.wrap(this.getFor(AA14BusinessID.TRAFIKOA));
-	}
-	public AA14BusinessConfigForBizilagun getForBizilagun() {
-		return AA14BusinessConfigForBizilagun.wrap(this.getFor(AA14BusinessID.BIZILAGUN));
-	}
-	public AA14BusinessConfigForBloodDonation getForBloodDonation() {
-		return AA14BusinessConfigForBloodDonation.wrap(this.getFor(AA14BusinessID.BLOOD_DONATION));
-	}
-	public AA14BusinessConfigForMedicalService getForMedicalService() {
-		return AA14BusinessConfigForMedicalService.wrap(this.getFor(AA14BusinessID.MEDICAL_SERVICE));
-	}
-	public AA14BusinessConfigForZuzenean getForZuzenean() {
-		return AA14BusinessConfigForZuzenean.wrap(this.getFor(AA14BusinessID.ZUZENEAN));
-	}
-	public AA14BusinessConfigForJustizia getForJustizia() {
-		return AA14BusinessConfigForJustizia.wrap(this.getFor(AA14BusinessID.JUSTIZIA));
 	}
 }

@@ -9,23 +9,16 @@ import com.google.inject.Singleton;
 
 import aa14b.services.delegates.notifier.AA14NotifierServicesForPersonLocator;
 import aa14f.api.interfaces.AA14PersonLocatorServices;
-import aa14f.model.oids.AA14IDs.AA14OrganizationID;
-import aa14f.model.oids.AA14IDs.AA14PersonLocatorID;
-import lombok.extern.slf4j.Slf4j;
 import r01f.bootstrap.services.config.core.ServicesCoreBootstrapConfigWhenBeanExposed;
 import r01f.events.COREServiceMethodExecEventListeners.COREServiceMethodExecOKEventListener;
 import r01f.events.COREServiceMethodExecEvents.COREServiceMethodExecOKEvent;
-import r01f.locale.Language;
 import r01f.model.annotations.ModelObjectsMarshaller;
 import r01f.objectstreamer.Marshaller;
 import r01f.securitycontext.SecurityContext;
-import r01f.types.contact.EMail;
-import r01f.types.contact.PersonID;
 
 /**
- * Listens to {@link AA14PersonLocatorIDRemindEvent} events
+ * Listens to {@link AA14PersonLocatorIDRemindMessage} events
  */
-@Slf4j
 @Singleton
 public class AA14EventListenerForPersonLocatorIDReminder 
   implements COREServiceMethodExecOKEventListener {
@@ -62,20 +55,13 @@ public class AA14EventListenerForPersonLocatorIDReminder
 	@Override
 	@Subscribe		// subscribes this event listener at the EventBus
 	public void onPersistenceOperationOK(final COREServiceMethodExecOKEvent opOKEvent) {
-		if (!(opOKEvent instanceof AA14PersonLocatorIDRemindEvent)) return;		// not handled
+		if (!(opOKEvent instanceof AA14PersonLocatorIDRemindMessage)) return;		// not handled
 		
-		AA14PersonLocatorIDRemindEvent personLocatorIdRemindEvent = (AA14PersonLocatorIDRemindEvent)opOKEvent;
+		AA14PersonLocatorIDRemindMessage personLocatorIdRemindMessage = (AA14PersonLocatorIDRemindMessage)opOKEvent;
 		// [1] - Get the data
-		SecurityContext securityContext = personLocatorIdRemindEvent.getSecurityContext();
-		AA14OrganizationID orgId = personLocatorIdRemindEvent.getOrgId();
-		PersonID personId = personLocatorIdRemindEvent.getPersonId();
-		EMail contactEMail = personLocatorIdRemindEvent.getContactEMail();	
-		Language contactLang = personLocatorIdRemindEvent.getLanguage();
-		AA14PersonLocatorID personLocatorId = personLocatorIdRemindEvent.getPersonLocatorId();
+		SecurityContext securityContext = personLocatorIdRemindMessage.getSecurityContext();
 		
 		// [5] - Send the notification
-		_personLocatorIdNotificator.sendPersonLocatorIdRemindMessage(orgId,
-						   											 personId,contactEMail,contactLang,
-						   											 personLocatorId);
+		_personLocatorIdNotificator.sendPersonLocatorIdRemindMessage(personLocatorIdRemindMessage);
 	}
 }

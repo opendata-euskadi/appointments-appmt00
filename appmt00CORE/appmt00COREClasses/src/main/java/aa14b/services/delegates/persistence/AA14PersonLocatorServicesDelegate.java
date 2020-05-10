@@ -13,7 +13,7 @@ import com.google.common.collect.FluentIterable;
 import com.google.common.eventbus.EventBus;
 
 import aa14b.db.entities.AA14DTOForPersonIdAndLocator;
-import aa14b.events.AA14PersonLocatorIDRemindEvent;
+import aa14b.events.AA14PersonLocatorIDRemindMessage;
 import aa14f.api.interfaces.AA14FindServicesForBookedSlot;
 import aa14f.api.interfaces.AA14PersonLocatorServices;
 import aa14f.model.oids.AA14IDs.AA14OrganizationID;
@@ -22,7 +22,6 @@ import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import r01f.bootstrap.services.config.core.ServicesCoreBootstrapConfigWhenBeanExposed;
 import r01f.exceptions.ExceptionSeverity;
-import r01f.guids.OIDBase;
 import r01f.locale.Language;
 import r01f.model.persistence.PersistenceOperationExecResultBuilder;
 import r01f.model.services.COREServiceErrorOrigin;
@@ -140,12 +139,11 @@ public class AA14PersonLocatorServicesDelegate
 		//			2. Update every appointment WITHOUT the person locator
 		//			1. Send an email with the [person locator id]
 		AA14PersonLocatorID personLocatorId = personLocatorFind.getOrThrow();	// safe now
-		boolean existsPersonLocatorId = OIDBase.asStringOrNull(personLocatorId)!=null;
-		if(existsPersonLocatorId) {
-			AA14PersonLocatorIDRemindEvent event = new AA14PersonLocatorIDRemindEvent(securityContext,
-																				  orgId,
-																				  personId,contactEMail,lang,
-																				  personLocatorId);
+		if (personLocatorId != null) {
+			AA14PersonLocatorIDRemindMessage event = new AA14PersonLocatorIDRemindMessage(securityContext,
+																				  		  orgId,
+																				  		  personId,contactEMail,lang,
+																				  		  personLocatorId);
 			log.info("... post an [event bus] message to recover [person locator] for personId={} and email={}",
 					personId,contactEMail);
 		
@@ -155,6 +153,6 @@ public class AA14PersonLocatorServicesDelegate
 		// [3] - Return
 		return PersistenceOperationExecResultBuilder.using(securityContext)
 													.executed(COREServiceMethod.named("remindPersonLocatorFor"))
-													.returning(existsPersonLocatorId);
+													.returning(personLocatorId != null);	// exists person locator id
 	}
 }

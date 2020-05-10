@@ -5,7 +5,7 @@
 ================================================================================
 -->
 <included>
-	<logger name="aa14b" level="debug">
+	<logger name="aa14b" level="info" additivity="false">
 		<appender-ref ref="app_log" />
 		<appender-ref ref="STDOUT" />
 	</logger>

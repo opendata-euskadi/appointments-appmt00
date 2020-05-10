@@ -128,6 +128,7 @@ public class AA14Schedule
 		return AA14SummarizedSchedule.create()
 					   .withOid(_oid)
 					   .withId(_id)
+					   .withBusinessId(this.getBusinessId())
 					   .named(_nameByLanguage.getFor(lang));
 	}
 /////////////////////////////////////////////////////////////////////////////////////////

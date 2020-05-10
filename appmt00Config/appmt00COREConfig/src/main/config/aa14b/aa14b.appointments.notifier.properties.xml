@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <notifier>
-	<a>adsfa</a>
 	<!-- ============================================= -->
 	<!-- SCHEDULER CONFIG                              -->
 	<!-- ============================================= -->
@@ -72,7 +71,7 @@
 	<notifiers>
 		<log enabled="false"/>
 		<email enabled="true" impl="aws" />		<!-- impls: smtp | aws | google/api | google/smtp -->
-		<sms enabled="false" impl="aws" />		<!-- impls: latinia | aws -->
+		<sms enabled="true" impl="aws" />		<!-- impls: latinia | aws -->
 		<voice enabled="false" impl="twilio" />	<!-- impls: twilio -->
 		<push enabled="false" impl="firebase"/>
 	</notifiers>

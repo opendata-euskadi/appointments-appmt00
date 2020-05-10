@@ -2,7 +2,7 @@ package aa14f.model;
 
 import r01f.enums.EnumExtended;
 import r01f.enums.EnumExtendedWrapper;
-import r01f.model.persistence.PersistencePerformedOperation;
+import r01f.model.persistence.PersistenceRequestedOperation;
 import r01f.model.services.COREServiceMethod;
 
 public enum AA14NotificationOperation
@@ -36,16 +36,16 @@ public enum AA14NotificationOperation
 //  
 /////////////////////////////////////////////////////////////////////////////////////////
 	public static AA14NotificationOperation fromCalledMethod(final COREServiceMethod calledServiceMethod) {
-		return AA14NotificationOperation.fromPersistencePerformedOperation(PersistencePerformedOperation.from(calledServiceMethod));
+		return AA14NotificationOperation.fromPersistencePerformedOperation(PersistenceRequestedOperation.from(calledServiceMethod));
 	}
-	public static AA14NotificationOperation fromPersistencePerformedOperation(final PersistencePerformedOperation op) {
-		if (op == PersistencePerformedOperation.CREATED) {
+	public static AA14NotificationOperation fromPersistencePerformedOperation(final PersistenceRequestedOperation op) {
+		if (op == PersistenceRequestedOperation.CREATE) {
 			return CREATE;
 		}
-		else if (op == PersistencePerformedOperation.UPDATED) {
+		else if (op == PersistenceRequestedOperation.UPDATE) {
 			return UPDATE;
 		}
-		else if (op == PersistencePerformedOperation.DELETED) {
+		else if (op == PersistenceRequestedOperation.DELETE) {
 			return DELETE;
 		}
 		else {

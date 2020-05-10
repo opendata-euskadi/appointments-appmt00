@@ -1,13 +1,13 @@
 <%@page import="aa14f.model.config.business.AA14BusinessConfigForBizilagun"%>
 <%--
-Selects the favourite location using the XLNets data
+Selects the favourite location using the [security provile] data
 --%>
 <script>
 	// if the user has a favorite schid select this
-	<% if (xlnetsAuthCtx.getFavoriteSheduleId() != null) { %>
+	<% if (securityAuthCtx.getFavoriteSheduleId() != null) { %>
 	<% 
 		Collection<AA14OrgDivisionServiceLocationID> favSchLocs = api.configAPI()
-																	 .getLocationsIdsFor(xlnetsAuthCtx.getFavoriteSheduleId());
+																	 .getLocationsIdsFor(securityAuthCtx.getFavoriteSheduleId());
 		AA14OrgDivisionServiceLocationID locId = CollectionUtils.pickOneElement(favSchLocs); 
 	
 		if (locId.getId().equals(AA14BusinessConfigForBizilagun.LOC_FIANZAS_DEPOSITO_CONTRATOS_AR_ID.getId())){
@@ -31,8 +31,8 @@ Selects the favourite location using the XLNets data
         // update booking config (see aa14a-main.js)
         _loadBookingConfigForLocation('<%=locId%>');
 	    
-	    <% if (xlnetsAuthCtx.getFavoriteSheduleId() != null
-	    	&& xlnetsAuthCtx.getAllowedScheduleIds().size() == 1) { %>
+	    <% if (securityAuthCtx.getFavoriteSheduleId() != null
+	    	&& securityAuthCtx.getAllowedScheduleIds().size() == 1) { %>
 		// goto step 2
 		gotoFormStep('#aa14a_step1',	// from
 					 '#aa14a_step2');	// to

@@ -172,19 +172,4 @@ public class AA14ClientAPI
 	public AA14ClientAPIForPersonLocator personLocatorAPI() {
 		return _personLocatorAPI;
 	}
-/////////////////////////////////////////////////////////////////////////////////////////
-//	
-/////////////////////////////////////////////////////////////////////////////////////////
-	/**
-	 * Ensures that the required config is present at the DB
-	 */
-	public void ensureConfig() {
-		// org config
-		AA14BusinessConfigCreator cfgCreator = new AA14BusinessConfigCreator(this);
-		cfgCreator.ensureConfig();
-		
-		// ensure scheduler (notifier) config
-		this.notifierAPI()
-			.ensureConfig();
-	}
 }

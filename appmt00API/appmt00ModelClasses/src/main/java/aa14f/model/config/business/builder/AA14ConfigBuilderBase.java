@@ -39,6 +39,7 @@ import r01f.types.contact.ContactInfo;
 import r01f.types.geo.GeoCountry;
 import r01f.types.geo.GeoCounty;
 import r01f.types.geo.GeoMunicipality;
+import r01f.types.geo.GeoOIDs.GeoCountyID;
 import r01f.types.geo.GeoPosition;
 import r01f.types.geo.GeoState;
 import r01f.util.types.collections.CollectionUtils;
@@ -49,30 +50,36 @@ abstract class AA14ConfigBuilderBase
 /////////////////////////////////////////////////////////////////////////////////////////
 //  CONSTANTS
 /////////////////////////////////////////////////////////////////////////////////////////
+	protected static final GeoCountyID ARABA_COUNTY_ID = GeoCountyID.forId(1);
+	protected static final GeoCountyID BIZKAIA_COUNTY_ID = GeoCountyID.forId(48);
+	protected static final GeoCountyID GIPUZKOA_COUNTY_ID = GeoCountyID.forId(20);
+/////////////////////////////////////////////////////////////////////////////////////////
+//  CONSTANTS
+/////////////////////////////////////////////////////////////////////////////////////////
 	public static final GeoCountry SPAIN = GeoCountry.create()
-											  		 .withNameInLang(Language.SPANISH,"España")
+											  		 .withNameInLang(Language.SPANISH,"Espaï¿½a")
 											  		 .withNameInLang(Language.BASQUE,"Espania");
 	public static final GeoState EUSKADI_STATE = GeoState.create()
 												  		 .withNameInLang(Language.SPANISH,"Euskadi")
 												  		 .withNameInLang(Language.BASQUE,"Euskadi");
-	public static final GeoCounty BIZKAIA_COUNTY = GeoCounty.create(AA14ConfigBuilderForEJGVBase.BIZKAIA_COUNTY_ID)
+	public static final GeoCounty BIZKAIA_COUNTY = GeoCounty.create(BIZKAIA_COUNTY_ID)
 												  		  .withNameInLang(Language.SPANISH,"Bizkaia")
 												  		  .withNameInLang(Language.BASQUE,"Bizkaia");
 	public static final GeoMunicipality BILBAO = GeoMunicipality.create()
 												  			 	.withNameInLang(Language.SPANISH,"Bilbao")
 												  			 	.withNameInLang(Language.BASQUE,"Bilbao");
-	public static final GeoCounty ARABA_COUNTY = GeoCounty.create(AA14ConfigBuilderForEJGVBase.ARABA_COUNTY_ID)
-												  		  .withNameInLang(Language.SPANISH,"Araba/Álava")
-												  		  .withNameInLang(Language.BASQUE,"Araba/Álava");
+	public static final GeoCounty ARABA_COUNTY = GeoCounty.create(ARABA_COUNTY_ID)
+												  		  .withNameInLang(Language.SPANISH,"Araba/ï¿½lava")
+												  		  .withNameInLang(Language.BASQUE,"Araba/ï¿½lava");
 	public static final GeoMunicipality GASTEIZ = GeoMunicipality.create()
 													  			 	.withNameInLang(Language.SPANISH,"Vitoria-Gasteiz")
 													  			 	.withNameInLang(Language.BASQUE,"Vitoria-Gasteiz");
-	public static final GeoCounty GIPUZKOA_COUNTY = GeoCounty.create(AA14ConfigBuilderForEJGVBase.GIPUZKOA_COUNTY_ID)
+	public static final GeoCounty GIPUZKOA_COUNTY = GeoCounty.create(GIPUZKOA_COUNTY_ID)
 													  		  .withNameInLang(Language.SPANISH,"Gipuzkoa")
 													  		  .withNameInLang(Language.BASQUE,"Gipuzkoa");
 	public static final GeoMunicipality DONOSTIA = GeoMunicipality.create()
-													  			 	.withNameInLang(Language.SPANISH,"Donostia-San Sebastián")
-													  			 	.withNameInLang(Language.BASQUE,"Donostia-San Sebastián");
+													  			 	.withNameInLang(Language.SPANISH,"Donostia-San Sebastiï¿½n")
+													  			 	.withNameInLang(Language.BASQUE,"Donostia-San Sebastiï¿½n");
 /////////////////////////////////////////////////////////////////////////////////////////
 //	OBJECT FIND
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -106,7 +113,7 @@ abstract class AA14ConfigBuilderBase
 		outOrg.setBusinessId(businessId);
 		outOrg.setNameByLanguage(new LanguageTextsMapBacked(LangTextNotFoundBehabior.RETURN_NULL)
 										   .add(Language.SPANISH,nameES)
-										   .add(Language.BASQUE,nameEU));		
+										   .add(Language.BASQUE,nameEU));
 		return outOrg;
 	}
 	protected static AA14OrgDivision _buildDivision(final AA14BusinessID businessId,

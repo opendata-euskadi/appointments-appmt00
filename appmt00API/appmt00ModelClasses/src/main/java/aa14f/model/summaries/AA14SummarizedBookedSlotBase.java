@@ -12,6 +12,7 @@ import aa14f.model.AA14BookedSlot;
 import aa14f.model.AA14BookedSlotType;
 import aa14f.model.AA14NumberOfAdjacentSlots;
 import aa14f.model.AA14PeriodicSlotData;
+import aa14f.model.oids.AA14IDs.AA14BusinessID;
 import aa14f.model.oids.AA14IDs.AA14SlotID;
 import aa14f.model.oids.AA14OIDs.AA14SlotOID;
 import lombok.Getter;
@@ -134,6 +135,15 @@ public abstract class AA14SummarizedBookedSlotBase<M extends AA14BookedSlot,
 /////////////////////////////////////////////////////////////////////////////////////////
 //  METHODS
 /////////////////////////////////////////////////////////////////////////////////////////
+	public AA14BusinessID getBusinessId() {
+		AA14BusinessID outBusinessId = null;
+		if (outBusinessId == null && this.getOrganization() != null) outBusinessId = this.getOrganization().getBusinessId();
+		if (outBusinessId == null && this.getDivision() != null)	 outBusinessId = this.getDivision().getBusinessId();
+		if (outBusinessId == null && this.getService() != null)		 outBusinessId = this.getService().getBusinessId();
+		if (outBusinessId == null && this.getLocation() != null)	 outBusinessId = this.getLocation().getBusinessId();
+		if (outBusinessId == null && this.getSchedule() != null)	 outBusinessId = this.getSchedule().getBusinessId();
+		return outBusinessId;
+	}
 	public Date getStartDate() {
 		DateTime start = new DateTime(_year.getYear(),_monthOfYear.getMonthOfYear(),_dayOfMonth.getDayOfMonth(),
 									  _hourOfDay.getHourOfDay(),_minuteOfHour.getMinuteOfHour());

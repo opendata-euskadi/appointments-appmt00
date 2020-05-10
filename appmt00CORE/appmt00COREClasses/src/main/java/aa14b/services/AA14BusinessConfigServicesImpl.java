@@ -11,12 +11,15 @@ import com.google.common.eventbus.EventBus;
 import com.google.inject.persist.Transactional;
 
 import aa14b.services.delegates.persistence.AA14BusinessConfigServicesDelegate;
+import aa14b.services.internal.AA14CORESideBusinessConfigServices;
+import aa14f.api.context.AA14SecurityContextBuilder;
 import aa14f.api.interfaces.AA14BusinessConfigServices;
 import aa14f.api.interfaces.AA14FindServicesForOrgDivision;
 import aa14f.api.interfaces.AA14FindServicesForOrgDivisionService;
 import aa14f.api.interfaces.AA14FindServicesForOrgDivisionServiceLocation;
 import aa14f.api.interfaces.AA14FindServicesForOrganization;
 import aa14f.api.interfaces.AA14FindServicesForSchedule;
+import aa14f.common.internal.AA14AppCodes;
 import aa14f.model.config.business.AA14BusinessConfigs;
 import lombok.Getter;
 import lombok.experimental.Accessors;
@@ -37,7 +40,16 @@ import r01f.services.persistence.ServiceDelegateProvider;
 public class AA14BusinessConfigServicesImpl 
      extends CorePersistenceServicesBase					  
   implements AA14BusinessConfigServices,
+  			 AA14CORESideBusinessConfigServices,
   			 AA14ServiceInterfaceImpl {
+/////////////////////////////////////////////////////////////////////////////////////////
+//	
+/////////////////////////////////////////////////////////////////////////////////////////
+	/**
+	 * Stores the last loaded business config
+	 * (updated every time the config is loaded)
+	 */
+	private AA14BusinessConfigs _coreSideCachedBusinessConfigs;
 /////////////////////////////////////////////////////////////////////////////////////////
 //	DELEGATE PROVIDER: called at every services impl method to create a fresh new 
 //					   EntityManager and avoid transactional issues
@@ -79,15 +91,35 @@ public class AA14BusinessConfigServicesImpl
 							};
 	}
 /////////////////////////////////////////////////////////////////////////////////////////
+//	
+/////////////////////////////////////////////////////////////////////////////////////////
+	@Override
+	public AA14BusinessConfigs getCORESideCachedBusinessConfigs() {
+		if (_coreSideCachedBusinessConfigs == null) {
+			// force the config load
+			this.loadConfig(AA14SecurityContextBuilder.createForApp(AA14AppCodes.CORE_APPCODE));
+		}
+		return _coreSideCachedBusinessConfigs;
+	}
+/////////////////////////////////////////////////////////////////////////////////////////
 //	SERVICES EXTENSION
 // 	IMPORTANT!!! Do NOT put any logic in these methods ONLY DELEGATE!!!
 /////////////////////////////////////////////////////////////////////////////////////////
 	@Transactional
 	@Override
 	public PersistenceOperationResult<AA14BusinessConfigs> loadConfig(final SecurityContext securityContext) {
-		return this.forSecurityContext(securityContext)
-					.createDelegateAs(AA14BusinessConfigServices.class)
-						.loadConfig(securityContext);
+		// load
+		PersistenceOperationResult<AA14BusinessConfigs> outLoad = this.forSecurityContext(securityContext)
+																		.createDelegateAs(AA14BusinessConfigServices.class)
+																			.loadConfig(securityContext);
+		// core-side cache
+		if (outLoad.hasSucceeded()) {
+			_coreSideCachedBusinessConfigs = outLoad.asCOREServiceMethodExecOK()
+													.getMethodExecResult();
+		}
+		
+		// return
+		return outLoad;
 	}
 	@Transactional
 	@Override

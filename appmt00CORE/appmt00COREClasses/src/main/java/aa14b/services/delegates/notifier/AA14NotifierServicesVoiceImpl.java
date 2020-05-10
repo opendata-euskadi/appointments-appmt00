@@ -11,7 +11,7 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 
 import aa14b.events.AA14NotificationMessageAboutAppointment;
-import aa14b.notifier.config.AA14NotifierConfigForVoice;
+import aa14b.services.internal.AA14CORESideBusinessConfigServices;
 import aa14f.model.AA14NotificationOperation;
 import aa14f.model.summaries.AA14SummarizedAppointment;
 import lombok.Getter;
@@ -41,11 +41,13 @@ public class AA14NotifierServicesVoiceImpl
 //  CONSTRUCTORS
 /////////////////////////////////////////////////////////////////////////////////////////
 	@Inject
-	public AA14NotifierServicesVoiceImpl(final NotifierConfigForVoice config,final NotifierServiceForVoicePhoneCall voiceNotifier,
+	public AA14NotifierServicesVoiceImpl(final AA14CORESideBusinessConfigServices businessConfigServices,
+										 final NotifierConfigForVoice config,final NotifierServiceForVoicePhoneCall voiceNotifier,
 										 final VelocityEngine templateEngine) {
-		super(config,
+		super(businessConfigServices,
+			  config,
 			  templateEngine,
-			  new AA14NotifierTemplateSelectorVoiceImpl(config.getAppConfigAs(AA14NotifierConfigForVoice.class)));
+			  new AA14NotifierTemplateSelectorVoiceImpl(businessConfigServices));
 		_voiceNotifier = voiceNotifier;
 	}
 /////////////////////////////////////////////////////////////////////////////////////////

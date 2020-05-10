@@ -9,7 +9,9 @@ import aa14b.events.AA14CRUDOKEventListenersForNotificationEvents.AA14CRUDOKEven
 import aa14b.events.AA14CRUDOKEventListenersForNotificationEvents.AA14CRUDOKEventListenersForAppointmentNotifyByMessaging;
 import aa14b.events.AA14EventListenerForPersonLocatorIDReminder;
 import aa14b.notifier.config.AA14SchedulerNotifierConfig;
+import aa14b.services.AA14BusinessConfigServicesImpl;
 import aa14b.services.internal.AA14BookedSlotSummarizerService;
+import aa14b.services.internal.AA14CORESideBusinessConfigServices;
 import aa14b.services.internal.AA14SlotOverlappingValidatorService;
 import lombok.EqualsAndHashCode;
 import r01f.bootstrap.BeanImplementedPersistenceServicesCoreBootstrapGuiceModuleBase;
@@ -48,6 +50,11 @@ public class AA14ServicesBootstrapGuiceModule
 /////////////////////////////////////////////////////////////////////////////////////////
 	@Override
 	public void configureMoreBindings(final Binder binder) {
+		// core-side configs loader
+		binder.bind(AA14CORESideBusinessConfigServices.class)
+			  .to(AA14BusinessConfigServicesImpl.class)
+			  .in(Singleton.class);
+		
 		// booked slots summarizer 
 		binder.bind(AA14BookedSlotSummarizerService.class)
 			  .in(Singleton.class);

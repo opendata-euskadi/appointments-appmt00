@@ -4,6 +4,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import aa14b.events.AA14NotificationMessageAboutAppointment;
+import aa14b.services.internal.AA14CORESideBusinessConfigServices;
 import aa14f.model.AA14NotificationOperation;
 import lombok.extern.slf4j.Slf4j;
 import r01f.core.services.notifier.config.NotifierConfigForLog;
@@ -19,9 +20,11 @@ public class AA14NotifierServicesLoggerImpl
 //  CONSTRUCTORS
 /////////////////////////////////////////////////////////////////////////////////////////
 	@Inject
-	public AA14NotifierServicesLoggerImpl(final NotifierConfigForLog config) {
-		super(config,
-			  null);	// no template engine
+	public AA14NotifierServicesLoggerImpl(final AA14CORESideBusinessConfigServices businessConfigServices,
+										  final NotifierConfigForLog config) {
+		super(businessConfigServices,
+			  config,
+			  null,null);	// no template engine
 	}
 /////////////////////////////////////////////////////////////////////////////////////////
 //  METHODS

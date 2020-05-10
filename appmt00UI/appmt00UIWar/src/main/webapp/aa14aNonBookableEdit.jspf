@@ -67,8 +67,8 @@
 	<input type="hidden" name="slotOid" />
 	<input type="hidden" name="periodicSerieOid" />
 	<input type="hidden" name="schId" />
-<% if(xlnetsAuthCtx != null && xlnetsAuthCtx.getUserCode() != null) { %>
-	<input type="hidden" id="userCode" name="userCode" value="<%=xlnetsAuthCtx.getUserCode()%>"/>
+<% if(securityAuthCtx != null && securityAuthCtx.getUserCode() != null) { %>
+	<input type="hidden" id="userCode" name="userCode" value="<%=securityAuthCtx.getUserCode()%>"/>
 <% } %>	
 	<p class="aa14a_nonBookable">
 		<label for="dateNonBookable"><fmt:message key="comun.dia" /></label>

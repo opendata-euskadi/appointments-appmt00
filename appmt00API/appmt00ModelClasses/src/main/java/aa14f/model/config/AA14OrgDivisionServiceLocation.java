@@ -80,6 +80,7 @@ public class AA14OrgDivisionServiceLocation
 		return AA14SummarizedOrgDivisionServiceLocation.create()
 													   .withOid(_oid)
 													   .withId(_id)
+													   .withBusinessId(this.getBusinessId())
 													   .named(_nameByLanguage.getFor(lang))		
    													   .country(_position != null && _position.getCountry() != null ? _position.getCountry().getNameIn(lang) : null)
 													   .state(_position != null && _position.getState() != null ? _position.getState().getNameIn(lang) : null)

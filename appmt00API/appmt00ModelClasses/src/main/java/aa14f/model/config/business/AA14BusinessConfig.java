@@ -9,6 +9,8 @@ import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Maps;
 
 import aa14f.model.AA14ModelObject;
+import aa14f.model.config.AA14NotifierFromConfig;
+import aa14f.model.config.AA14NotifierMessageComposingConfig;
 import aa14f.model.config.AA14OrgDivision;
 import aa14f.model.config.AA14OrgDivisionService;
 import aa14f.model.config.AA14OrgDivisionServiceLocation;
@@ -19,6 +21,7 @@ import aa14f.model.oids.AA14IDs.AA14BusinessID;
 import aa14f.model.oids.AA14IDs.AA14OrgDivisionID;
 import aa14f.model.oids.AA14IDs.AA14OrgDivisionServiceID;
 import aa14f.model.oids.AA14IDs.AA14OrgDivisionServiceLocationID;
+import aa14f.model.oids.AA14IDs.AA14OrganizationID;
 import aa14f.model.oids.AA14IDs.AA14ScheduleID;
 import aa14f.model.oids.AA14OIDs.AA14OrgDivisionOID;
 import aa14f.model.oids.AA14OIDs.AA14OrgDivisionServiceLocationOID;
@@ -374,7 +377,6 @@ public class AA14BusinessConfig
 						   		 Language.BASQUE));
 		return outMap;
 	}
-	
 	protected AA14SummarizedOrgHierarchy _orgHierarchy(final AA14OrganizationOID orgOid,final AA14OrgDivisionOID divOid,final AA14OrgDivisionServiceOID srvcOid,final AA14OrgDivisionServiceLocationOID locOid,
 													   final Language lang) {
 		AA14SummarizedOrgHierarchy outHierarchy = new AA14SummarizedOrgHierarchy();
@@ -389,5 +391,48 @@ public class AA14BusinessConfig
 		outHierarchy.setService(srvc.getSummarizedIn(lang));
 		outHierarchy.setLocation(loc.getSummarizedIn(lang));
 		return outHierarchy;
+	}
+/////////////////////////////////////////////////////////////////////////////////////////
+//	NOTIFICATION CONFIG
+/////////////////////////////////////////////////////////////////////////////////////////
+	public AA14NotifierFromConfig getNotifierFromConfigFor(final AA14OrganizationOID orgOid,final AA14OrgDivisionOID divOid,final AA14OrgDivisionServiceOID srvcOid) {
+		AA14Organization org = this.getOrganization();
+		AA14OrgDivision div = this.getDivisionFor(divOid);
+		AA14OrgDivisionService srvc = this.getServiceFor(srvcOid);
+		
+		return this.getNotifierFromConfigFor(org,div,srvc);
+	}
+	public AA14NotifierFromConfig getNotifierFromConfigFor(final AA14OrganizationID orgId,final AA14OrgDivisionID divId,final AA14OrgDivisionServiceID srvcId) {
+		AA14Organization org = this.getOrganization();
+		AA14OrgDivision div = this.getDivisionFor(divId);
+		AA14OrgDivisionService srvc = this.getServiceFor(srvcId);
+		
+		return this.getNotifierFromConfigFor(org,div,srvc);
+	}
+	public AA14NotifierFromConfig getNotifierFromConfigFor(final AA14Organization org,final AA14OrgDivision div,final AA14OrgDivisionService srvc) {
+		AA14NotifierFromConfig outCfg = srvc.getNotifierFromConfig();;
+		if (outCfg == null) outCfg = div.getNotifierFromConfig();;
+		if (outCfg == null) outCfg = org.getNotifierFromConfig();
+		return outCfg;
+	}
+	public AA14NotifierMessageComposingConfig getNotifierMessageComposingConfigFor(final AA14OrganizationOID orgOid,final AA14OrgDivisionOID divOid,final AA14OrgDivisionServiceOID srvcOid) {
+		AA14Organization org = this.getOrganization();
+		AA14OrgDivision div = this.getDivisionFor(divOid);
+		AA14OrgDivisionService srvc = this.getServiceFor(srvcOid);
+		
+		return this.getNotifierMessageComposingConfigFor(org,div,srvc);
+	}
+	public AA14NotifierMessageComposingConfig getNotifierMessageComposingConfigFor(final AA14OrganizationID orgId,final AA14OrgDivisionID divId,final AA14OrgDivisionServiceID srvcId) {
+		AA14Organization org = this.getOrganization();
+		AA14OrgDivision div = this.getDivisionFor(divId);
+		AA14OrgDivisionService srvc = this.getServiceFor(srvcId);
+		
+		return this.getNotifierMessageComposingConfigFor(org,div,srvc);
+	}
+	public AA14NotifierMessageComposingConfig getNotifierMessageComposingConfigFor(final AA14Organization org,final AA14OrgDivision div,final AA14OrgDivisionService srvc) {
+		AA14NotifierMessageComposingConfig outCfg = srvc.getNotifierMessageComposingConfig();
+		if (outCfg == null) outCfg = div.getNotifierMessageComposingConfig();
+		if (outCfg == null) outCfg = org.getNotifierMessageComposingConfig();
+		return outCfg;
 	}
 }

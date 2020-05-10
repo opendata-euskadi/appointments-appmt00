@@ -19,7 +19,7 @@ import aa14f.model.oids.AA14OIDs.AA14ScheduleOID;
 import aa14f.model.summaries.AA14SummarizedOrgHierarchy;
 import r01f.locale.Language;
 
-abstract class A14BusinessConfigWrappedBase {
+public abstract class A14BusinessConfigWrappedBase {
 /////////////////////////////////////////////////////////////////////////////////////////
 //	FIELDS
 /////////////////////////////////////////////////////////////////////////////////////////	

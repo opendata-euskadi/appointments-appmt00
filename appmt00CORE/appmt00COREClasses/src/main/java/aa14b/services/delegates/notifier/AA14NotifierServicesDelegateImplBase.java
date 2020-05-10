@@ -8,7 +8,9 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 
 import aa14b.events.AA14NotificationMessageAboutAppointment;
+import aa14b.services.internal.AA14CORESideBusinessConfigServices;
 import aa14f.model.AA14NotificationOperation;
+import aa14f.model.oids.AA14IDs.AA14BusinessID;
 import aa14f.model.oids.AA14IDs.AA14OrgDivisionID;
 import aa14f.model.oids.AA14IDs.AA14OrgDivisionServiceID;
 import aa14f.model.oids.AA14IDs.AA14OrgDivisionServiceLocationID;
@@ -36,26 +38,24 @@ abstract class AA14NotifierServicesDelegateImplBase<C extends NotifierConfig>
 /////////////////////////////////////////////////////////////////////////////////////////
 //  FIELDS
 /////////////////////////////////////////////////////////////////////////////////////////
+	@Getter protected final AA14CORESideBusinessConfigServices _businessConfigServices; 
 	@Getter protected final VelocityEngine _templateEngine;
 	@Getter protected final AA14NotifierTemplateSelector _templateSelector;
-	@Getter protected final AA14NotifierDataSupplierSelector _templateModelDataSupplierSelector;
+	@Getter protected final AA14NotifierMessageDataSupplier _templateModelDataSupplier;
 	
-	public AA14NotifierServicesDelegateImplBase(final C config,
+/////////////////////////////////////////////////////////////////////////////////////////
+//	CONSTRUCTOR
+/////////////////////////////////////////////////////////////////////////////////////////	
+	public AA14NotifierServicesDelegateImplBase(final AA14CORESideBusinessConfigServices businessConfigServices,
+												final C notifierConfig,
 												final VelocityEngine templateEngine,
 												final AA14NotifierTemplateSelector templateSelector) {
-		super(config);
+		super(notifierConfig);
 		
+		_businessConfigServices = businessConfigServices;
 		_templateEngine = templateEngine;
 		_templateSelector = templateSelector;
-		_templateModelDataSupplierSelector = new AA14NotifierDataSupplierSelector();
-	}
-	public AA14NotifierServicesDelegateImplBase(final C config,
-												final VelocityEngine velocityEngine) {
-		super(config);
-		
-		_templateEngine = velocityEngine;
-		_templateSelector = null;
-		_templateModelDataSupplierSelector = null;
+		_templateModelDataSupplier = new AA14NotifierMessageDataSupplier(businessConfigServices);
 	}
 /////////////////////////////////////////////////////////////////////////////////////////
 //	
@@ -67,7 +67,7 @@ abstract class AA14NotifierServicesDelegateImplBase<C extends NotifierConfig>
 	public String composeMessageBody(final AA14NotificationOperation op,
 								     final AA14SummarizedAppointment appointment, 
 									 final Collection<EMail> mails,final Collection<Phone> phones) {
-		if (_templateEngine == null || _templateSelector == null || _templateModelDataSupplierSelector == null) {
+		if (_templateEngine == null || _templateSelector == null || _templateModelDataSupplier == null) {
 			throw new IllegalStateException("Not enought state data to apply the template!");
 		}
 		
@@ -81,6 +81,7 @@ abstract class AA14NotifierServicesDelegateImplBase<C extends NotifierConfig>
 	    										 mails,phones);
     	// apply template
     	Path msgTemplatePath = _msgTemplatePathFor(op,
+    											   appointment.getBusinessId(),
     											   appointment.getOrganization().getId(),appointment.getDivision().getId(),appointment.getService().getId(),appointment.getLocation().getId(),
     											   lang);
 	    
@@ -106,57 +107,57 @@ abstract class AA14NotifierServicesDelegateImplBase<C extends NotifierConfig>
 											   final AA14SummarizedAppointment appointment,
 											   final Language lang,
 											   final Collection<EMail> mails,final Collection<Phone> phones) {
-		// [1] - Get the template model data supplier
-		AA14NotifierTemplateModelDataSupplier modelDataSupplier = _templateModelDataSupplierSelector.dataSupplierFor(appointment.getOrganization().getId(),
-																													 appointment.getDivision().getId(),
-																													 appointment.getService().getId(),
-																													 appointment.getLocation().getId(), 
-																													 lang);
 	    Map<String,Object> model = null;
 	    if (op == AA14NotificationOperation.CREATE) {
-	    	model = modelDataSupplier.supplyModelDataForCreate(appointment,
-	    													   lang,
-	    													   mails,phones);
+	    	model = _templateModelDataSupplier.supplyModelDataForCreate(appointment,
+	    													   			lang,
+	    													   			mails,phones);
 	    } else if (op == AA14NotificationOperation.UPDATE) {
-	    	model = modelDataSupplier.supplyModelDataForUpdate(appointment,
-	    													   lang,
-	    													   mails,phones);
+	    	model = _templateModelDataSupplier.supplyModelDataForUpdate(appointment,
+	    													   			lang,
+	    													   			mails,phones);
 	    } else if (op == AA14NotificationOperation.DELETE) {
-	    	model = modelDataSupplier.supplyModelDataForDelete(appointment,
-	    													   lang,
-	    													   mails,phones);
+	    	model = _templateModelDataSupplier.supplyModelDataForDelete(appointment,
+	    													   			lang,
+	    													   			mails,phones);
 	    } else if (op == AA14NotificationOperation.REMIND_TOMORROW) {
-	    	model = modelDataSupplier.supplyModelDataForRemindTomorrow(appointment,
-	    													   		   lang,
-	    													   		   mails,phones);
+	    	model = _templateModelDataSupplier.supplyModelDataForRemindTomorrow(appointment,
+	    													   		   			lang,
+	    													   		   			mails,phones);
 	    } else if (op == AA14NotificationOperation.REMIND_TODAY) {
-	    	model = modelDataSupplier.supplyModelDataForRemindToday(appointment,
-	    													   		lang,
-	    													   		mails,phones);
+	    	model = _templateModelDataSupplier.supplyModelDataForRemindToday(appointment,
+	    													   				 lang,
+	    													   				 mails,phones);
 	    } else {
 	    	throw new IllegalArgumentException("No template path for operation = " + op);
 	    }
 	    return model;
 	}
 	protected Path _msgTemplatePathFor(final AA14NotificationOperation op,
+									   final AA14BusinessID businessId,
 									   final AA14OrganizationID org,final AA14OrgDivisionID div,final AA14OrgDivisionServiceID srvc,final AA14OrgDivisionServiceLocationID loc,
 									   final Language lang) {
 	    Path outMsgTemplatePath;
 	    if (op == AA14NotificationOperation.CREATE) {
-	    	outMsgTemplatePath = _templateSelector.createTemplatePathFor(org,div,srvc,loc,
-	    																lang);
+	    	outMsgTemplatePath = _templateSelector.createTemplateFor(businessId,
+	    															 org,div,srvc,loc,
+	    														 	 lang);
 	    } else if (op == AA14NotificationOperation.UPDATE) {
-	    	outMsgTemplatePath = _templateSelector.updateTemplatePathFor(org,div,srvc,loc,
-	    																lang);
+	    	outMsgTemplatePath = _templateSelector.updateTemplateFor(businessId,
+	    															 org,div,srvc,loc,
+	    															 lang);
 	    } else if (op == AA14NotificationOperation.DELETE) {
-	    	outMsgTemplatePath = _templateSelector.deleteTemplatePathFor(org,div,srvc,loc,
-	    																lang);
+	    	outMsgTemplatePath = _templateSelector.deleteTemplateFor(businessId,
+	    															 org,div,srvc,loc,
+	    															 lang);
 	    } else if (op == AA14NotificationOperation.REMIND_TOMORROW) {
-	    	outMsgTemplatePath = _templateSelector.remindTomorrowTemplatePathFor(org,div,srvc,loc,
-	    																		 lang);
+	    	outMsgTemplatePath = _templateSelector.remindTomorrowTemplateFor(businessId,
+	    																	 org,div,srvc,loc,
+	    																	 lang);
 	    } else if (op == AA14NotificationOperation.REMIND_TODAY) {
-	    	outMsgTemplatePath = _templateSelector.remindTodayTemplatePathFor(org,div,srvc,loc,
-	    																	  lang);
+	    	outMsgTemplatePath = _templateSelector.remindTodayTemplateFor(businessId,
+	    																  org,div,srvc,loc,
+	    																  lang);
 	    } else {
 	    	throw new IllegalArgumentException("No template path for operation = " + op);
 	    }

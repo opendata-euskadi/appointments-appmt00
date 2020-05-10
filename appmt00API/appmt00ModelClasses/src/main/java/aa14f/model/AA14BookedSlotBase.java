@@ -36,7 +36,6 @@ public abstract class AA14BookedSlotBase<SELF_TYPE extends AA14BookedSlotBase<SE
            implements AA14BookedSlot,
            			  SelfValidates<SELF_TYPE> {
 
-
 	private static final long serialVersionUID = 2981113515733558022L;
 /////////////////////////////////////////////////////////////////////////////////////////
 //  CONSTANTS

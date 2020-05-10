@@ -11,10 +11,10 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 
 import aa14b.events.AA14NotificationMessageAboutAppointment;
-import aa14b.notifier.config.AA14NotifierConfigForEMail;
+import aa14b.services.internal.AA14CORESideBusinessConfigServices;
 import aa14f.model.AA14NotificationOperation;
+import aa14f.model.config.AA14NotifierFromConfig;
 import aa14f.model.summaries.AA14SummarizedAppointment;
-import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import r01f.core.services.mail.model.EMailRFC822Address;
@@ -37,17 +37,19 @@ public class AA14NotifierServicesEMailImpl
 /////////////////////////////////////////////////////////////////////////////////////////
 //  FIELDS
 /////////////////////////////////////////////////////////////////////////////////////////
-	@Getter private final NotifierServiceForEMail _mailNotifier;
+	private final NotifierServiceForEMail _mailNotifier;
 
 /////////////////////////////////////////////////////////////////////////////////////////
 //  CONSTRUCTOR
 /////////////////////////////////////////////////////////////////////////////////////////
 	@Inject
-	public AA14NotifierServicesEMailImpl(final NotifierConfigForEMail notifierConfig,final NotifierServiceForEMail notifier,
+	public AA14NotifierServicesEMailImpl(final AA14CORESideBusinessConfigServices businessConfigServices,
+										 final NotifierConfigForEMail notifierConfig,final NotifierServiceForEMail notifier,										
 										 final VelocityEngine templateEngine) {
-		super(notifierConfig,
+		super(businessConfigServices,
+			  notifierConfig,
 			  templateEngine,
-			  new AA14NotifierTemplateSelectorEMailImpl(notifierConfig.getAppConfigAs(AA14NotifierConfigForEMail.class)));
+			  new AA14NotifierTemplateSelectorEMailImpl(businessConfigServices));
 		_mailNotifier = notifier;
 	}
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -62,15 +64,29 @@ public class AA14NotifierServicesEMailImpl
 		}
 		log.warn("[EMailNotifier ({})]================================================",
 				 _mailNotifier.getClass().getSimpleName());
-		if (CollectionUtils.hasData(message.getMails())) {
-			for (EMail to : message.getMails()) {
-				_sendEMailMessage(op,
-								  EMailRFC822Address.of(to),
-								  message.getAppointment(), 
-								  message.getMails(),message.getPhones());
-			}
-		} else {
+		
+		if (CollectionUtils.isNullOrEmpty(message.getMails())) {
 			log.warn("\t--> there aren't eMails to send message...");
+			return;
+		}
+		// Get the business config where the template id (path) and from address is configured
+		AA14NotifierFromConfig notifFromConfig = _businessConfigServices.getCORESideCachedBusinessConfigs()
+																		.getFor(message.getAppointment().getBusinessId())
+																		.getNotifierFromConfigFor(message.getAppointment().getOrganization().getOid(),
+																								  message.getAppointment().getDivision().getOid(),
+																								  message.getAppointment().getService().getOid());
+		EMail fromEMail = notifFromConfig.getEmailFromAddress();
+		String fromOwner = notifFromConfig.getEmailFromAddressOwner();
+		EMailRFC822Address fromAddr = fromEMail != null ? EMailRFC822Address.of(fromEMail,
+																				fromOwner)
+														: _config.getFrom() != null ? _config.getFrom()	// system-wide from address 
+																					: EMailRFC822Address.of("zuzenean-noreplay@euskadi.eus");	// last resource!
+		// send the notification
+		for (EMail to : message.getMails()) {
+			_sendEMailMessage(op,
+							  fromAddr,EMailRFC822Address.of(to),
+							  message.getAppointment(), 
+							  message.getMails(),message.getPhones());
 		}
 	}
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -85,12 +101,11 @@ public class AA14NotifierServicesEMailImpl
 	 * @param agent
 	 */
 	private void _sendEMailMessage(final AA14NotificationOperation op,
-								   final EMailRFC822Address to,
+								   final EMailRFC822Address from,final EMailRFC822Address to,
 								   final AA14SummarizedAppointment appointment,
 								   final Collection<EMail> emails,final Collection<Phone> phones) {
 		log.info("\t-->sending email to {} using {}",to,_mailNotifier.getClass());
 
-		
 		// [1] - Create the subject & body
 		final String subject = _composeMailMessageSubject(appointment);
 		final String body = this.composeMessageBody(op,
@@ -107,8 +122,8 @@ public class AA14NotifierServicesEMailImpl
 									    MimeMessageHelper msgHelper = new MimeMessageHelper(mimeMessage,
 									    												    true);	// multi-part!!
 									    // To & From
-									    msgHelper.setTo(EMailRFC822Address.asRFC822Address(to));
-									    msgHelper.setFrom(_config.getFrom().asRFC822Address());
+									    msgHelper.setTo(to.asRFC822InternetAddress());
+									    msgHelper.setFrom(from.asRFC822InternetAddress());
 
 									    // Subject & Text
 									    msgHelper.setSubject(subject);

@@ -47,7 +47,8 @@ public class AA14OrgDivisionService
 	public AA14SummarizedOrgDivisionService getSummarizedIn(final Language lang) {
 		return AA14SummarizedOrgDivisionService.create()
 											   .withOid(_oid)
-											   .withId(_id)											   
+											   .withId(_id)	
+											   .withBusinessId(this.getBusinessId())
 											   .named(_nameByLanguage != null ? _nameByLanguage.get(lang) : null)
 											   .managedProcedure(_procedure != null ? _procedure.get(lang) : null);
 	}

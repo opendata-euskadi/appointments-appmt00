@@ -19,7 +19,6 @@ public class AA14Organization
      								   		   AA14Organization> {
 
 	private static final long serialVersionUID = 8349805975439486112L;
-
 /////////////////////////////////////////////////////////////////////////////////////////
 //  
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -28,6 +27,7 @@ public class AA14Organization
 		return AA14SummarizedOrganization.create()
 									     .withOid(_oid)
 									     .withId(_id)
+									     .withBusinessId(this.getBusinessId())
 									     .named(_nameByLanguage.get(lang));
 	}
 /////////////////////////////////////////////////////////////////////////////////////////

@@ -186,10 +186,10 @@ public class AA14AppointmentsCalendarServicesDelegate
 												   			  final Year year,final MonthOfYear monthOfYear,final DayOfMonth dayOfMonth,
 												   			  final int numberOfDays,
 												   			  final boolean slipDateRangeToFindFirstAvailableSlot) {
-		log.warn("Available time slots at LOCATION={} for SCHEDULES={} from {}/{}/{} within {} days (slip range to find first available slot={})",
-				 loc.getId(),
-				 FluentIterable.from(schs)
-	 						   .transform(new Function<AA14Schedule,AA14ScheduleID>() {
+		log.debug("Available time slots at LOCATION={} for SCHEDULES={} from {}/{}/{} within {} days (slip range to find first available slot={})",
+				  loc.getId(),
+				  FluentIterable.from(schs)
+	 						    .transform(new Function<AA14Schedule,AA14ScheduleID>() {
 													@Override
 													public AA14ScheduleID apply(final AA14Schedule sch) {
 														return sch.getId();

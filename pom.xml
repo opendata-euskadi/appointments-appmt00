@@ -40,9 +40,9 @@
 	<modules>
 		<module>appmt00API</module>
 		<module>appmt00CORE</module>
+		<module>appmt00SecurityClasses</module>
 		<module>appmt00UI</module>
 		<module>appmt00Config</module>
-		<module>appmt00TestClasses</module>
 	</modules>
 
 <!-- ====================================================================== -->

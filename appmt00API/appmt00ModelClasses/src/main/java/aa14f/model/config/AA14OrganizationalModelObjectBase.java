@@ -42,6 +42,12 @@ public abstract class AA14OrganizationalModelObjectBase<O extends AA14ModelObjec
 	@MarshallField(as="name")
 	@Getter @Setter protected LanguageTexts _nameByLanguage;
 	
+	@MarshallField(as="notifierFromConfig")
+	@Getter @Setter private AA14NotifierFromConfig _notifierFromConfig;
+	
+	@MarshallField(as="notifierMessageComposingConfig")
+	@Getter @Setter private AA14NotifierMessageComposingConfig _notifierMessageComposingConfig;
+	
 /////////////////////////////////////////////////////////////////////////////////////////
 //  REFERENCE
 /////////////////////////////////////////////////////////////////////////////////////////

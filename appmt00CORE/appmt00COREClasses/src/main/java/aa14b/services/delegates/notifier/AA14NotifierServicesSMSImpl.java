@@ -11,16 +11,17 @@ import org.apache.velocity.app.VelocityEngine;
 import com.google.common.collect.Maps;
 
 import aa14b.events.AA14NotificationMessageAboutAppointment;
-import aa14b.notifier.config.AA14NotifierConfigForSMS;
+import aa14b.services.internal.AA14CORESideBusinessConfigServices;
 import aa14f.model.AA14NotificationOperation;
+import aa14f.model.config.AA14NotifierFromConfig;
 import aa14f.model.summaries.AA14SummarizedAppointment;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import r01f.core.services.notifier.NotifierServiceForSMS;
 import r01f.core.services.notifier.config.NotifierConfigForSMS;
 import r01f.locale.Language;
 import r01f.patterns.Factory;
 import r01f.types.contact.EMail;
+import r01f.types.contact.OwnedContactMean;
 import r01f.types.contact.Phone;
 import r01f.util.types.Strings;
 import r01f.util.types.collections.CollectionUtils;
@@ -35,17 +36,19 @@ public class AA14NotifierServicesSMSImpl
 /////////////////////////////////////////////////////////////////////////////////////////
 //  FIELDS
 /////////////////////////////////////////////////////////////////////////////////////////
-	@Getter private final NotifierServiceForSMS _smsNotifier;
+	private final NotifierServiceForSMS _smsNotifier;
 	
 /////////////////////////////////////////////////////////////////////////////////////////
 //  CONSTRUCTORS
 /////////////////////////////////////////////////////////////////////////////////////////
 	@Inject
-	public AA14NotifierServicesSMSImpl(final NotifierConfigForSMS notifierConfig,final NotifierServiceForSMS notifier,
+	public AA14NotifierServicesSMSImpl(final AA14CORESideBusinessConfigServices businessConfigServices,
+									   final NotifierConfigForSMS notifierConfig,final NotifierServiceForSMS notifier,
 									   final VelocityEngine templateEngine) {
-		super(notifierConfig,
+		super(businessConfigServices,
+			  notifierConfig,
 			  templateEngine,
-			  new AA14NotifierTemplateSelectorSMSImpl(notifierConfig.getAppConfigAs(AA14NotifierConfigForSMS.class)));
+			  new AA14NotifierTemplateSelectorSMSImpl(businessConfigServices));
 		_smsNotifier = notifier;
 	}
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -65,13 +68,38 @@ public class AA14NotifierServicesSMSImpl
 			log.warn("... NO phones to notify to");
 			return;
 		}
-		_smsNotifier.notifyAll(_config.getFrom(),phones,
+		
+		// Get the business config where the template id (path) and from phone is configured
+		AA14NotifierFromConfig notifFromConfig = _businessConfigServices.getCORESideCachedBusinessConfigs()
+																		.getFor(message.getAppointment().getBusinessId())
+																		.getNotifierFromConfigFor(message.getAppointment().getOrganization().getOid(),
+																								  message.getAppointment().getDivision().getOid(),
+																								  message.getAppointment().getService().getOid());
+		Phone fromPhone = notifFromConfig.getSmsFromPhoneNumber();	
+		String fromPhoneOwner = notifFromConfig.getSmsFromPhoneOwner();
+		
+		OwnedContactMean<Phone> fromPhoneOwned = fromPhone != null ? OwnedContactMean.from(fromPhone,
+																						   fromPhoneOwner != null ? fromPhoneOwner : fromPhone.asString())
+																   : _config.getFrom() != null 
+															   				? _config.getFrom()
+															   				: OwnedContactMean.from(Phone.of("012"));
+		
+		_sendSMSMessage(op,
+						fromPhoneOwned,phones,
+						message.getAppointment(),
+						message.getMails(),message.getPhones());
+	}
+	private void _sendSMSMessage(final AA14NotificationOperation op,
+								 final OwnedContactMean<Phone> fromPhone,final Collection<Phone> toPhones,
+								 final AA14SummarizedAppointment appointment,
+								 final Collection<EMail> emails,final Collection<Phone> phones) {
+		_smsNotifier.notifyAll(fromPhone,toPhones,
 							   new Factory<String>() {
 										@Override
 										public String create() {
 											return AA14NotifierServicesSMSImpl.this.composeMessageBody(op,
-																									   message.getAppointment(),
-																									   message.getMails(),message.getPhones());
+																									   appointment,
+																									   emails,phones);
 										}
 							   });
 	}

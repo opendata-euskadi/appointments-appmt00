@@ -2,6 +2,8 @@ package aa14f.model.config.business.builder;
 
 import java.util.Collection;
 
+import aa14f.model.config.AA14NotifierFromConfig;
+import aa14f.model.config.AA14NotifierMessageComposingConfig;
 import aa14f.model.config.AA14OrgDivision;
 import aa14f.model.config.AA14OrgDivisionService;
 import aa14f.model.config.AA14OrgDivisionServiceLocation;
@@ -27,4 +29,10 @@ public interface AA14ConfigBuilder {
 														   final Collection<AA14OrgDivision> divisions,
 														   final Collection<AA14OrgDivisionService> services,
 														   final Collection<AA14OrgDivisionServiceLocation> locs);
+/////////////////////////////////////////////////////////////////////////////////////////
+//	NOTIFIER
+/////////////////////////////////////////////////////////////////////////////////////////
+	public AA14NotifierFromConfig createNotifierFromConfig();
+	
+	public AA14NotifierMessageComposingConfig createNotifierMessageComposingConfig();
 }

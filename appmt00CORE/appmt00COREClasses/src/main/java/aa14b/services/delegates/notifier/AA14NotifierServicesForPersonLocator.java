@@ -7,7 +7,9 @@ import org.apache.velocity.app.VelocityEngine;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 
-import aa14f.model.oids.AA14IDs.AA14OrganizationID;
+import aa14b.events.AA14PersonLocatorIDRemindMessage;
+import aa14b.services.internal.AA14CORESideBusinessConfigServices;
+import aa14f.model.config.AA14NotifierFromConfig;
 import aa14f.model.oids.AA14IDs.AA14PersonLocatorID;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +21,6 @@ import r01f.locale.Language;
 import r01f.patterns.Factory;
 import r01f.service.ServiceCanBeDisabled;
 import r01f.types.contact.EMail;
-import r01f.types.contact.PersonID;
 import r01f.util.types.Strings;
 
 @Slf4j
@@ -28,6 +29,7 @@ public class AA14NotifierServicesForPersonLocator {
 //	
 /////////////////////////////////////////////////////////////////////////////////////////
 	// services needed to send emails
+	private final AA14CORESideBusinessConfigServices _businessConfigServices;
 	private final NotifierConfigForEMail _notifierConfig;
 	private final NotifierServiceForEMail _mailNotifier;
 	private final VelocityEngine _templateEngine;
@@ -35,10 +37,10 @@ public class AA14NotifierServicesForPersonLocator {
 //	CONSTRUCTORS
 /////////////////////////////////////////////////////////////////////////////////////////
 	@Inject
-	public AA14NotifierServicesForPersonLocator(// needed to send emails
+	public AA14NotifierServicesForPersonLocator(final AA14CORESideBusinessConfigServices businessConfigServices,
 											 	final NotifierConfigForEMail notifierConfig,final NotifierServiceForEMail notifier,
 												final VelocityEngine templateEngine) {
-		// needed to send emails
+		_businessConfigServices = businessConfigServices;
 		_notifierConfig = notifierConfig;
 		_mailNotifier = notifier;
 		_templateEngine = templateEngine;
@@ -46,11 +48,9 @@ public class AA14NotifierServicesForPersonLocator {
 /////////////////////////////////////////////////////////////////////////////////////////
 //	
 /////////////////////////////////////////////////////////////////////////////////////////
-	public void sendPersonLocatorIdRemindMessage(final AA14OrganizationID orgId,
-								   				 final PersonID personId,final EMail email,final Language lang,
-								   				 final AA14PersonLocatorID personLocatorId) {
+	public void sendPersonLocatorIdRemindMessage(final AA14PersonLocatorIDRemindMessage message) {
 		log.info("=======================================================================");
-		log.info("send [person locator reminder for personId={} to email={}",personId,email);
+		log.info("send [person locator reminder for personId={} to email={}",message.getPersonId(),message.getContactEMail());
 		log.info("=======================================================================");
 		boolean isEnabled = _notifierConfig.isEnabled();
 		if (_mailNotifier instanceof ServiceCanBeDisabled) {
@@ -58,9 +58,7 @@ public class AA14NotifierServicesForPersonLocator {
 			if (serviceCanBeDisabled.isDisabled()) isEnabled = false;
 		}
 		if (isEnabled) {
-			_sendEMailMessage(orgId,
-							  email,lang,
-							  personLocatorId);
+			_sendEMailMessage(message);
 		} else {
 			log.warn("Mail sending is DISABLED");
 		}
@@ -75,22 +73,31 @@ public class AA14NotifierServicesForPersonLocator {
 	 * @param lang
 	 * @param personLocatorId
 	 */
-	private void _sendEMailMessage(final AA14OrganizationID orgId,
-								   final EMail to,final Language lang,
-								   final AA14PersonLocatorID personLocatorId) {
+	private void _sendEMailMessage(final AA14PersonLocatorIDRemindMessage message) {
 		log.info("\t-->sending [person loctor] reminder email to {} using {}",
-				 to,_mailNotifier.getClass());
+				 message.getContactEMail(),_mailNotifier.getClass());
+		
+		// Get the business config where the template id (path) and from address is configured
+		AA14NotifierFromConfig notifFromConfig = _businessConfigServices.getCORESideCachedBusinessConfigs()
+																		.getFor(message.getOrgId())
+																		.getNotifierFromConfigFor(message.getOrgId(),null,null);
+		EMail fromEMail = notifFromConfig.getEmailFromAddress();
+		String fromOwner = notifFromConfig.getEmailFromAddressOwner();
+		EMailRFC822Address fromAddr = fromEMail != null ? EMailRFC822Address.of(fromEMail,
+																				fromOwner)
+														: _notifierConfig.getFrom() != null ? _notifierConfig.getFrom()	// system-wide from address 
+																							: EMailRFC822Address.of("zuzenean-noreplay@euskadi.eus");	// last resource!
 		
 		// [1] - Create a MimeMessagePreparator
-		String subject = _composeMailMessageSubject(lang);
-		String body = _composeMailMessageBody(lang,
-											  personLocatorId);
+		String subject = _composeMailMessageSubject(message.getLanguage());
+		String body = _composeMailMessageBody(message.getLanguage(),
+											  message.getPersonLocatorId());
 		
-		EMailRFC822Address emailTo = EMailRFC822Address.of(to);
-		EMailRFC822Address emailFrom = EMailRFC822Address.of(AA14NotifierEMailFromSelector.eMailFromFor(orgId,
-																										EMail.create("hitzordua-noreply@euskadi.eus")));
+		
+		EMailRFC822Address emailTo = EMailRFC822Address.of(message.getContactEMail());
+		
 		// [2] - Send the message
-		_mailNotifier.notify(emailTo,emailFrom,
+		_mailNotifier.notify(fromAddr,emailTo,
 							 // mime message factory
     						 new Factory<MimeMessage>() {
 									@Override @SneakyThrows
@@ -101,7 +108,7 @@ public class AA14NotifierServicesForPersonLocator {
 									    												    true);	// multi-part!!
 									    // To & From
 									    msgHelper.setTo(emailTo.asRFC822Address());
-									    msgHelper.setFrom(emailFrom.asRFC822Address());
+									    msgHelper.setFrom(fromAddr.asRFC822Address());
 
 									    // Subject & Text
 									    msgHelper.setSubject(subject);

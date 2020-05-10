@@ -55,7 +55,8 @@ public class AA14CRUDOKEventListenersForNotificationEvents {
 		
 		public AA14CRUDOKEventListenersForAppointmentBase(final AA14BookedSlotSummarizerService appointmentSummarizerService,
 														  final AA14NotifierServicesDelegateImpl notifierServices) {
-			super(AA14Appointment.class,
+			super(AA14BookedSlot.class,
+				  // event filter
 				  new CRUDOKEventFilter() {
 							@Override @SuppressWarnings("unchecked")
 							public boolean hasTobeHandled(final COREServiceMethodExecOKEvent opEvent) {
@@ -71,7 +72,13 @@ public class AA14CRUDOKEventListenersForNotificationEvents {
 		}
 		@Subscribe	// subscribes this event listener at the EventBus
 		@Override
-		public void onPersistenceOperationOK(final COREServiceMethodExecOKEvent opOKEvent) {
+		public void onPersistenceOperationOK(final COREServiceMethodExecOKEvent opOKEvent) {		
+			// Check if the notifier is enabled
+			if (!_notifierServices.isEnabled()) {
+				log.warn("[notifier event handler]: {} is NOT enabled; the notification will not be sent",
+						 _notifierServices.getClass().getSimpleName());
+				return;
+			}
 			// ... upon create or update
 			if (_crudOperationOKEventFilter.hasTobeHandled(opOKEvent)) {
 				AA14BookedSlot slot = opOKEvent.getAsCOREServiceMethodExecOKOn(AA14BookedSlot.class)
@@ -104,7 +111,7 @@ public class AA14CRUDOKEventListenersForNotificationEvents {
 					// [3]-Compose the notification message to be sent form the event
 					AA14NotificationMessageAboutAppointment msg = AA14NotificationMessageBuilder.using(_appointmentSummarizerService)
 														  	   				    				.createForAppointment(opOKEvent.getSecurityContext(),
-														  	   				    									  appointment);					
+														  	   				    									  appointment);		
 					_notifierServices.sendNotification(AA14NotificationOperation.fromCalledMethod(opOKEvent.getAsCOREServiceMethodExecOK()
 																										   .getCalledMethod()),
 													   msg);
