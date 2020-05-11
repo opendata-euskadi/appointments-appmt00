@@ -111,6 +111,38 @@ BEWARE that the db-tables are auto-created / extended; use the `schema/generatio
 When tables are created, a file with the `ddl-script` is created at `{dev-home}/db/ddl-scripts/aa14b` so ensure this folder exists or the tables will not be created
 
 
+## web resource files (images / scripts / styles...)
+
+Web resource files are splitted in TWO projects:
+
+- appmt00/appmt00UI/appmt00UIWebContent: initiative INdependent files
+- appmt01/appmt01UI/appmt01UIWebContent: initiativa dependent files
+
+the [web content] is at a folder named `aa14aAppointments` that is exposed as an alias `appcont/aa14aAppointments` so:
+
+a. Copy the content of both `appmt00UIWebContent` and `appmt01UIWebContent` to a web-server folder and set an alias named `appcont/aa14aAppointments`
+
+b. create a proxy to the tomcat server
+
+	Alias /appcont/aa14aAppointments ${projects-root}/aa14aWebContent/aa14aAppointments
+	<Directory "${projects-root}/aa14aWebContent/aa14aAppointments">
+		Options Indexes FollowSymLinks MultiViews
+		AllowOverride None
+		Require all granted
+	</Directory>
+	
+	# Proxies
+	# Send everything for context /examples to worker named [localhost_tomcat] (ajp13)
+	# and defined at conf/pci/workers.properties
+	#JkMount  /appmt01UIWar/* localhost_tomcat
+	
+	# Use mod_proxy instead of tomcat ajp13
+	<Location /appmt01UIWar>
+		ProxyPass http://localhost:8080/appmt01UIWar
+		ProxyPassReverse http://localhost:8080/appmt01UIWar
+	</Location>
+
+
 
 
 
