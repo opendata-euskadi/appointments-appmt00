@@ -25,20 +25,6 @@
 		<!-- Pool size: See more at: http://www.eclipse.org/eclipselink/documentation/2.5/jpa/extensions/p_connection_pool.htm -->
 		<!-- <connectionPool initial="1" min="16" max="16" /> --> 
 		
-		<connection vendor='ORACLE'>
-			<eclipselink.jdbc.user>[USER]</eclipselink.jdbc.user>
-			<eclipselink.jdbc.password>[PASSWORD]</eclipselink.jdbc.password>
-			<eclipselink.jdbc.driver>oracle.jdbc.driver.OracleDriver</eclipselink.jdbc.driver>
-			<eclipselink.jdbc.url>jdbc:oracle:thin:@//[HOST]:[PORT]/[SERVICE_NAME]</eclipselink.jdbc.url>
-			<eclipselink.target-database>org.eclipse.persistence.platform.database.oracle.Oracle11Platform</eclipselink.target-database>
-		</connection>
-		<connection vendor='MySQL'>
-			<javax.persistence.jdbc.user>[USER]</javax.persistence.jdbc.user>
-			<javax.persistence.jdbc.password>[PASSWORD]</javax.persistence.jdbc.password>
-			<javax.persistence.jdbc.driver>com.mysql.cj.jdbc.Driver</javax.persistence.jdbc.driver>
-			<javax.persistence.jdbc.url><![CDATA[jdbc:mysql://[HOST]:[PORT]/[SCHEMA]?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC]]></javax.persistence.jdbc.url>
-		</connection>
-		
 		<properties>
 			<!-- Location of persistence unit -->
 			<eclipselink.persistencexml>META-INF/jpa/{APPCODE}.{APP_MODULE}.persistence.xml</eclipselink.persistencexml>
