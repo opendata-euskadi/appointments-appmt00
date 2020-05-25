@@ -122,6 +122,13 @@ public class AA14PersonLocatorServicesDelegate
 	public COREServiceMethodExecResult<Boolean> remindPersonLocatorFor(final SecurityContext securityContext,
 																	   final AA14OrganizationID orgId,
 																	   final PersonID personId,final EMail contactEMail,final Language lang) {
+		// [0] - If the email is a fake email (used when the email is NOT mandatory), do NOT remind the locator
+		if (contactEMail.asString().toLowerCase().startsWith("appmt-fake-mail")) {
+			log.info("NOT reminding locator to: {} (fake email)",contactEMail);
+			return PersistenceOperationExecResultBuilder.using(securityContext)
+												 		.executed(COREServiceMethod.named("remindPersonLocatorFor"))
+												 		.returning(false);
+		}
 		// [1] - A reminder with the [locator] can only be sent for those [appointments] whose
 		//		 [email] matches the received one
 		//		 ... so filter [appointments] with the received [email]

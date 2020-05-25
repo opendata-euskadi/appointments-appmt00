@@ -104,6 +104,14 @@ public class AA14NotifierServicesEMailImpl
 								   final EMailRFC822Address from,final EMailRFC822Address to,
 								   final AA14SummarizedAppointment appointment,
 								   final Collection<EMail> emails,final Collection<Phone> phones) {
+		// if the email is like: fake@{domain} or no-email@{domain}
+		// the message is NOT sent
+		if (to.asString().toLowerCase().startsWith("appmt-fake-mail")) {
+			log.info("\t--> ignored email: {} > NOT sending notification",to);
+			return;
+		}
+		
+		// send the email
 		log.info("\t-->sending email to {} using {}",to,_mailNotifier.getClass());
 
 		// [1] - Create the subject & body
