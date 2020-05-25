@@ -244,7 +244,7 @@ span.aa14a_numero_paso {
 	border-right: 0px;
 	border-bottom: 1px dotted #606060;
 }
-.aa14a_detalle td.aa14a_etiquetas {}
+.aa14a_detalle td.aa14a_etiquetas {
 	background-color: #F2F2F2;
 	font-weight: bold;
 	width: 35%;
@@ -283,9 +283,11 @@ span.aa14a_numero_paso {
 .aa14a_input#date,
 input.aa14a_input[name='dateNonBookable'],
 input.aa14a_input[name='dateNonBookablePeriodicStart'],input.aa14a_input[name='dateNonBookablePeriodicEnd'],
-input.aa14a_input[name$='_start_date'],input.aa14a_input[name$='_end_date'],
-input.aa14a_input[type="checkbox"]{
+input.aa14a_input[name$='_start_date'],input.aa14a_input[name$='_end_date']{
 	width: 100px;
+}
+input.aa14a_input[type="checkbox"]{
+	width: 20px;
 }
 .aa14a_input#COD_EXP, .aa14a_input#NIF {
 	width: 20%;

@@ -30,7 +30,9 @@ import aa14f.model.AA14Appointment;
 import aa14f.model.AA14BookedSlot;
 import aa14f.model.AA14BookedSlotType;
 import aa14f.model.config.AA14OrgDivisionServiceLocation;
+import aa14f.model.config.AA14Schedule;
 import aa14f.model.oids.AA14IDs.AA14OrgDivisionServiceLocationID;
+import aa14f.model.oids.AA14IDs.AA14ScheduleID;
 import lombok.extern.slf4j.Slf4j;
 import r01f.locale.Language;
 import r01f.servlet.HttpRequestParamsWrapper;
@@ -90,9 +92,18 @@ public class AA14SchedulePrintServlet
 		AA14OrgDivisionServiceLocation loc = _clientAPI.configAPI()
 													   .getLocationFor(locId);
 		
+		// load the schedule if present
+		AA14ScheduleID schId = reqParams.getParameter("schId")
+								 		.asType(AA14ScheduleID.class)
+								 		.using(AA14ReqParamToType.transform(AA14ScheduleID.class))
+								 		.orNull();
+		AA14Schedule schedule = null;
+		schedule = _clientAPI.configAPI()
+							.getScheduleFor(schId);
+		
 		// get the date range
 		String dateFormat = lang.is(Language.SPANISH) ? Dates.ES_DEFAULT_FORMAT
-													  : Dates.EU_DEFAULT_FORMAT;
+													  : Dates.EU_DEFAULT_FORMAT.replaceAll("/", "-"); //FIXME datepicker has yyyy-MM-dd as format in basque
 		Date startDate = reqParams.getParameter("print_start_date").asDate(dateFormat)
 																   .orDefault(new Date());
 		Date endDate = reqParams.getParameter("print_end_date").asDate(dateFormat)
@@ -109,13 +120,25 @@ public class AA14SchedulePrintServlet
 											 endDateLastInstant.toDate());
 		
 		// load the booked slots
-		log.debug("[CalendarPRINT]: Retrieve slots for location oid/id={}/{} in date range={}",
-				  loc.getOid(),loc.getId(),
-				  dateRange);
-		Collection<AA14BookedSlot> slots = _clientAPI.bookedSlotsAPI()
-														.getForFind()
-								   							.findRangeBookedSlotsFor(loc.getOid(),
-								   													 dateRange);
+		Collection<AA14BookedSlot> slots = null;
+		if (schedule != null) {
+			log.debug("[CalendarPRINT]: Retrieve slots for schedule oid/id={}/{} in date range={}",
+					  loc.getOid(),loc.getId(),
+					  dateRange);
+			slots = _clientAPI.bookedSlotsAPI()
+							  .getForFind()
+							  .findRangeBookedSlotsFor(schedule.getOid(),
+									   				   dateRange);	
+		}
+		else {
+			log.debug("[CalendarPRINT]: Retrieve slots for location oid/id={}/{} in date range={}",
+					  loc.getOid(),loc.getId(),
+					  dateRange);
+			slots = _clientAPI.bookedSlotsAPI()
+							  .getForFind()
+							  .findRangeBookedSlotsFor(loc.getOid(),
+									   				   dateRange);	
+		}
 		log.debug("Range calendar events for {}: {} events",
 				  dateRange,(slots != null ? slots.size() : 0));
 		// Print

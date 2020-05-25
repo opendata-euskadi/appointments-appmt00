@@ -70,7 +70,7 @@ function openReserveSlotDialog(schId,
 
 	// [3]: Set the ui
 	// Set the date & start / end time
-	
+	$("#aa14a_reservedSlot_edit_form input[name='reserveAllDay']").prop("checked", false);	
 	$("#aa14a_reservedSlot_edit_form input[name='dateNonBookable']").datepicker("setDate",theStartDate.toDate());
 	$("#aa14a_reservedSlot_edit_form input[name='timeStartNonBookable']").timepicker("setTime",theStartDate.toDate());	
 	$("#aa14a_reservedSlot_edit_form input[name='timeEndNonBookable']").timepicker("setTime",theEndDate.toDate());

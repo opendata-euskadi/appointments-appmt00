@@ -87,9 +87,9 @@ public class AA14DayTimeSlots
 //  METHODS
 /////////////////////////////////////////////////////////////////////////////////////////
 	public boolean isAt(final Year year,final MonthOfYear monthOfYear,final DayOfMonth dayOfMonth) {
-		return _year == year
-			&& _monthOfYear == monthOfYear
-			&& _dayOfMonth == dayOfMonth;
+		return _year.equals(year)
+			&& _monthOfYear.equals(monthOfYear)
+			&& _dayOfMonth.equals(dayOfMonth);
 	}
 	public boolean isAt(final Date date) {
 		return new LocalDate(date.getTime()).isEqual(new LocalDate(_year.getYear(),_monthOfYear.getMonthOfYear(),_dayOfMonth.getDayOfMonth()));

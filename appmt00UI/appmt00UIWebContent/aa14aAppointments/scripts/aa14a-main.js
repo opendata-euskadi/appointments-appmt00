@@ -395,9 +395,10 @@ function setDatosTablaDetallesLocalizacion(loc) {
 	$("td[aa14val='aa14a_justizia_loc_judicial_party']").each(function() {
 			$(this).html(loc._location._municipality);
 	});
-	$("td[aa14val='aa14a_justizia_service']").each(function() {
-		$(this).html(loc._location._name);
-});
+	//see justizia/common/inc/aa14aLocationDetails.inc
+	$("td[aa14val='aa14a_justizia_loc_civil_registry']").each(function() {
+		$(this).html(loc._location._municipality);
+	});
 	
 }
 

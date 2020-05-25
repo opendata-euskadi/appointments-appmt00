@@ -8,13 +8,22 @@ function initAppointmentForm() {
     $("#date").on("change",
 			      function () {
 				    	var fechaSeleccionada = $("#date").datepicker( "getDate" );
-				    	var location = getSelectedServiceLocationId();
+				    	var locId = getSelectedServiceLocationId();
 				    	var numberOfAdjacentSlots = getNumberOfAdjacentSlots();
-				    	
-				    	obtenerCitasLibres(fechaSeleccionada,
-				    					   false,		// DO NOT slip date range to find first available slot
-				    					   numberOfAdjacentSlots,
-				    					   location);
+				    	var schId = forAScheduleId(); // see aa14a-form.js
+				    	if (schId != ""){
+				    		obtenerCitasLibres(fechaSeleccionada,
+				    					       false,		// DO NOT slip date range to find first available slot
+				    					       numberOfAdjacentSlots,
+				    					       locId,
+				    					       schId);
+				    	}
+				    	else {
+				    		obtenerCitasLibres(fechaSeleccionada,
+			    					   		   false,		// DO NOT slip date range to find first available slot
+			    					   		   numberOfAdjacentSlots,
+			    					   		   locId);
+				    	}
 				  });
 	
 	
@@ -48,11 +57,20 @@ function initAppointmentForm() {
 					$("#date").datepicker("setDate",today);
 					var locId = getSelectedServiceLocationId();
 					var numberOfAdjacentSlots=getNumberOfAdjacentSlots();
-					
-					obtenerCitasLibres(today,
-									   true,		// slip date range to find first available slot
-									   numberOfAdjacentSlots,
-									   locId);
+					var schId = forAScheduleId(); // see aa14a-form.js
+			    	if (schId != ""){
+			    		obtenerCitasLibres(today,
+			    					   	   false,		// DO NOT slip date range to find first available slot
+			    					   	   numberOfAdjacentSlots,
+			    					   	   locId,
+			    					   	   schId);
+			    	}
+			    	else {
+			    		obtenerCitasLibres(today,
+		    					   		  false,		// DO NOT slip date range to find first available slot
+		    					   		  numberOfAdjacentSlots,
+		    					   		  locId);
+			    	}
 				}
 			}
 			else {
@@ -115,10 +133,20 @@ function initAppointmentForm() {
 							var locId = getSelectedServiceLocationId();
 							var numberOfAdjacentSlots = getNumberOfAdjacentSlots();
 							
-							obtenerCitasLibres(today,
-											   true,		// slip date range to find first available slot
-											   numberOfAdjacentSlots,
-											   locId);
+					    	var schId = forAScheduleId(); //see aa14a-form.js
+					    	if (schId != ""){
+					    		obtenerCitasLibres(today,
+					    					      false,		// DO NOT slip date range to find first available slot
+					    					      numberOfAdjacentSlots,
+					    					      null,
+					    					      schId);
+					    	}
+					    	else {
+					    		obtenerCitasLibres(today,
+				    					          false,		// DO NOT slip date range to find first available slot
+				    					          numberOfAdjacentSlots,
+				    					          locId);
+					    	}
 							
 							// goto step 3
 							gotoFormStep('#aa14a_step2',	// from
@@ -216,14 +244,24 @@ function saveAppointment() {
 							  // Get the available slots again
 						      var fechaSeleccionada = $("#date").datepicker( "getDate" );
 						      var location = getSelectedServiceLocationId();
-						      obtenerCitasLibres(fechaSeleccionada,
-						    		  			 false,		// do NOT slip range to find first available slot
-						    		  			 numberOfAdjacentSlots,
-						      					 location);
-							  
-							  // goto step 5 & show the save button 
-							  gotoFormStep('#aa14a_step3');
-							  $("#aa14a_step4_next_btn").show();
+						      var schId = forAScheduleId(); // see aa14a-form.js
+						      if (schId != ""){
+						    		obtenerCitasLibres(fechaSeleccionada,
+						    					   false,		// DO NOT slip date range to find first available slot
+						    					   numberOfAdjacentSlots,
+						    					   null,
+						    					   schId);
+						      }
+						      else {
+						    		obtenerCitasLibres(fechaSeleccionada,
+					    					   false,		// DO NOT slip date range to find first available slot
+					    					   numberOfAdjacentSlots,
+					    					   locId);
+						     }
+						    	
+							 // goto step 5 & show the save button 
+							 gotoFormStep('#aa14a_step3');
+							 $("#aa14a_step4_next_btn").show();
 						  }  else {
 							  showServerErrorDialog(msgErrorGenerico,
 									  				function() {

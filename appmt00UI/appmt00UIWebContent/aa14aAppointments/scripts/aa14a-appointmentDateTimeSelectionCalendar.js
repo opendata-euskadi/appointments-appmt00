@@ -94,19 +94,31 @@ function obtenerCitasLibres(fecha,
 							slipDateRangeToFindFirstAvailableSlot,
 							numberOfAdjacentSlots,
 							serviceLocId,
-							prefSchId) { // preferred schedule id, optional
+							schId) { //schedule id, optional only if serviceLocId is not null
 	//Refresh the schedule config for calSlotLength
-	_loadBookingConfigForLocation(serviceLocId,false);
+	if (serviceLocId){
+		console.log("...get free slots: " + serviceLocId);
+		_loadBookingConfigForLocation(serviceLocId,false);
+	}
+	else {
+		console.log("...get free slots: " + schId);
+		_loadBookingConfigForSchedule(schId,false);
+	}
 	
 	var dd = fecha.getDate();
 	var mm = fecha.getMonth()+1; // today=0!
 	var yyyy = fecha.getFullYear();
-	console.log("...get free slots: " + serviceLocId);
+	if (serviceLocId){
+		console.log("...get free slots: " + serviceLocId);
+	}
+	else {
+		console.log("...get free slots: " + schId);
+	}
 	$.ajax({
-		  url		: '/' + appmt01UIWar + '/AA14ControllerServlet?R01HNoPortal=true',
+		  url		: '/' + appmtContextRoot + '/AA14ControllerServlet?R01HNoPortal=true',
 		  data		: "op=OBTENERCITAS&year=" + yyyy + "&month=" + mm + "&day=" + dd + 
-		  			    "&serviceLocId=" + serviceLocId + 
-		  			    "&prefSchId=" + prefSchId +			// preferred schedule id
+		  			    "&serviceLocId=" + serviceLocId + "&prefSchId=" + schId +			// locId + optional preferred schedule id
+		  			    "&schId=" + schId +			// schId
 		  			    "&numberOfAdjacentSlots=" + numberOfAdjacentSlots + //number of slots per appointment
 		  			    "&slipDateRangeToFindFirstAvailableSlot=" + slipDateRangeToFindFirstAvailableSlot,		// slip date range to find first available slot
 		  type		: "get",
@@ -176,7 +188,7 @@ function obtenerCitasLibres(fecha,
 
 // [1] - Paint the schedule; every cell has an id like: D{dayOfMonth}_{monthOfYear}_{year}_{hourOfDay}_{minuteOfHour}
 //	     and an style="ocupado"
-function pintarTablaCitas(dayRangeTimeSlots, showPrevious, showNext) {
+function pintarTablaCitas(dayRangeTimeSlots, showPrevious, showNext, prefSchId) {
 	$("div.aa14a_selector_fecha").show();
 	$("#aa14_calendar_instructions").show();
 	$("#aa14a_step3_next_btn").show();
@@ -193,12 +205,12 @@ function pintarTablaCitas(dayRangeTimeSlots, showPrevious, showNext) {
 		 trHTML += '<th data-title="" class="aa14a_menos_dias_disabled aa14_menos_dias_movil_disabled"><span class="fa fa-backward backward"></span>' + anterior + '</th>';
 	 }
 	 trHTML += '<th class="dateRange">' + tramo + '</th>';	
-//	 <fmt:message key="fechahora.tramo"/>
+
      $.each(dayRangeTimeSlots, 		// >>>> AA14DayRangeTimeSlots
     		function(i,item) {
 	        	$.each(item,		// >>>> AA14DayTimeSlots
 	        		   function(j,dayTimeSlot){
-			        		if (idioma == 'eu') {	// see aa14aJSDynamicVars.inc
+	        				if (idioma == 'eu') {	// see aa14aJSDynamicVars.inc
 			        			fecha = _yearOf(dayTimeSlot) + '/' + ("0" + _monthOfYearOf(dayTimeSlot)).slice(-2) + '/' + ("0" + _dayOfMonthOf(dayTimeSlot)).slice(-2);
 			        		} else {
 			        			fecha = ("0" + _dayOfMonthOf(dayTimeSlot)).slice (-2) + '/' + ("0" + _monthOfYearOf(dayTimeSlot)).slice(-2) + '/' + _yearOf(dayTimeSlot);
@@ -290,7 +302,6 @@ function actualizarCitasLibres(dayRangeTimeSlots, numberOfAdjacentSlots) {
 
 //Update the schedule with the available slots
 function applyClassToSlots(dayRangeTimeSlots) {
-	console.log(dayRangeTimeSlots);
 	var now = moment();
 	
 	$.each(dayRangeTimeSlots,	// >>>> AA14DayRangeTimeSlots
@@ -313,7 +324,6 @@ function applyClassToSlots(dayRangeTimeSlots) {
 							        						_hourOfDayOf(timeSlot),_minuteOfHourOf(timeSlot));
 							        		var theSlotId = id + '_' + timeSlot._scheduleOid._id;
 							        		
-				        					console.log("\t..." + id);
 				        					var slotCell = $("#" + id);	
 				        		
 							        		slotCell.html('<input type="radio" value="' + theSlotId + '" name="radfree" class="libre' + todayStyleClass + '">' + libre + '</input>');
@@ -331,32 +341,34 @@ function applyClassToSlots(dayRangeTimeSlots) {
 function combineSlots(numberOfAdjacentSlots, numberOfDays) {
 	var ancestorId=""; //select the table in the edit dialog or the table in the create dialog
 	if($("#aa14a_editAppointment_dialog") && $("#aa14a_editAppointment_dialog").dialog("isOpen")==true){
-		ancestorId="#aa14a_editAppointment_form ";
+		ancestorId = "#aa14a_editAppointment_form ";
 	}
 
 	var totalCols=numberOfDays + 3 ; //previous+date range + N days + next  
-	var totalRows=$(ancestorId+"table#citas_table>tbody>tr").size(); //number of slots per day for this schedule
+	var totalRows=$( ancestorId + "table#citas_table>tbody>tr").size(); //number of slots per day for this schedule
 	var colInit=3; //skip previous and date range columns, index starts with 1
 	var rowInit=2; //skip header row, index starts with 1		
-	//loop throwght cells starting at the top left side of the table
+	//loop through cells starting at the top left side of the table
 	for (row = rowInit; row < totalRows; row++) {	
 		for(col=colInit; col< totalCols; col++){
 			//Check if this cell needs to be expanded
-			var cell=$(ancestorId+"table#citas_table>tbody>tr:nth-child("+row+") > td:nth-child("+col+")");
-			if (cell.prop('rowspan') && cell.prop("className")!="ocupado" && cell.text()!=" "){
+			var cell=$(ancestorId + "table#citas_table>tbody>tr:nth-child(" + row + ") > td:nth-child(" + col + ")");
+			if (cell.prop('rowspan') && cell.prop("className") != "ocupado" && cell.text()!=" "){
 				//mark the N cells below to be deleted later
 				var nextSlotCellRowPosition = parseInt(row) + parseInt(numberOfAdjacentSlots) - 1;
-				var nextSlotCell =$(ancestorId+"table#citas_table>tbody>tr:nth-child("+nextSlotCellRowPosition+") > td:nth-child("+col+")");
-
-				if (nextSlotCell.prop("id")!=undefined && nextSlotCell.prop("className")!="ocupado"){ 
+				var nextSlotCell = $(ancestorId + "table#citas_table>tbody>tr:nth-child(" + nextSlotCellRowPosition + ") > td:nth-child("+col+")");
+				
+				if (nextSlotCell.prop("id")!=undefined){ 
+					if (nextSlotCell.prop("id") == "SLTID_22_5_2020_13_50"){
+						console.log("a");
+					}
 					for(gap=1; gap<numberOfAdjacentSlots && (row+gap)<totalRows+1; gap++){
-						var bellowCell =$(ancestorId+"table#citas_table>tbody>tr:nth-child("+(row+gap)+") > td:nth-child("+col+")");
-						
-						if (bellowCell!= undefined){
-							bellowCell.text(" ") //mark this cell for deletion
+						var belowCell =$(ancestorId + "table#citas_table>tbody>tr:nth-child(" + (row+gap) + ") > td:nth-child(" + col + ")");
+						if (belowCell!= undefined){
+							belowCell.text(" ") //mark this cell for deletion
 						}
 						else {
-							console.log("orphan cell");
+							console.log("found an orphan cell > mark not bookable");
 							cell.prop("className", "ocupado");
 						}
 					}
@@ -366,7 +378,7 @@ function combineSlots(numberOfAdjacentSlots, numberOfDays) {
 		}
 	}
 	//remove and expand designed cells
-	$(ancestorId+"table#citas_table>tbody>tr>td").each(function (index){
+	$(ancestorId + "table#citas_table>tbody>tr>td").each(function (index){
 													if ($(this).text()==" "){
 														$(this).remove();
 													}
@@ -388,9 +400,9 @@ function countNumberOfAvailableSlotsPainted(){
 	
 	var ancestorId=""; //select the table in the edit dialog or the table in the create dialog
 	if($("#aa14a_editAppointment_dialog") && $("#aa14a_editAppointment_dialog").dialog("isOpen")==true){
-		ancestorId="#aa14a_editAppointment_form ";
+		ancestorId = "#aa14a_editAppointment_form ";
 	}
-	return $(ancestorId+"table#citas_table>tbody>tr>td [class^='libre']").size();
+	return $(ancestorId + "table#citas_table>tbody>tr>td [class^='libre']").size();
 }
 
 // creates the slot id

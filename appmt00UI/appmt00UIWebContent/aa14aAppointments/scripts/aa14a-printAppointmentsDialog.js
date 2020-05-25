@@ -2,6 +2,8 @@
 function initPrintAppointmentsButton() {
 	$("#aa14a_print_appointments_btn").click(
 			function() {
+				// clear selection
+				$("#aa14a_print_appointments_form input:radio").prop("checked", false);
 				// show the print appointments dialog
 				var dialog = $("#aa14a_print_appointments_dialog");
 				dialog.dialog("open");

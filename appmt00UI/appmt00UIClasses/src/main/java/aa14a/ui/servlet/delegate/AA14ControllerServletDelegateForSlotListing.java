@@ -14,6 +14,7 @@ import aa14a.ui.servlet.AA14ReqParamToType;
 import aa14f.client.api.AA14ClientAPI;
 import aa14f.model.AA14NumberOfAdjacentSlots;
 import aa14f.model.config.AA14OrgDivisionServiceLocation;
+import aa14f.model.config.AA14Schedule;
 import aa14f.model.oids.AA14IDs.AA14OrgDivisionServiceLocationID;
 import aa14f.model.oids.AA14IDs.AA14ScheduleID;
 import aa14f.model.timeslots.AA14DayRangeTimeSlots;
@@ -40,10 +41,16 @@ public class AA14ControllerServletDelegateForSlotListing
 		log.debug("[init]: Slot listing -----------------");
 		
 		// get the service location
-		AA14OrgDivisionServiceLocationID locId = reqParams.getMandatoryParameter("serviceLocId")		// mandatory!!!
+		// get the service location
+		AA14OrgDivisionServiceLocationID locId = reqParams.getParameter("serviceLocId")		// not mandatory!!
 									 					  .asType(AA14OrgDivisionServiceLocationID.class)
-									 					  .using(AA14ReqParamToType.transform(AA14OrgDivisionServiceLocationID.class));
+									 					  .using(AA14ReqParamToType.transform(AA14OrgDivisionServiceLocationID.class))
+									 					  .orNull();
 		AA14ScheduleID prefSchId = reqParams.getParameter("prefSchId")		// not mandatory
+										    .asType(AA14ScheduleID.class)
+					 					    .using(AA14ReqParamToType.transform(AA14ScheduleID.class))
+					 					    .orNull();
+		AA14ScheduleID schId = reqParams.getParameter("schId")			// not mandatory
 										    .asType(AA14ScheduleID.class)
 					 					    .using(AA14ReqParamToType.transform(AA14ScheduleID.class))
 					 					    .orNull();
@@ -74,17 +81,40 @@ public class AA14ControllerServletDelegateForSlotListing
 		log.debug("\t... at service location with id={} (preferred schedule with id={}) > dateRange={} (slip range to find first available slot={})",
 				  locId,prefSchId,
 				  range.asString(),slipDateRangeToFindFirstAvailableSlot);
-		AA14OrgDivisionServiceLocation location = _clientAPI.orgDivisionServiceLocationsAPI().getForCRUD()
+		AA14DayRangeTimeSlots dayRangeTimeSlots = null;
+		if (locId != null) {
+			AA14OrgDivisionServiceLocation location = _clientAPI.orgDivisionServiceLocationsAPI().getForCRUD()
 														   		  .loadById(locId);
-
-		AA14DayRangeTimeSlots dayRangeTimeSlots = _clientAPI.bookedSlotsAPI()
-																 .getForCalendar()
-																	   .timeSlotsForRange(location.getOid(),
-																			   			  numberOfAdjacentSlots,
-																			   			  range,
-																			   			  slipDateRangeToFindFirstAvailableSlot);		
-		
-//		log.info(dayRangeTimeSlots.debugInfo().toString());
+			if (prefSchId != null) {
+				AA14Schedule prefSch = _clientAPI.schedulesAPI().getForCRUD()
+															   	.loadById(prefSchId);
+				dayRangeTimeSlots = _clientAPI.bookedSlotsAPI()
+											  .getForCalendar()
+											  .timeSlotsForRange(location.getOid(),
+													  			 numberOfAdjacentSlots,
+																 range,
+																 prefSch.getOid(),
+																 slipDateRangeToFindFirstAvailableSlot);
+			}
+			else {
+				dayRangeTimeSlots = _clientAPI.bookedSlotsAPI()
+											  .getForCalendar()
+											  .timeSlotsForRange(location.getOid(),
+													  			 numberOfAdjacentSlots,
+																 range,
+																 slipDateRangeToFindFirstAvailableSlot);	
+			}
+		}
+		else {
+			AA14Schedule sch = _clientAPI.schedulesAPI().getForCRUD()
+														.loadById(schId);
+			dayRangeTimeSlots = _clientAPI.bookedSlotsAPI()
+										  .getForCalendar()
+										  .timeSlotsForRange(sch.getOid(),
+												  			 numberOfAdjacentSlots,
+															 range,
+															 slipDateRangeToFindFirstAvailableSlot);
+		}
 		
 		_returnJsonResponse(response, 
 							dayRangeTimeSlots); 
