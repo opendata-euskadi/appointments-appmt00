@@ -2,6 +2,7 @@
 <div id="recoverForm" class="aa14a_inline">
  	<form action="" method="get" name="formRemindPersonLocator" id="formRemindPersonLocator" class='aa14a_form aa14aclearfix'>
 		<p class="aa14a_comentario"><span class="fa fa-commenting"></span><fmt:message key="comun.datospersonales.localizador.recordar.msg" /></p>
+		<p id="aditionalInstructions" class="aa14a_comentario ocultar" style="margin-left:2.5em;"><fmt:message key="comun.datospersonales.localizador.recordar.noPhone" /></p>
 		<p>
 			<label for="personId"><fmt:message key="comun.datospersonales.nif" />:</label>
 			<input class="aa14a_input" type="text" name="personId" placeholder="<fmt:message key='comun.datospersonales.nif.placeholder' />" />

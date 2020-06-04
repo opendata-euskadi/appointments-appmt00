@@ -17,8 +17,12 @@ function($) {
 	$body = $("body");
 //	idioma=$("html").attr('lang');		// var idioma is defined at aa14aVariablesIdiomaticas.inc
 	
-	// Inicializar calendarios (opciones comunes para TODOS los calendarios)
+	// Initialize calendar options (common options for ALL calendars)
+	if (idioma == 'eu') { //update date format for basque (yy-mm-dd) with yyyy/mm/dd
+		$.datepicker.regional['eu'].dateFormat = "yy/mm/dd";
+	}
 	$.datepicker.setDefaults($.datepicker.regional[idioma]);
+	
 	var pickerOpts = {
 						showOn: "button",				
 						buttonImage: "/appcont/aa14aAppointments/images/aa14a-calendar.png",
@@ -27,7 +31,7 @@ function($) {
 	$.datepicker.setDefaults(pickerOpts);
 	
 	//locale for moment.js
-	moment.locale(idioma);
+	moment.locale(idioma); //throws a warning, don't panic https://github.com/moment/moment/issues/3043
 	
 	// Bootstrap the UI
 	_bootstrapUI();
@@ -195,13 +199,25 @@ function _updateBookingConfigWith(bookingCfg) {
 	bookingConfig.calMaxTime = bookingConfig.calMaxHour + ':' + bookingConfig.calMaxMin;
 	
 	bookingConfig.calSlotLength = bookingCfg._slotDefaultLengthMinutes;	
+	if ((bookingCfg._bookingLimit) && $("#date").length >0){
+		if (bookingCfg._bookingLimit._dateLimit){
+			var dateFormat = "L";
+			if (idioma == 'eu'){
+				dateFormat = "YYYY/MM/DD"; //overrided equivalent dateformat in the document.ready() section
+			}
+			$("#date").datepicker("option", "maxDate", moment.utc(bookingCfg._bookingLimit._dateLimit).format(dateFormat));			
+		}
+		else if (bookingCfg._bookingLimit._daysInFutureLimit >-1){
+			$("#date").datepicker("option", "maxDate", "+" + bookingCfg._bookingLimit._daysInFutureLimit + "d");			
+		}
+	}
 }
 // called from the appointment create form
 function _loadBookingConfigForLocation(locId,
 									   action) {
 	console.log("...getting booking config for loc id=" + locId);
 	$.ajax({
-		  url		: '/' + appmt01UIWar + '/AA14ModelObjectsLoadServlet?R01HNoPortal=true',
+		  url		: '/' + appmtContextRoot + '/AA14ModelObjectsLoadServlet?R01HNoPortal=true',
 		  data		: "op=OBTENERCONFIGCALENDARBYLOCATIONID&locId=" + locId,
 		  type		: "get",
 		  success	: function(bookingCfg) {
@@ -218,7 +234,7 @@ function _loadBookingConfigForSchedule(schId,
 									   action) {
 	console.log("[Booking Config]: getting booking config for schedule id=" + schId + " (used to paint the calendar and non-bookable slot selection)");
 	$.ajax({
-		  url		: '/' + appmt01UIWar + '/AA14ModelObjectsLoadServlet?R01HNoPortal=true',
+		  url		: '/' + appmtContextRoot + '/AA14ModelObjectsLoadServlet?R01HNoPortal=true',
 		  data		: "op=OBTENERCONFIGCALENDARBYSCHEDULEID&schId=" + schId,
 		  type		: "get",
 		  success	: function(bookingCfg) {
@@ -238,20 +254,16 @@ function _loadBookingConfigForSchedule(schId,
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 function paintAppointmentDetails(slotOid) {
 $.ajax({
-	  url		: '/' + appmt01UIWar + '/AA14ModelObjectsLoadServlet?R01HNoPortal=true',
+	  url		: '/' + appmtContextRoot + '/AA14ModelObjectsLoadServlet?R01HNoPortal=true',
 	  data		: "op=OBTENERCITABYOID&appointmentOid=" + slotOid,
 	  type		: "get",
 	  success	: function(appointment) {
 			  		
-		  				// establecer los datos de la localización
+		  				// location
 			  			pintarDatosLocalizacionByOid(appointment._orgDivisionServiceLocationOid._id);
 						
-			  			// establecer los datos de la cita
-			  			//TODO poner la fecha en el JSON en formato ISO para no tener que hacer esta conversion
-			  			var createDateEn = moment();
-			  			createDateEn.locale("en"); 
-			  			createDateEn = moment(appointment._trackingInfo._createDate.replace(',', '')); //sample: Apr 5, 2019 1:50:17 PM
-			  			$("#appointmentRequestedAt").html(moment(createDateEn).format("LLLL"));
+			  			// appointment
+			  			$("#appointmentRequestedAt").html(moment.utc(appointment._trackingInfo._createDate).format("LLLL"));
 			  			$("#aa14a_requestedDate").show();
 			  			
 						$("#citaSelec").html(devolverFechaFormateada(appointment));
@@ -300,17 +312,17 @@ $.ajax({
 						$("#apellidos").val(appointment._person._surname1);
 
 						if (appointment._contactInfo) {
-							if (appointment._contactInfo._contactMails 
-							 && appointment._contactInfo._contactMails[0]._mail) {
+							if (appointment._contactInfo._mailAddresses 
+							 && appointment._contactInfo._mailAddresses[0]._mail) {
 								//Pick the html from #datoemail imput to resolve the &#64; entity
 								$("#email").val($("#datoemail").html());
 							}
 							else{
 								$("#email").val("");
 							}
-							if (appointment._contactInfo._contactPhones
-								&& appointment._contactInfo._contactPhones[0]._number) {
-								$("#movil").val(appointment._contactInfo._contactPhones[0]._number._id);
+							if (appointment._contactInfo._phones
+								&& appointment._contactInfo._phones[0]._number) {
+								$("#movil").val(appointment._contactInfo._phones[0]._number._id);
 							}
 							else{
 								$("#movil").val("");
@@ -320,7 +332,7 @@ $.ajax({
 							$("#movil").val("");
 							$("#email").val("");
 						}
-						// appointment (see /trafikoa/aa14a-appointmentDetails.js or /bizilagun/aa14a-appointmentDetails.js)
+						// appointment (see /{business}/aa14a-appointmentDetails.js)
 						paintCustomAppointmentDetails(appointment);
 	  			  },
 	  error		: function (xhr, ajaxOptions, thrownError) {
@@ -336,7 +348,7 @@ $.ajax({
 function pintarDatosLocalizacionById(locId) {
 	var lang = (idioma == "eu" ? "BASQUE" : "SPANISH");
 	$.ajax({
-		  url		: '/' + appmt01UIWar + '/AA14ModelObjectsLoadServlet?R01HNoPortal=true',
+		  url		: '/' + appmtContextRoot + '/AA14ModelObjectsLoadServlet?R01HNoPortal=true',
 		  data		: "op=OBTENERJERARQUIALOCALIZACIONBYID&locId=" + locId + "&lang=" + lang,
 		  type		: "get",
 		  success	: function(responseText) {
@@ -350,7 +362,7 @@ function pintarDatosLocalizacionById(locId) {
 function pintarDatosLocalizacionByOid(locOid) {
 	var lang = (idioma == "eu" ? "BASQUE" : "SPANISH");
 	$.ajax({
-		  url		: '/' + appmt01UIWar + '/AA14ModelObjectsLoadServlet?R01HNoPortal=true',
+		  url		: '/' + appmtContextRoot + '/AA14ModelObjectsLoadServlet?R01HNoPortal=true',
 		  data		: "op=OBTENERJERARQUIALOCALIZACIONBYOID&locOid=" + locOid + "&lang=" + lang,
 		  type		: "post",
 		  success	: function(responseText) {
@@ -395,6 +407,7 @@ function setDatosTablaDetallesLocalizacion(loc) {
 	$("td[aa14val='aa14a_justizia_loc_judicial_party']").each(function() {
 			$(this).html(loc._location._municipality);
 	});
+	
 	//see justizia/common/inc/aa14aLocationDetails.inc
 	$("td[aa14val='aa14a_justizia_loc_civil_registry']").each(function() {
 		$(this).html(loc._location._municipality);

@@ -28,19 +28,7 @@ abstract class AA14ControllerServletDelegateBase {
 	protected static void _returnJsonResponse(final HttpServletResponse response,
 							   		 		  final Object obj) throws IOException {
 		
-		Gson gson = new Gson();
-		//TODO test this change to return tracking info (create/update time) with ISO8601 format to avoid moment.js warning pasted above
-		//Dates are parsed to JSON as DateFormat.MEDIUM (that means: Apr 8 2019 11:23:02 AM )
-		
-		//moment.js says
-		//Deprecation warning: value provided is not in a recognized RFC2822 or ISO format. 
-		//moment construction falls back to js Date(), which is not reliable across all browsers and versions. 
-		//Non RFC2822/ISO date formats are discouraged and will be removed in an upcoming major release. 
-		//Please refer to http://momentjs.com/guides/#/warnings/js-date/ 
-		
-//		Gson gson = new GsonBuilder()
-//                .setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
-//                .create();
+		Gson gson = new Gson();		//dates are not returned in ISO format, use GsonBuilder().setDateFormat(Dates.ISO8601)
 		String json = gson.toJson(obj);
 		response.setContentType("application/json");
 		response.setCharacterEncoding("UTF-8");

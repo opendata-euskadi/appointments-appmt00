@@ -6,6 +6,8 @@ import java.util.Comparator;
 import javax.persistence.EntityManager;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
@@ -208,15 +210,21 @@ public class AA14AppointmentsCalendarServicesDelegate
 			throw new IllegalArgumentException(Throwables.message("The provided year/month/day={}/{}/{} is NOT valid",
 																  year,monthOfYear,dayOfMonth));
 		
-		// order the schedules so the preferred one is always the first
-		Collection<AA14Schedule> orderedSchedules = Ordering.from(new Comparator<AA14Schedule>() {
-																			@Override
-																			public int compare(final AA14Schedule s1,final AA14Schedule s2) {
-																				if (s1.getOid().is(prefSchOid)) return 1;
-																				return -1;
-																			}
-																   })
-										 					.immutableSortedCopy(schs);
+		// mix all the day range time slots (the collection will contain the preferred schedule in the first place)
+		Predicate<AA14Schedule> prefSchPredicate = new Predicate<AA14Schedule>() {
+															@Override
+															public boolean apply(final AA14Schedule sch) {
+																return sch.getOid().is(prefSchOid);
+															}
+										   		   };
+		Collection<AA14Schedule> orderedSchedules = Lists.newArrayListWithExpectedSize(schs.size());
+		orderedSchedules.add(FluentIterable.from(schs)
+										   .firstMatch(prefSchPredicate)
+										   .orNull());
+		orderedSchedules.addAll(FluentIterable.from(schs)
+											  .filter(Predicates.not(prefSchPredicate))
+											  .toList());
+											  
 		// Get the day range time slots for every schedule
 		Collection<AA14DayRangeTimeSlots> schDayRangeTimeSlots = Lists.newArrayListWithExpectedSize(schs.size());
 		for (AA14Schedule sch : orderedSchedules) {
@@ -398,7 +406,8 @@ public class AA14AppointmentsCalendarServicesDelegate
 						AA14TimeSlot existingSlot = existingDayTimeSlots.getSlotAt(slot.getHourOfDay(),
 																				   slot.getMinuteOfHour());
 						if (existingSlot != null) {
-							// just ignore
+							// just ignore (the preferred [schedule] should have been the FIRST to be processed
+							//				... so the slots at this [schedule] will be the selected ones)
 						} else {
 							// add
 							existingDayTimeSlots.add(slot);

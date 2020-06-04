@@ -82,9 +82,21 @@ public class AA14ControllerServletDelegateForSlotListing
 				  locId,prefSchId,
 				  range.asString(),slipDateRangeToFindFirstAvailableSlot);
 		AA14DayRangeTimeSlots dayRangeTimeSlots = null;
-		if (locId != null) {
+		if (schId != null) {
+			// if the [schId] param is received it has precedence over the [locationId]
+			AA14Schedule sch = _clientAPI.schedulesAPI().getForCRUD()
+														.loadById(schId);
+			dayRangeTimeSlots = _clientAPI.bookedSlotsAPI()
+										  .getForCalendar()
+										  .timeSlotsForRange(sch.getOid(),
+												  			 numberOfAdjacentSlots,
+															 range,
+															 slipDateRangeToFindFirstAvailableSlot);			
+		} 
+		else if (locId != null) {
+			// the [locationId] is received
 			AA14OrgDivisionServiceLocation location = _clientAPI.orgDivisionServiceLocationsAPI().getForCRUD()
-														   		  .loadById(locId);
+														   	    .loadById(locId);
 			if (prefSchId != null) {
 				AA14Schedule prefSch = _clientAPI.schedulesAPI().getForCRUD()
 															   	.loadById(prefSchId);
@@ -106,14 +118,7 @@ public class AA14ControllerServletDelegateForSlotListing
 			}
 		}
 		else {
-			AA14Schedule sch = _clientAPI.schedulesAPI().getForCRUD()
-														.loadById(schId);
-			dayRangeTimeSlots = _clientAPI.bookedSlotsAPI()
-										  .getForCalendar()
-										  .timeSlotsForRange(sch.getOid(),
-												  			 numberOfAdjacentSlots,
-															 range,
-															 slipDateRangeToFindFirstAvailableSlot);
+			throw new IllegalArgumentException("Either the locId or the schId are mandatory parameters!");
 		}
 		
 		_returnJsonResponse(response, 

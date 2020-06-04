@@ -11,11 +11,11 @@ function initAppointmentForm() {
 				    	var locId = getSelectedServiceLocationId();
 				    	var numberOfAdjacentSlots = getNumberOfAdjacentSlots();
 				    	var schId = forAScheduleId(); // see aa14a-form.js
-				    	if (schId != ""){
+				    	if (schId != "") {
 				    		obtenerCitasLibres(fechaSeleccionada,
 				    					       false,		// DO NOT slip date range to find first available slot
 				    					       numberOfAdjacentSlots,
-				    					       locId,
+				    					       null,
 				    					       schId);
 				    	}
 				    	else {
@@ -52,24 +52,24 @@ function initAppointmentForm() {
 				$("#aa14a_step1_next").show();		// show the step1 button
 				
 				// refresh the appointment table if initialized
-				if($("#date").datepicker("getDate")!=null){
+				if ($("#date").datepicker("getDate")!=null){
 					var today = new Date();
 					$("#date").datepicker("setDate",today);
 					var locId = getSelectedServiceLocationId();
-					var numberOfAdjacentSlots=getNumberOfAdjacentSlots();
+					var numberOfAdjacentSlots = getNumberOfAdjacentSlots();
 					var schId = forAScheduleId(); // see aa14a-form.js
-			    	if (schId != ""){
+			    	if (schId != "") {
 			    		obtenerCitasLibres(today,
-			    					   	   false,		// DO NOT slip date range to find first available slot
+			    					   	   true,		// slip date range to find first available slot
 			    					   	   numberOfAdjacentSlots,
 			    					   	   locId,
 			    					   	   schId);
 			    	}
 			    	else {
 			    		obtenerCitasLibres(today,
-		    					   		  false,		// DO NOT slip date range to find first available slot
-		    					   		  numberOfAdjacentSlots,
-		    					   		  locId);
+		    					   		   true,		// slip date range to find first available slot
+		    					   		   numberOfAdjacentSlots,
+		    					   		   locId);
 			    	}
 				}
 			}
@@ -134,18 +134,18 @@ function initAppointmentForm() {
 							var numberOfAdjacentSlots = getNumberOfAdjacentSlots();
 							
 					    	var schId = forAScheduleId(); //see aa14a-form.js
-					    	if (schId != ""){
+					    	if (schId != "") {
 					    		obtenerCitasLibres(today,
-					    					      false,		// DO NOT slip date range to find first available slot
-					    					      numberOfAdjacentSlots,
-					    					      null,
-					    					      schId);
+					    					       true,		// slip date range to find first available slot
+					    					       numberOfAdjacentSlots,
+					    					       null,
+					    					       schId);
 					    	}
 					    	else {
 					    		obtenerCitasLibres(today,
-				    					          false,		// DO NOT slip date range to find first available slot
-				    					          numberOfAdjacentSlots,
-				    					          locId);
+				    					           false,		// slip date range to find first available slot
+				    					           numberOfAdjacentSlots,
+				    					           locId);
 					    	}
 							
 							// goto step 3

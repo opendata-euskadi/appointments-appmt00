@@ -57,6 +57,9 @@
 	
 	var citaMsgDuplicada = "<fmt:message key='errores.citaDuplicada'/>";
 	
+	var msgErrorSearchOr = "<fmt:message key='errores.busqueda' />";
+	var msgErrorSearchAnd = "<fmt:message key='errores.busqueda.todos' />";
+	
 	var msgErrorSearch = "<fmt:message key='errores.busqueda' />";
 	var msgNoExiste ="<fmt:message key='errores.nodatos' />";
 	

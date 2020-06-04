@@ -103,7 +103,7 @@ public class AA14SchedulePrintServlet
 		
 		// get the date range
 		String dateFormat = lang.is(Language.SPANISH) ? Dates.ES_DEFAULT_FORMAT
-													  : Dates.EU_DEFAULT_FORMAT.replaceAll("/", "-"); //FIXME datepicker has yyyy-MM-dd as format in basque
+													  : Dates.EU_DEFAULT_FORMAT;
 		Date startDate = reqParams.getParameter("print_start_date").asDate(dateFormat)
 																   .orDefault(new Date());
 		Date endDate = reqParams.getParameter("print_end_date").asDate(dateFormat)

@@ -64,33 +64,58 @@ function validarCitaSeleccionada() {
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 //	SLOT TABLE
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-function obtenerCitasSiguientes(fecha, numberOfAdjacentSlots, serviceLocId, moreAvailable) {
+function getNextAvailableSlots(selectedDate, 
+								numberOfAdjacentSlots, 
+								serviceLocId, 
+								schId,
+								moreAvailable) {
 	if (!moreAvailable){
 		 return false;
 	}
-	fecha.setTime(fecha.getTime()+5*24*60*60*1000 );
+	selectedDate.setTime(selectedDate.getTime()+5*24*60*60*1000 );
 	$("#date").datepicker( "setDate", fecha );
-	obtenerCitasLibres(fecha,
-					   false,		// do NOT slip range to find first available slot
-					   numberOfAdjacentSlots,
-					   serviceLocId);
+	if (schId && schId != ""){
+		obtenerCitasLibres(selectedDate,
+					       false,		// DO NOT slip date range to find first available slot
+					       numberOfAdjacentSlots,
+					       null,
+					       schId);
+	}
+	else {
+		obtenerCitasLibres(selectedDate,
+				   		   false,		// DO NOT slip date range to find first available slot
+				   		   numberOfAdjacentSlots,
+				   		   serviceLocId);
+	}
 	
 }
-function obtenerCitasAnteriores(fecha, numberOfAdjacentSlots, serviceLocId) {
-	if (fecha <= new Date()) {
+function getPreviousAvailableSlots(selectedDate, 
+								  numberOfAdjacentSlots, 
+								  serviceLocId,
+								  schId) {
+	if (selectedDate <= new Date()) {
 		return false;
 	}
-	fecha.setTime(fecha.getTime()-5*24*60*60*1000 );
-	if (fecha < new Date()){
-		fecha = new Date();
+	selectedDate.setTime(selectedDate.getTime()-5*24*60*60*1000 );
+	if (selectedDate < new Date()){
+		selectedDate = new Date();
 	}
-	$("#date").datepicker("setDate",fecha);
-	obtenerCitasLibres(fecha,
-					   false,		// do NOT slip range to find first available slot
-					   numberOfAdjacentSlots,
-					   serviceLocId);
+	$("#date").datepicker("setDate",selectedDate);
+	if (schId && schId != ""){
+		obtenerCitasLibres(selectedDate,
+					       false,		// DO NOT slip date range to find first available slot
+					       numberOfAdjacentSlots,
+					       null,
+					       schId);
+	}
+	else {
+		obtenerCitasLibres(selectedDate,
+				   		   false,		// DO NOT slip date range to find first available slot
+				   		   numberOfAdjacentSlots,
+				   		   serviceLocId);
+	}
 }
-function obtenerCitasLibres(fecha,
+function obtenerCitasLibres(selectedDate,
 							slipDateRangeToFindFirstAvailableSlot,
 							numberOfAdjacentSlots,
 							serviceLocId,
@@ -105,9 +130,9 @@ function obtenerCitasLibres(fecha,
 		_loadBookingConfigForSchedule(schId,false);
 	}
 	
-	var dd = fecha.getDate();
-	var mm = fecha.getMonth()+1; // today=0!
-	var yyyy = fecha.getFullYear();
+	var dd = selectedDate.getDate();
+	var mm = selectedDate.getMonth()+1; // today=0!
+	var yyyy = selectedDate.getFullYear();
 	if (serviceLocId){
 		console.log("...get free slots: " + serviceLocId);
 	}
@@ -133,27 +158,30 @@ function obtenerCitasLibres(fecha,
 			  			  			var allowNextDayNavigation = dayRangeTimeSlots._moreAvailable === true;
 				  			  		// [1] - Paint the schedule; every cell has an id like: D{dayOfMonth}_{monthOfYear}_{year}_{hourOfDay}_{minuteOfHour}
 	  			  					//	   and an style="ocupado"
-	  			  					pintarTablaCitas({ _dayTimeSlots : dayRangeTimeSlots._dayTimeSlots }, allowPreviousDayNavigation, allowNextDayNavigation);
+	  			  					buildScheduleTable({ _dayTimeSlots : dayRangeTimeSlots._dayTimeSlots }, allowPreviousDayNavigation, allowNextDayNavigation);
 				  			  
 	  			  					// [2] - Update the schedule with the available slots
 	  			  					//	   	a) Find the slot cell by it's id: D{dayOfMonth}_{monthOfYear}_{year}_{hourOfDay}_{minuteOfHour}
 	  			  					//		b) set style=libre
 	  			  					//		c) add an input[type=radio] with value=id_{scheduleOid} => D{dayOfMonth}_{monthOfYear}_{year}_{hourOfDay}_{minuteOfHour}_{scheduleOid}
-	  			  					actualizarCitasLibres({ _dayTimeSlots : dayRangeTimeSlots._dayTimeSlots }, numberOfAdjacentSlots);
+	  			  					updateScheduleTableWithAvailableSlots({ _dayTimeSlots : dayRangeTimeSlots._dayTimeSlots }, numberOfAdjacentSlots);
 	  			  					// [3] Set a link to previous days
 	  			  					if (allowPreviousDayNavigation){
 		  			  					$(".aa14a_menos_dias,.aa14_menos_dias_movil").click(function() {
-							    	  															obtenerCitasAnteriores(firstDayWithAvailableSlots,
-							    	  																					numberOfAdjacentSlots,
-							    	  																				    serviceLocId);
+							    	  															getPreviousAvailableSlots(firstDayWithAvailableSlots,
+							    	  																					  numberOfAdjacentSlots,
+							    	  																				      serviceLocId,
+							    	  																				      schId);
 							      												  			});
 		  			  				}
 	  			  					// [4] Set a link to next days
 	  			  					if (allowNextDayNavigation){
 		  			  					$(".aa14a_mas_dias,.aa14_mas_dias_movil").click(function() {
-							    	  														obtenerCitasSiguientes(firstDayWithAvailableSlots,
-							    	  																			   numberOfAdjacentSlots, 
-							    	  																			   serviceLocId, allowNextDayNavigation);
+		  			  																			getNextAvailableSlots(firstDayWithAvailableSlots,
+		  			  																								 numberOfAdjacentSlots, 
+		  			  																								 serviceLocId, 
+		  			  																								 schId,
+		  			  																								 allowNextDayNavigation);
 							      												  		});
 		  			  				}
 	  			  					//If after arranging slots there is nothing to reserve and no other days can't be requested
@@ -188,7 +216,7 @@ function obtenerCitasLibres(fecha,
 
 // [1] - Paint the schedule; every cell has an id like: D{dayOfMonth}_{monthOfYear}_{year}_{hourOfDay}_{minuteOfHour}
 //	     and an style="ocupado"
-function pintarTablaCitas(dayRangeTimeSlots, showPrevious, showNext, prefSchId) {
+function buildScheduleTable(dayRangeTimeSlots, showPrevious, showNext, prefSchId) {
 	$("div.aa14a_selector_fecha").show();
 	$("#aa14_calendar_instructions").show();
 	$("#aa14a_step3_next_btn").show();
@@ -246,7 +274,7 @@ function pintarTablaCitas(dayRangeTimeSlots, showPrevious, showNext, prefSchId) 
      var curr = start;
      do {
     	 var next = moment(curr).add(bookingConfig.calSlotLength,'minutes');
-    	 trHTML += pintarTramo(curr.format('HH:mm') + " - " + next.format('HH:mm'),		// horario
+    	 trHTML += buildSlotRangeCell(curr.format('HH:mm') + " - " + next.format('HH:mm'),		// horario
     			 			   parseInt(curr.hour()),parseInt(curr.minutes()),			// idtramo
     			 			   dayRangeTimeSlots);
     	 curr = next;
@@ -260,7 +288,7 @@ function pintarTablaCitas(dayRangeTimeSlots, showPrevious, showNext, prefSchId) 
 };
 
 // Paint timerange column
-function pintarTramo(horario,
+function buildSlotRangeCell(horario,
 					 hourOfDay,minuteOfHour,
 					 dayRangeTimeSlots) {
 	/* Pintar tramo 9 a 9:30 */
@@ -290,7 +318,7 @@ function pintarTramo(horario,
 //b) set style=libre
 //c) add an input[type=radio] with value=id_{scheduleOid} => D{dayOfMonth}_{monthOfYear}_{year}_{hourOfDay}_{minuteOfHour}_{scheduleOid}
 //d) combine slots if we need to book more than one slot at a time
-function actualizarCitasLibres(dayRangeTimeSlots, numberOfAdjacentSlots) {
+function updateScheduleTableWithAvailableSlots(dayRangeTimeSlots, numberOfAdjacentSlots) {
 	//color green the free slots
 	applyClassToSlots(dayRangeTimeSlots);
 	//Combine cells in case the numberOfAdjacentSlots is >1

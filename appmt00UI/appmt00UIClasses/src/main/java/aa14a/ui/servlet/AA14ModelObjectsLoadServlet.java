@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -24,6 +25,7 @@ import aa14f.model.summaries.AA14SummarizedOrgHierarchy;
 import lombok.extern.slf4j.Slf4j;
 import r01f.locale.Language;
 import r01f.servlet.HttpRequestParamsWrapper;
+import r01f.util.types.Dates;
 
 @Slf4j
 @Singleton
@@ -235,7 +237,8 @@ public class AA14ModelObjectsLoadServlet
 /////////////////////////////////////////////////////////////////////////////////////////
 	private static void _returnJsonResponse(final HttpServletResponse response,
 							   		 		final Object obj) throws IOException {
-		Gson gson = new Gson();
+		Gson gson = new GsonBuilder().setDateFormat(Dates.ISO8601) //avoid deprecation warning with moment.js
+									 .create();
 		String json =gson.toJson(obj);
 		response.setContentType("application/json");
 		response.setCharacterEncoding("UTF-8");
