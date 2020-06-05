@@ -1,5 +1,9 @@
 package aa14f.model;
 
+import java.util.Date;
+
+import com.google.common.collect.Range;
+
 import aa14f.model.metadata.AA14MetaDataForAppointment;
 import aa14f.model.oids.AA14IDs.AA14PersonLocatorID;
 import lombok.Getter;
@@ -74,6 +78,15 @@ public class AA14Appointment
 	public AA14Appointment() {
 		super(AA14BookedSlotType.APPOINTMENT);
 		//_numberOfAdjacentSlots = AA14NumberOfAdjacentSlots.ONE;
+	}
+	public AA14Appointment(final Date startDate,final int durationInMinutes) {
+		this();
+		this.setDate(startDate);
+		this.setDurationMinutes(durationInMinutes);;
+	}
+	public AA14Appointment(final Range<Date> dateRange) {
+		this();
+		this.setDateRange(dateRange);
 	}
 /////////////////////////////////////////////////////////////////////////////////////////
 //  APPOINTMENT DESCRIPTION

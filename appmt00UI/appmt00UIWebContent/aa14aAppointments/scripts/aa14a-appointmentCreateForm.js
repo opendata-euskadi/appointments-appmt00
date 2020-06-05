@@ -11,7 +11,8 @@ function initAppointmentForm() {
 				    	var locId = getSelectedServiceLocationId();
 				    	var numberOfAdjacentSlots = getNumberOfAdjacentSlots();
 				    	var schId = forAScheduleId(); // see aa14a-form.js
-				    	if (schId != "") {
+				
+				    	if (schId != ""){
 				    		obtenerCitasLibres(fechaSeleccionada,
 				    					       false,		// DO NOT slip date range to find first available slot
 				    					       numberOfAdjacentSlots,
@@ -31,6 +32,7 @@ function initAppointmentForm() {
 	// Cambiar datos dependiendo del servicio seleccionado
 	$("input:radio[name='serviceLocId']").click(
 		function() {
+			
 			// get the selected location id
 			var locationId = getSelectedServiceLocationId();
 			// location may be null for [medical service] if the xlnets data 
@@ -45,14 +47,14 @@ function initAppointmentForm() {
 		        _loadBookingConfigForLocation(locationId);
 	
 				$("#aa14a_errores_servicio").hide();
-				if ($("#aa14a_error_delegacion")){
+				if ($("#aa14a_error_delegacion")) {
 					$("#aa14a_error_delegacion").hide();
 				}
 		        $("#servicio").show();
 				$("#aa14a_step1_next").show();		// show the step1 button
 				
 				// refresh the appointment table if initialized
-				if ($("#date").datepicker("getDate")!=null){
+				if($("#date").datepicker("getDate") != null) {
 					var today = new Date();
 					$("#date").datepicker("setDate",today);
 					var locId = getSelectedServiceLocationId();
@@ -60,25 +62,25 @@ function initAppointmentForm() {
 					var schId = forAScheduleId(); // see aa14a-form.js
 			    	if (schId != "") {
 			    		obtenerCitasLibres(today,
-			    					   	   true,		// slip date range to find first available slot
+			    						   true,		// slip date range to find first available slot
 			    					   	   numberOfAdjacentSlots,
-			    					   	   locId,
+			    					   	   null,
 			    					   	   schId);
 			    	}
 			    	else {
 			    		obtenerCitasLibres(today,
-		    					   		   true,		// slip date range to find first available slot
-		    					   		   numberOfAdjacentSlots,
-		    					   		   locId);
+			    						  true,		// slip date range to find first available slot
+		    					   		  numberOfAdjacentSlots,
+		    					   		  locId);
 			    	}
 				}
 			}
 			else {
 				var msgError = "";
-				if (msgErrorNoDel != undefined && msgErrorNoDel == "NO_COUNTY_FOUND"){
+				if (msgErrorNoDel != undefined && msgErrorNoDel == "NO_COUNTY_FOUND") {
 					msgError="<p class='aa14a_warning'><span class='fa fa-warning'></span>" + msgNoCounty + "</p>";
 				}
-				else if (msgErrorNoDel != undefined && msgErrorNoDel == "COUNTY_NOT_BASQUE_COUNTRY"){
+				else if (msgErrorNoDel != undefined && msgErrorNoDel == "COUNTY_NOT_BASQUE_COUNTRY") { 
 					msgError="<p class='aa14a_warning'><span class='fa fa-warning'></span>" + msgNoBasqueCountry + "</p>";
 				}
 				$("#aa14a_error_delegacion").html(msgError);
@@ -103,6 +105,7 @@ function initAppointmentForm() {
 				// goto step 2
 				gotoFormStep('#aa14a_step1',	// from
 							 '#aa14a_step2');	// to
+				
 				// set the focus on the first visible empty input or textarea
 				$("#aa14a_createAppointment_form div").find("input:not([value]):first, textarea:empty:first").first().focus();
 			}				
@@ -132,20 +135,20 @@ function initAppointmentForm() {
 							$("#date").datepicker("setDate",today);
 							var locId = getSelectedServiceLocationId();
 							var numberOfAdjacentSlots = getNumberOfAdjacentSlots();
-							
 					    	var schId = forAScheduleId(); //see aa14a-form.js
-					    	if (schId != "") {
+					    	
+					    	if (schId != ""){
 					    		obtenerCitasLibres(today,
-					    					       true,		// slip date range to find first available slot
-					    					       numberOfAdjacentSlots,
-					    					       null,
-					    					       schId);
+					    						  true,		// slip date range to find first available slot
+					    					      numberOfAdjacentSlots,
+					    					      null,
+					    					      schId);
 					    	}
 					    	else {
 					    		obtenerCitasLibres(today,
-				    					           false,		// slip date range to find first available slot
-				    					           numberOfAdjacentSlots,
-				    					           locId);
+					    						  true,		// slip date range to find first available slot
+				    					          numberOfAdjacentSlots,
+				    					          locId);
 					    	}
 							
 							// goto step 3
@@ -221,8 +224,8 @@ function saveAppointment() {
 	}
 	console.log("...reserve slot at " + getAvailableSlotsCalendarSelectedSlotDate() + ": " + $("#aa14a_createAppointment_form").serialize());
 	$.ajax({
-		  url		: '/' + appmt01UIWar + '/AA14ControllerServlet?R01HNoPortal=true&numberOfAdjacentSlots='
-			  			+ numberOfAdjacentSlots, //default 1
+		  url		: '/' + appmtContextRoot + '/AA14ControllerServlet?R01HNoPortal=true&numberOfAdjacentSlots='
+			  			  + numberOfAdjacentSlots, //default 1
 		  data		: $("#aa14a_createAppointment_form").serialize(),
 		  type		: "post",
 		  success	: function(responseText) {
@@ -247,21 +250,22 @@ function saveAppointment() {
 						      var schId = forAScheduleId(); // see aa14a-form.js
 						      if (schId != ""){
 						    		obtenerCitasLibres(fechaSeleccionada,
-						    					   false,		// DO NOT slip date range to find first available slot
-						    					   numberOfAdjacentSlots,
-						    					   null,
-						    					   schId);
+						    					  	   false,		// DO NOT slip date range to find first available slot
+						    					  	   numberOfAdjacentSlots,
+						    					  	   null,
+						    					  	   schId);
 						      }
 						      else {
 						    		obtenerCitasLibres(fechaSeleccionada,
-					    					   false,		// DO NOT slip date range to find first available slot
-					    					   numberOfAdjacentSlots,
-					    					   locId);
+					    					   		   false,		// DO NOT slip date range to find first available slot
+					    					   		   numberOfAdjacentSlots,
+					    					   		   locId);
 						     }
 						    	
 							 // goto step 5 & show the save button 
 							 gotoFormStep('#aa14a_step3');
 							 $("#aa14a_step4_next_btn").show();
+							 
 						  }  else {
 							  showServerErrorDialog(msgErrorGenerico,
 									  				function() {
@@ -271,10 +275,10 @@ function saveAppointment() {
 					  },
 		  beforeSend: function() {
 			  			  $("#aa14a_step4_next_btn").hide();
-						  $body.addClass("loading"); 
+			  			  $body.addClass("loading"); 
 					  },
 		  complete	: function() {  
-		    	  			$body.removeClass("loading");  
+		    	  		  $body.removeClass("loading");  
 		    	  	  }
 	});
 }
@@ -289,8 +293,8 @@ function gotoFormStep(stepFrom,stepTo) {
 	$(stepTo + "_next").show();		// show the [next] button at the section we go to
 	// show section we go to
 	$("html,body").animate({
-								scrollTop: $(stepTo).offset().top	
-						    },1000);
+						scrollTop: $(stepTo).offset().top	
+				   },1000);
 };
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // INPUT VALIDATION

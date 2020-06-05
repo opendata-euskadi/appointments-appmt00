@@ -6,7 +6,7 @@ For a clean start
 
 2. Change the `generationMode` at aa14b.appointments.dbpersistence.xml: at `aa14b.appointments.dbpersistence.properties`  property to `<generationMode>DROP_AND_CREATE_TABLES</generationMode>`
 
-3. Init the db:  /aa14uiWar/AA14ControllerServlet?op=INIT_DB
+3. Init the db:  /{context-root}/AA14ControllerServlet?op=INIT_DB
 
 4. Restore the `generationMode` at aa14b.appointments.dbpersistence.xml: at `aa14b.appointments.dbpersistence.properties`  property to `<generationMode>NONE</generationMode>`
 

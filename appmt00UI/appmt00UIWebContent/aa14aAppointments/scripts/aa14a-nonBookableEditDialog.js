@@ -7,7 +7,7 @@ function openReserveSlotDialog(schId,
 							   slotOid,
 							   startDate,endDate,
 							   subject,details,
-							   periodicSerieOid) {
+							   periodicSerieOid) {	
 	// [1]: fix some things
 	var theStartDate;
 	var theEndDate;
@@ -70,7 +70,7 @@ function openReserveSlotDialog(schId,
 
 	// [3]: Set the ui
 	// Set the date & start / end time
-	$("#aa14a_reservedSlot_edit_form input[name='reserveAllDay']").prop("checked", false);	
+	$("#aa14a_reservedSlot_edit_form input[name='reserveAllDay']").prop("checked", false);
 	$("#aa14a_reservedSlot_edit_form input[name='dateNonBookable']").datepicker("setDate",theStartDate.toDate());
 	$("#aa14a_reservedSlot_edit_form input[name='timeStartNonBookable']").timepicker("setTime",theStartDate.toDate());	
 	$("#aa14a_reservedSlot_edit_form input[name='timeEndNonBookable']").timepicker("setTime",theEndDate.toDate());
@@ -439,7 +439,7 @@ function updateOrCreateReservedSlot(reservedSlotData) {
 	$("#aa14a_reservedSlot_edit_form input[name='dateNonBookable']").datepicker('enable');	// enable the date picker (if not enabled, it's not serialized!!)
 	console.log("...update the date/time for reserved slot id=" + reservedSlotData.oid + ": " + $("#aa14a_reservedSlot_edit_form").serialize());
 	$.ajax({
-		  url		: '/' + appmt01UIWar + '/AA14ControllerServlet?R01HNoPortal=true',
+		  url		: '/' + appmtContextRoot + '/AA14ControllerServlet?R01HNoPortal=true',
 		  data		: $("#aa14a_reservedSlot_edit_form").serialize(),
 		  type		: "post",
 		  success	: function(responseText) {			  				

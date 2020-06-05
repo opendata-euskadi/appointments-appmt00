@@ -86,6 +86,7 @@ public abstract class AA14IDs {
 		public static final AA14BusinessID MEDICAL_SERVICE = AA14BusinessID.forId("medical-service");
 		public static final AA14BusinessID ZUZENEAN = AA14BusinessID.forId("zuzenean");
 		public static final AA14BusinessID JUSTIZIA = AA14BusinessID.forId("justizia");
+		public static final AA14BusinessID KONTSUMOBIDE = AA14BusinessID.forId("kontsumobide");
 	}
 /////////////////////////////////////////////////////////////////////////////////////////
 // 	ORGANIZATION / DIVISION / SERVICE IDs

@@ -1,5 +1,5 @@
 <%--
-Selects the favourite schedule using the [security profile] data
+Selects the favourite schedule using the security data
 --%>
 <% if (hasScheduleAccess) { %>
 	<script>

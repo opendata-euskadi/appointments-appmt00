@@ -106,9 +106,9 @@ function paintCalendar() {
 function _setCalendarEventsSource(schId) {
 	if (schId == null || schId == "undefined") schId = getSelectedScheduleId();
 	
-	var eventSourceUrl = '/' + appmt01UIWar + '/AA14CalendarServlet?op=range_appointments&schId=' + schId +
-																  '&lang=' + idioma + 	// see aa14aJSDynamicVars.inc
-														 		  '&R01HNoPortal=true';
+	var eventSourceUrl = '/' + appmtContextRoot + '/AA14CalendarServlet?op=range_appointments&schId=' + schId +
+														 			  '&lang=' + idioma + 	// see aa14aJSDynamicVars.inc
+														 			  '&R01HNoPortal=true';
 	console.log("[Calendar]: refreshing for: " + schId + " > " + eventSourceUrl);	
 	// [2]: Add the new source
 	currentCalendarEventSource = {

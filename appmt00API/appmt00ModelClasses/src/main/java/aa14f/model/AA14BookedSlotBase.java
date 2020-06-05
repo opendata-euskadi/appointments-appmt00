@@ -112,6 +112,22 @@ public abstract class AA14BookedSlotBase<SELF_TYPE extends AA14BookedSlotBase<SE
 //  DATE
 /////////////////////////////////////////////////////////////////////////////////////////
 	@Override
+	public void setDateRange(final Range<Date> dateRange) {
+		// start date
+		this.setDate(dateRange.lowerEndpoint());
+		
+		// hour & minute
+		DateTime dateTime = new DateTime(dateRange.lowerEndpoint());
+		_hourOfDay = HourOfDay.of(dateTime);
+		_minuteOfHour = MinuteOfHour.of(dateTime);
+		
+		// duration in minutes
+		long diffInMillis = dateRange.upperEndpoint().getTime() - dateRange.lowerEndpoint().getTime();
+		float diffInSeconds = diffInMillis / 1000;
+		float diffInMinutes = diffInSeconds / 60;
+		this.setDurationMinutes(Math.round(diffInMinutes));
+	}
+	@Override
 	public void setDate(final Year year,final MonthOfYear monthOfYear,final DayOfMonth dayOfMonth) {
 		_year = year;
 		_monthOfYear = monthOfYear;

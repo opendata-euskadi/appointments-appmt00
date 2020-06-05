@@ -82,6 +82,12 @@ public interface AA14BookedSlot
 
 	public LocalTime getStartTime();
 	public LocalTime getEndTime();	
+	
+	/**
+	 * Sets the start date and duratinon from a date-range
+	 * @param dateRange
+	 */
+	public void setDateRange(final Range<Date> dateRange);
 /////////////////////////////////////////////////////////////////////////////////////////
 //  SUMMARY & SUBJECT
 /////////////////////////////////////////////////////////////////////////////////////////

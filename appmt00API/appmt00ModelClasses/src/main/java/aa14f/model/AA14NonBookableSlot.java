@@ -1,5 +1,9 @@
 package aa14f.model;
 
+import java.util.Date;
+
+import com.google.common.collect.Range;
+
 import aa14f.model.metadata.AA14MetaDataForNonBookableSlot;
 import lombok.Getter;
 import lombok.Setter;
@@ -49,6 +53,15 @@ public class AA14NonBookableSlot
 /////////////////////////////////////////////////////////////////////////////////////////
 	public AA14NonBookableSlot() {
 		super(AA14BookedSlotType.NON_BOOKABLE);
+	}
+	public AA14NonBookableSlot(final Date startDate,final int durationInMinutes) {
+		this();
+		this.setDate(startDate);
+		this.setDurationMinutes(durationInMinutes);;
+	}
+	public AA14NonBookableSlot(final Range<Date> dateRange) {
+		this();
+		this.setDateRange(dateRange);
 	}
 /////////////////////////////////////////////////////////////////////////////////////////
 //  APPOINTMENT DESCRIPTION

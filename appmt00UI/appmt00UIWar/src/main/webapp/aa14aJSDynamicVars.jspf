@@ -59,8 +59,6 @@
 	
 	var msgErrorSearchOr = "<fmt:message key='errores.busqueda' />";
 	var msgErrorSearchAnd = "<fmt:message key='errores.busqueda.todos' />";
-	
-	var msgErrorSearch = "<fmt:message key='errores.busqueda' />";
 	var msgNoExiste ="<fmt:message key='errores.nodatos' />";
 	
 	var titleMsg = "<fmt:message key='anular.title.msg' />";

@@ -275,16 +275,16 @@ $.ajax({
 						
 						// contact
 						if (appointment._contactInfo) {
-							if (appointment._contactInfo._mailAddresses 
-							 && appointment._contactInfo._mailAddresses[0]._mail) {
-								$("#datoemail").html(appointment._contactInfo._mailAddresses[0]._mail._id);
+							if (appointment._contactInfo._contactMails 
+							 && appointment._contactInfo._contactMails[0]._mail) {
+								$("#datoemail").html(appointment._contactInfo._contactMails[0]._mail._id);
 							}
 							else{
 								$("#datoemail").html("");
 							}
-							if (appointment._contactInfo._phones
-							 && appointment._contactInfo._phones[0]._number) {
-								$("#datomovil").html(appointment._contactInfo._phones[0]._number._id);
+							if (appointment._contactInfo._contactPhones
+							 && appointment._contactInfo._contactPhones[0]._number) {
+								$("#datomovil").html(appointment._contactInfo._contactPhones[0]._number._id);
 							}
 							else{
 								$("#datomovil").html("");
@@ -312,17 +312,17 @@ $.ajax({
 						$("#apellidos").val(appointment._person._surname1);
 
 						if (appointment._contactInfo) {
-							if (appointment._contactInfo._mailAddresses 
-							 && appointment._contactInfo._mailAddresses[0]._mail) {
+							if (appointment._contactInfo._contactMails 
+							 && appointment._contactInfo._contactMails[0]._mail) {
 								//Pick the html from #datoemail imput to resolve the &#64; entity
 								$("#email").val($("#datoemail").html());
 							}
 							else{
 								$("#email").val("");
 							}
-							if (appointment._contactInfo._phones
-								&& appointment._contactInfo._phones[0]._number) {
-								$("#movil").val(appointment._contactInfo._phones[0]._number._id);
+							if (appointment._contactInfo._contactPhones
+								&& appointment._contactInfo._contactPhones[0]._number) {
+								$("#movil").val(appointment._contactInfo._contactPhones[0]._number._id);
 							}
 							else{
 								$("#movil").val("");

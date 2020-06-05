@@ -94,27 +94,25 @@ public class AA14AppointmentsCalendarServicesDelegate
 /////////////////////////////////////////////////////////////////////////////////////////
 	@Override
 	public AA14DayRangeTimeSlots availableTimeSlotsForRange(final SecurityContext securityContext,
-												   			final AA14OrgDivisionServiceLocationOID locOid,
-												   			final AA14ScheduleOID prefSchOid,
+												   			final AA14OrgDivisionServiceLocationOID locOid,final AA14ScheduleOID prefSchOid,
 												   			final AA14NumberOfAdjacentSlots numberOfAdjacentSlots,
 												   			final Year year,final MonthOfYear monthOfYear,final DayOfMonth dayOfMonth,
 												   			final int numberOfDays,
 												   			final boolean slipDateRangeToFindFirstAvailableSlot) {
-		
 		// Create a new AA14OrgDivisionServiceLocation delegate to load the full AA14OrgDivisionServiceLocation
-		final AA14OrgDivisionServiceLocation loc = _locCRUD.load(securityContext,
-														  		 locOid)
-												    	   .getOrThrow();
-		final Collection<AA14Schedule> schs = FluentIterable.from(loc.getSchedulesRefs())
-												.transform(new Function<AA14ModelObjectRef<AA14ScheduleOID,AA14ScheduleID>,AA14Schedule>() {
-																	@Override
-																	public AA14Schedule apply(final AA14ModelObjectRef<AA14ScheduleOID,AA14ScheduleID> ref) {
-																		return _schCRUD.load(securityContext,
-																							 ref.getOid())
-																					   .getOrThrow();
-																	}
-														   })
-												.toList();
+		AA14OrgDivisionServiceLocation loc = _locCRUD.load(securityContext,
+														   locOid)
+												     .getOrThrow();
+		Collection<AA14Schedule> schs = FluentIterable.from(loc.getSchedulesRefs())
+											.transform(new Function<AA14ModelObjectRef<AA14ScheduleOID,AA14ScheduleID>,AA14Schedule>() {
+																@Override
+																public AA14Schedule apply(final AA14ModelObjectRef<AA14ScheduleOID,AA14ScheduleID> ref) {
+																	return _schCRUD.load(securityContext,
+																						 ref.getOid())
+																				   .getOrThrow();
+																}
+													   })
+											.toList();
 		return _availableTimeSlotsForRange(securityContext,
 										   loc,schs,prefSchOid,
 										   numberOfAdjacentSlots,
@@ -131,19 +129,19 @@ public class AA14AppointmentsCalendarServicesDelegate
 												   			final int numberOfDays,
 												   			final boolean slipDateRangeToFindFirstAvailableSlot) {
 		// load the full service locations at the given schedule
-		final AA14Schedule sch = _schCRUD.load(securityContext,
-											   schOid)
-										 .getOrThrow();
-		final Collection<AA14OrgDivisionServiceLocation> locs = FluentIterable.from(sch.getServiceLocationsRefs())
-																	.transform(new Function<AA14ModelObjectRef<AA14OrgDivisionServiceLocationOID,AA14OrgDivisionServiceLocationID>,AA14OrgDivisionServiceLocation>() {
-																						@Override
-																						public AA14OrgDivisionServiceLocation apply(final AA14ModelObjectRef<AA14OrgDivisionServiceLocationOID,AA14OrgDivisionServiceLocationID> ref) {
-																							return _locCRUD.load(securityContext,
-																												 ref.getOid())
-																										   .getOrThrow();
-																						}
-																			   })
-																	.toList();
+		AA14Schedule sch = _schCRUD.load(securityContext,
+										 schOid)
+									.getOrThrow();
+		Collection<AA14OrgDivisionServiceLocation> locs = FluentIterable.from(sch.getServiceLocationsRefs())
+																.transform(new Function<AA14ModelObjectRef<AA14OrgDivisionServiceLocationOID,AA14OrgDivisionServiceLocationID>,AA14OrgDivisionServiceLocation>() {
+																					@Override
+																					public AA14OrgDivisionServiceLocation apply(final AA14ModelObjectRef<AA14OrgDivisionServiceLocationOID,AA14OrgDivisionServiceLocationID> ref) {
+																						return _locCRUD.load(securityContext,
+																											 ref.getOid())
+																									   .getOrThrow();
+																					}
+																		   })
+																.toList();
 		return _availableTimeSlotsForRange(securityContext,
 										   sch,locs,prefLocOid,
 										   numberOfAdjacentSlots,
@@ -196,7 +194,7 @@ public class AA14AppointmentsCalendarServicesDelegate
 													public AA14ScheduleID apply(final AA14Schedule sch) {
 														return sch.getId();
 													}
-	 									 }),
+	 									  }),
 				 year,monthOfYear,dayOfMonth,
 				 numberOfDays,
 				 slipDateRangeToFindFirstAvailableSlot);
@@ -210,7 +208,7 @@ public class AA14AppointmentsCalendarServicesDelegate
 			throw new IllegalArgumentException(Throwables.message("The provided year/month/day={}/{}/{} is NOT valid",
 																  year,monthOfYear,dayOfMonth));
 		
-		// mix all the day range time slots (the collection will contain the preferred schedule in the first place)
+		// order the schedules so the preferred one is always the first
 		Predicate<AA14Schedule> prefSchPredicate = new Predicate<AA14Schedule>() {
 															@Override
 															public boolean apply(final AA14Schedule sch) {
@@ -218,13 +216,18 @@ public class AA14AppointmentsCalendarServicesDelegate
 															}
 										   		   };
 		Collection<AA14Schedule> orderedSchedules = Lists.newArrayListWithExpectedSize(schs.size());
-		orderedSchedules.add(FluentIterable.from(schs)
-										   .firstMatch(prefSchPredicate)
-										   .orNull());
-		orderedSchedules.addAll(FluentIterable.from(schs)
-											  .filter(Predicates.not(prefSchPredicate))
-											  .toList());
-											  
+		AA14Schedule prefSch = FluentIterable.from(schs)
+										     .firstMatch(prefSchPredicate)
+										     .orNull();
+		if (prefSch != null) { 
+			orderedSchedules.add(prefSch);
+			orderedSchedules.addAll(FluentIterable.from(schs)
+												  .filter(Predicates.not(prefSchPredicate))
+												  .toList());
+		} else {
+			orderedSchedules = schs;
+		}
+		
 		// Get the day range time slots for every schedule
 		Collection<AA14DayRangeTimeSlots> schDayRangeTimeSlots = Lists.newArrayListWithExpectedSize(schs.size());
 		for (AA14Schedule sch : orderedSchedules) {
@@ -236,7 +239,7 @@ public class AA14AppointmentsCalendarServicesDelegate
 																						 slipDateRangeToFindFirstAvailableSlot);
 			schDayRangeTimeSlots.add(schLocDayRangeTimeSlots);
 		}
-		// mix all the day range time slots 		
+		// mix all the day range time slots (the collection will contain the preferred schedule in the first place)		
 		return _mixDayRangeTimeSlotsCol(year,monthOfYear,dayOfMonth,
 									    numberOfDays,
 										schDayRangeTimeSlots);
@@ -374,14 +377,14 @@ public class AA14AppointmentsCalendarServicesDelegate
 	 * @param numberOfDays number of days in the range
 	 * @param dayRangeTimeSlotsCol collection of available slots
 	 */
-	private AA14DayRangeTimeSlots _mixDayRangeTimeSlotsCol(final Year year,final MonthOfYear monthOfYear,final DayOfMonth dayOfMonth,
-												   		   final int numberOfDays,
-												   		   final Collection<AA14DayRangeTimeSlots> dayRangeTimeSlotsCol) {
+	private static AA14DayRangeTimeSlots _mixDayRangeTimeSlotsCol(final Year year,final MonthOfYear monthOfYear,final DayOfMonth dayOfMonth,
+												   		   		  final int numberOfDays,
+												   		   		  final Collection<AA14DayRangeTimeSlots> dayRangeTimeSlotsCol) {
 		// ensure all day range time slots have the SAME slot size
 		boolean allSameSlotSize = _sameSlotsSizeInMinutes(dayRangeTimeSlotsCol);
 		if (!allSameSlotSize) throw new IllegalStateException("The provided day range time slots do NOT have the SAME slot size in minutes!!!");
 		
-		// every dayRangeTimeSlots MUST have the same slot duration in minutest... so pick the slot size from any 
+		// every dayRangeTimeSlots MUST have the same slot duration in minutes... so pick the slot size from any 
 		int slotsSizeInMinutes = FluentIterable.from(dayRangeTimeSlotsCol)
 											   .first().orNull().getTimeSlotsSizeInMinutes();	
 		
@@ -430,7 +433,7 @@ public class AA14AppointmentsCalendarServicesDelegate
 	 * @param dayRangeTimeSlots
 	 * @return
 	 */
-	private boolean _sameSlotsSizeInMinutes(final Collection<AA14DayRangeTimeSlots> dayRangeTimeSlots) {
+	private static boolean _sameSlotsSizeInMinutes(final Collection<AA14DayRangeTimeSlots> dayRangeTimeSlots) {
 		boolean outSame = true;
 		int currSlotsSizeInMinutes = -1;
 		for (AA14DayRangeTimeSlots s : dayRangeTimeSlots) {

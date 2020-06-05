@@ -1,6 +1,6 @@
 <%@page import="aa14f.model.config.business.AA14BusinessConfigForBizilagun"%>
 <%--
-Selects the favourite location using the [security provile] data
+Selects the favourite location using the security data
 --%>
 <script>
 	// if the user has a favorite schid select this
@@ -23,7 +23,7 @@ Selects the favourite location using the [security provile] data
 		var locRadios = $('input:radio[name=serviceLocId]');
 	    if (locRadios.is(':checked') === false) {
 	        locRadios.filter('[value=<%=locId%>]').prop('checked',true);
-			$("input:radio[name='serviceLocId']:checked").trigger("click");
+	        $("input:radio[name='serviceLocId']:checked").trigger("click");
 	    }
 	    // triger the click event
 	   	pintarDatosLocalizacionById('<%=locId%>');
