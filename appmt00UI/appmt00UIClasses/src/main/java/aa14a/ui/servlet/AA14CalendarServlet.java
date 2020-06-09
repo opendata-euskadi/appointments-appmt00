@@ -8,6 +8,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.joda.time.LocalDate;
 
@@ -21,6 +22,8 @@ import aa14f.model.config.AA14Schedule;
 import aa14f.model.oids.AA14IDs.AA14ScheduleID;
 import aa14f.model.summaries.AA14SummarizedBookedSlot;
 import lombok.extern.slf4j.Slf4j;
+import r01f.ejie.xlnets.context.XLNetsAuthCtx;
+import r01f.ejie.xlnets.servlet.XLNetsAuthServletFilterBase;
 import r01f.locale.Language;
 import r01f.servlet.HttpRequestParamsWrapper;
 import r01f.types.Range;
@@ -65,6 +68,13 @@ public class AA14CalendarServlet
 	protected void doGet(final HttpServletRequest request,final HttpServletResponse response) throws ServletException, 
 																									 IOException {
 		if (_clientAPI == null) throw new IllegalStateException("Client API was NOT injected!!!");
+		
+		// check the user authentication
+		boolean isUserAuthenticated = _isUserAuthenticated(request);
+		if (!isUserAuthenticated) {
+			response.sendError(HttpServletResponse.SC_FORBIDDEN);
+			return;
+		}
 		
 		// get a request params wrapper that provides easier params access
 		HttpRequestParamsWrapper reqParams = new HttpRequestParamsWrapper(request);
@@ -174,4 +184,30 @@ public class AA14CalendarServlet
 		response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		response.flushBuffer();
     }
+/////////////////////////////////////////////////////////////////////////////////////////
+//	
+/////////////////////////////////////////////////////////////////////////////////////////
+	@SuppressWarnings("null")
+	private static boolean _isUserAuthenticated(final HttpServletRequest req) {
+		log.debug("check if the user is authenticated!");
+		XLNetsAuthCtx authCtx = null;
+		
+		// [1] - Try a request attribute
+		if (authCtx == null) {
+			authCtx = (XLNetsAuthCtx)req.getAttribute(XLNetsAuthServletFilterBase.AUTHCTX_REQUESTATTR);
+		}
+		
+		// [2] - Try the session
+		HttpSession ses = req.getSession(false);	// do not create a new session
+		if (authCtx == null
+		 && ses != null) {
+            authCtx = (XLNetsAuthCtx)ses.getAttribute(XLNetsAuthServletFilterBase.AUTHCTX_SESSIONATTR);
+
+            log.warn("Auth context is present in server session {}!",
+            		 ses.getId());
+        } else {
+            log.warn("NO auth context present in servers session");
+        }		
+		return authCtx != null;		// null if servers session is not used
+	}
 }
