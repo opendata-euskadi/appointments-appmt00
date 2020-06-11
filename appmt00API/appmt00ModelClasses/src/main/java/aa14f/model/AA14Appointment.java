@@ -23,6 +23,7 @@ import r01f.types.contact.ContactInfo;
 import r01f.types.contact.EMail;
 import r01f.types.contact.NIFPersonID;
 import r01f.types.contact.Person;
+import r01f.types.contact.Phone;
 import r01f.types.summary.Summary;
 import r01f.types.summary.SummaryBuilder;
 import r01f.util.types.Strings;
@@ -124,9 +125,22 @@ public class AA14Appointment
 		// [3] - If multiple mails, just return the first
 		return CollectionUtils.firstOf(_contactInfo.getMailAddresses());
 	}
-	public EMail getPersonLocatorEMailOrNull() {
-		EMail locEMail = this.getPersonLocatorEMail();
-		return locEMail != null ? locEMail : null;
+	/**
+	 * The phone to be used when computing the locator
+	 * @return
+	 */
+	public Phone getPersonLocatorPhone() {
+		if (_contactInfo == null || CollectionUtils.isNullOrEmpty(_contactInfo.getPhones())) return null;
+		
+		// [1] - Default phone
+		Phone defPhone = _contactInfo.getDefaultPhone();
+		if (defPhone != null) return defPhone;
+		
+		// [2] - If no default phone and just one phone, return that phone
+		if (_contactInfo.getPhones().size() == 1) return CollectionUtils.pickOneAndOnlyElement(_contactInfo.getPhones());
+		
+		// [3] - If multiple phone, just return the first
+		return CollectionUtils.firstOf(_contactInfo.getPhones());
 	}
 /////////////////////////////////////////////////////////////////////////////////////////
 //	SUMMARIES

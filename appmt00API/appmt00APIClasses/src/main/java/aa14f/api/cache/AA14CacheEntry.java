@@ -1,4 +1,4 @@
-package aa14f.client.api.sub;
+package aa14f.api.cache;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -8,8 +8,9 @@ import lombok.Getter;
 import lombok.experimental.Accessors;
 
 	@Accessors(prefix="_") 
-    class AA14CacheEntry
-implements Serializable {
+public class AA14CacheEntry
+  implements Serializable {
+		
 	private static final long serialVersionUID = -3077860130764155886L;
 /////////////////////////////////////////////////////////////////////////////////////////
 //	

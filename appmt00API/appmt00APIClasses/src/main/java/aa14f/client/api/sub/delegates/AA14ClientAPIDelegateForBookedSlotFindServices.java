@@ -21,6 +21,7 @@ import aa14f.model.oids.AA14OIDs.AA14PeriodicSlotSerieOID;
 import aa14f.model.oids.AA14OIDs.AA14ScheduleOID;
 import aa14f.model.oids.AA14OIDs.AA14SlotOID;
 import aa14f.model.search.AA14AppointmentFilter;
+import aa14f.model.search.AA14BookedSlotFilter;
 import aa14f.model.summaries.AA14SummarizedAppointment;
 import aa14f.model.summaries.AA14SummarizedBookedSlot;
 import lombok.extern.slf4j.Slf4j;
@@ -556,6 +557,21 @@ public class AA14ClientAPIDelegateForBookedSlotFindServices
 																 dateRange);
 		return this.findAppointmentsBy(filter,
 									   lang);
+	}
+/////////////////////////////////////////////////////////////////////////////////////////
+//  FIND BOOKED SLOTS
+/////////////////////////////////////////////////////////////////////////////////////////
+	/**
+	 * Returns the oids of the {@link AA14BookedSlot} matching the given filter
+	 * @param lang
+	 * @param personId
+	 * @return summarized appointment collection
+	 */
+	public Collection<AA14SlotOID> findBookedSlotsBy(final AA14BookedSlotFilter filter) {
+		FindOIDsResult<AA14SlotOID> findResult = this.getServiceProxyAs(AA14FindServicesForBookedSlot.class)
+														  .findBookedSlotsBy(this.getSecurityContext(), 
+																  			 filter);
+		return findResult.getOrThrow();
 	}
 /////////////////////////////////////////////////////////////////////////////////////////
 //  

@@ -8,6 +8,7 @@ import javax.inject.Singleton;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
+import aa14f.api.cache.AA14BusinessConfigCache;
 import aa14f.api.interfaces.AA14BusinessConfigServices;
 import aa14f.api.interfaces.AA14NotifierServices;
 import aa14f.api.interfaces.AA14PersonLocatorServices;
@@ -96,6 +97,7 @@ public class AA14ClientAPI
 	@Inject @SuppressWarnings("rawtypes")
 	public AA14ClientAPI(						 final Provider<SecurityContext> securityContextProvider,
 						 @ModelObjectsMarshaller final Marshaller modelObjectsMarshaller,
+						 						 final AA14BusinessConfigCache configCache,
 					     @Named(AA14AppCodes.API_APPCODE_STR) final Map<Class,ServiceInterface> srvcIfaceMappings) {	// comes from injection
 		// Services proxy
 		super(securityContextProvider,
@@ -105,7 +107,8 @@ public class AA14ClientAPI
 		// Build every sub-api
 		_configAPI = new AA14ClientAPIForBusinessConfigs(securityContextProvider,
 														 modelObjectsMarshaller, 
-														 this.getServiceInterfaceCoreImplOrProxy(AA14BusinessConfigServices.class));
+														 this.getServiceInterfaceCoreImplOrProxy(AA14BusinessConfigServices.class),
+														 configCache);
 		_organizationsAPI = new AA14ClientAPIForOrganizations(securityContextProvider,
 															  modelObjectsMarshaller,
 															  srvcIfaceMappings);						    

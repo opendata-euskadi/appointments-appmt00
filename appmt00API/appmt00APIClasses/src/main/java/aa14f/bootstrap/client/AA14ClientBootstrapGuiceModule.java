@@ -1,8 +1,11 @@
 package aa14f.bootstrap.client;
 
+import javax.inject.Singleton;
+
 import com.google.inject.Binder;
 import com.google.inject.Provides;
 
+import aa14f.api.cache.AA14BusinessConfigCache;
 import aa14f.api.context.AA14MockSecurityContextProvider;
 import aa14f.common.internal.AA14AppCodes;
 import lombok.EqualsAndHashCode;
@@ -34,6 +37,10 @@ public class AA14ClientBootstrapGuiceModule
 	public void configureMoreBindings(final Binder binder) {
 		_bindModelObjectsMarshaller(binder);
 		_bindModelObjectExtensionsModule(binder);
+		
+		// bind config cache
+		binder.bind(AA14BusinessConfigCache.class)
+			  .in(Singleton.class);
 	}
 /////////////////////////////////////////////////////////////////////////////////////////
 //  USER CONTEXT PROVIDERS

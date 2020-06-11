@@ -23,6 +23,7 @@ import aa14f.model.oids.AA14OIDs.AA14PeriodicSlotSerieOID;
 import aa14f.model.oids.AA14OIDs.AA14ScheduleOID;
 import aa14f.model.oids.AA14OIDs.AA14SlotOID;
 import aa14f.model.search.AA14AppointmentFilter;
+import aa14f.model.search.AA14BookedSlotFilter;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import r01f.bootstrap.services.config.core.ServicesCoreBootstrapConfigWhenBeanExposed;
@@ -174,7 +175,7 @@ public class AA14FindServicesImplForBookedSlots
 											   	     		 dateRange);
 	}
 /////////////////////////////////////////////////////////////////////////////////////////
-//  BY CUSTOMER
+//  BOOKED SLOTS
 /////////////////////////////////////////////////////////////////////////////////////////
 	@Override
 	public FindSummariesResult<AA14Appointment> findAppointmentsBy(final SecurityContext securityContext,
@@ -185,6 +186,14 @@ public class AA14FindServicesImplForBookedSlots
 						   .findAppointmentsBy(securityContext,
 								   		       filter,
 								   		       lang);
+	}
+	@Override
+	public FindOIDsResult<AA14SlotOID> findBookedSlotsBy(final SecurityContext securityContext,
+														 final AA14BookedSlotFilter filter) {
+		return this.forSecurityContext(securityContext)
+						.createDelegateAs(AA14FindServicesForBookedSlot.class)
+						   .findBookedSlotsBy(securityContext,
+								   		      filter);
 	}
 /////////////////////////////////////////////////////////////////////////////////////////
 //  

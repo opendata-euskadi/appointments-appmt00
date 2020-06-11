@@ -8,6 +8,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.Tuple;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaBuilder.In;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
@@ -29,12 +30,17 @@ import aa14f.model.AA14Appointment;
 import aa14f.model.AA14BookedSlot;
 import aa14f.model.AA14BookedSlotType;
 import aa14f.model.AA14NonBookableSlot;
+import aa14f.model.oids.AA14IDs.AA14OrgDivisionID;
+import aa14f.model.oids.AA14IDs.AA14OrgDivisionServiceID;
+import aa14f.model.oids.AA14IDs.AA14OrgDivisionServiceLocationID;
+import aa14f.model.oids.AA14IDs.AA14OrganizationID;
 import aa14f.model.oids.AA14IDs.AA14SlotID;
 import aa14f.model.oids.AA14OIDs.AA14OrgDivisionServiceLocationOID;
 import aa14f.model.oids.AA14OIDs.AA14PeriodicSlotSerieOID;
 import aa14f.model.oids.AA14OIDs.AA14ScheduleOID;
 import aa14f.model.oids.AA14OIDs.AA14SlotOID;
 import aa14f.model.search.AA14AppointmentFilter;
+import aa14f.model.search.AA14BookedSlotFilter;
 import aa14f.model.summaries.AA14SummarizedAppointment;
 import aa14f.model.summaries.AA14SummarizedBookedSlot;
 import lombok.extern.slf4j.Slf4j;
@@ -346,13 +352,13 @@ public class AA14DBFindForBookedSlot
 		return namedQuery;
 	}
 /////////////////////////////////////////////////////////////////////////////////////////
-//  BY CUSTOMER
+//  APPOINTMENTS
 /////////////////////////////////////////////////////////////////////////////////////////
 	@Override
 	public FindSummariesResult<AA14Appointment> findAppointmentsBy(final SecurityContext securityContext,
 																   final AA14AppointmentFilter filter,
 																   final Language lang) {
-		log.debug("> loading appointments' summaries > {}", 
+		log.debug("> finding appointments' summaries > {}", 
 				  filter.debugInfo());
 		
 		// [1] - Do the query			
@@ -370,6 +376,34 @@ public class AA14DBFindForBookedSlot
 														 																   lang));
 		// [3] - Return
 		return outSummaries;
+	}
+/////////////////////////////////////////////////////////////////////////////////////////
+//	BOOKED SLOTS
+/////////////////////////////////////////////////////////////////////////////////////////	
+	@Override
+	public FindOIDsResult<AA14SlotOID> findBookedSlotsBy(final SecurityContext securityContext,
+														 final AA14BookedSlotFilter filter) {
+		log.debug("> findig booked slots oids > {}", 
+				  filter.debugInfo());
+		// [1] - Do the query			
+		TypedQuery<AA14DBEntityForBookedSlotBase> qry = _entityManager.createQuery(_createCriteriaQuery(filter));
+		qry.setHint(QueryHints.READ_ONLY,HintValues.TRUE);
+		Collection<AA14DBEntityForBookedSlotBase> dbEntities = qry.getResultList();
+		log.debug("> ...found {} slots",dbEntities.size());
+		
+		// [2] - Transform to summarized model objects
+		FindOIDsResult<AA14SlotOID> outOids = null; 
+		outOids = FindOIDsResultBuilder.using(securityContext)
+									   .on(AA14Appointment.class)			// beware the trick!!! it's not _modelObjectType
+									   .foundDBEntities(dbEntities,
+											   			new Function<AA14DBEntityForBookedSlotBase,AA14SlotOID>() {
+																@Override
+																public AA14SlotOID apply(final AA14DBEntityForBookedSlotBase dbEntity) {
+																	return AA14SlotOID.forId(dbEntity.getOid());
+																}
+									   					});
+		// [3] - Return
+		return outOids;
 	}
 /////////////////////////////////////////////////////////////////////////////////////////
 //  
@@ -496,17 +530,19 @@ public class AA14DBFindForBookedSlot
 																		.createQuery(AA14DBEntityForAppointment.class); 
 		Root<AA14DBEntityForAppointment> appointment = crQry.from(AA14DBEntityForAppointment.class);
 		
-		// Service & location
-		if (filter.getServiceId() != null) {
-			predicateList.add(crBldr.equal(appointment.get("_orgDivisionServiceId"), 
-							  filter.getServiceId().asString())); 
-		}
-		if (filter.getServiceLocationId() != null) {
-			predicateList.add(crBldr.equal(appointment.get("_orgDivisionServiceLocationId"), 
-							  filter.getServiceLocationId().asString())); 
-		}
+		// Organization & Division & Service & location
+		Collection<Predicate> organizationalPredicates = _buildOrganizationalPredicates(crBldr,
+																						 appointment,
+																						 null,null,filter.getServiceId(),filter.getServiceLocationId());
+		if (CollectionUtils.hasData(organizationalPredicates)) predicateList.addAll(organizationalPredicates);
 		
-		// Person
+		// Date Range
+		Collection<Predicate> dateRangePredicates = _buildDateRangePredicates(crBldr,
+																			 appointment,
+																			 filter.getDateRange());
+		if (CollectionUtils.hasData(dateRangePredicates)) predicateList.addAll(dateRangePredicates);
+		
+		// Person & locator
 		if (filter.getPersonLocatorId() != null) {
 			predicateList.add(crBldr.equal(crBldr.upper(appointment.get("_personLocatorId").as(String.class)), 
 							  crBldr.upper(crBldr.literal(filter.getPersonLocatorId().asString()))));
@@ -522,27 +558,6 @@ public class AA14DBFindForBookedSlot
 							  crBldr.upper(crBldr.literal(filter.getSubjectId().asString()))));
 		}
 		
-		// Date Range
-		if (filter.getDateRange() != null) {
-			Range<Date> dateRange = filter.getDateRange();
-			if (dateRange.hasLowerBound() && dateRange.hasUpperBound()) {
-				predicateList.add(_entityManager.getCriteriaBuilder()
-						.between(appointment.get("_startDate").as(java.sql.Date.class), 
-								 dateRange.getLowerBound(),
-								 dateRange.getUpperBound()));
-			}
-			else if (dateRange.hasLowerBound() && !dateRange.hasUpperBound()) {
-				predicateList.add(_entityManager.getCriteriaBuilder()
-						.greaterThanOrEqualTo(appointment.get("_startDate").as(java.sql.Date.class), 
-											  dateRange.getLowerBound()));
-			}
-			else{
-				predicateList.add(_entityManager.getCriteriaBuilder()
-						.lessThanOrEqualTo(appointment.get("_startDate").as(java.sql.Date.class), 
-											  dateRange.getUpperBound()));
-			}
-		}
-		
 		// compose the query
 		crQry.select(appointment);
 		if (CollectionUtils.hasData(predicateList)) {
@@ -552,5 +567,110 @@ public class AA14DBFindForBookedSlot
 		// order 
 		crQry.orderBy(_entityManager.getCriteriaBuilder().asc(appointment.get("_startDate").as(java.sql.Date.class)));
 		return crQry;
+	}
+	/**
+	 * Builds a query with different criteria to be used in find methods that filters by two dates for the start date
+	 * Null parameters will not be included in the where clause but its expected to be
+	 * able to include at least the dateRange as a condition
+	 * @param personId	person id. Optional
+	 * @param subjectId subject id. Optional
+	 * @param dateRange date range filter. Must not be null
+	 * @return query with the specified criteria
+	 * @throws IllegalArgumentException if dateRange is null
+	 */
+	private CriteriaQuery<AA14DBEntityForBookedSlotBase> _createCriteriaQuery(final AA14BookedSlotFilter filter) {
+		CriteriaBuilder crBldr = _entityManager.getCriteriaBuilder();
+		
+		// create the predicates
+		Collection<Predicate> predicateList = Lists.newArrayListWithExpectedSize(3);
+		CriteriaQuery<AA14DBEntityForBookedSlotBase> crQry = _entityManager.getCriteriaBuilder()
+																		   .createQuery(AA14DBEntityForBookedSlotBase.class); 
+		Root<AA14DBEntityForBookedSlotBase> slot = crQry.from(AA14DBEntityForBookedSlotBase.class);
+		
+		// Organization & Division & Service & location
+		Collection<Predicate> organizationalPredicates = _buildOrganizationalPredicates(crBldr,
+																						slot,
+																						filter.getOrganizationId(),filter.getDivisionId(),filter.getServiceId(),filter.getServiceLocationId());
+		if (CollectionUtils.hasData(organizationalPredicates)) predicateList.addAll(organizationalPredicates);
+		
+		// Date Range
+		Collection<Predicate> dateRangePredicates = _buildDateRangePredicates(crBldr,
+																			  slot,
+																			  filter.getDateRange());
+		if (CollectionUtils.hasData(dateRangePredicates)) predicateList.addAll(dateRangePredicates);
+		
+		// slot type
+		In<AA14BookedSlotType> inPredicate = _buildSlotTypePredicate(crBldr,
+																	 slot,
+																	 filter.getBookedSlotTypes());
+		if (inPredicate != null) predicateList.add(inPredicate);
+		
+		// compose the query
+		crQry.select(slot);
+		if (CollectionUtils.hasData(predicateList)) {
+			Predicate[] wherePredicateArray = predicateList.toArray(new Predicate[predicateList.size()]);
+			crQry.where(wherePredicateArray);
+		}
+		// order 
+		crQry.orderBy(_entityManager.getCriteriaBuilder().asc(slot.get("_startDate").as(java.sql.Date.class)));
+		return crQry;
+	}
+/////////////////////////////////////////////////////////////////////////////////////////
+//	
+/////////////////////////////////////////////////////////////////////////////////////////
+	private static <DB extends AA14DBEntityForBookedSlotBase> Collection<Predicate> _buildOrganizationalPredicates(final CriteriaBuilder crBldr,
+																  											 	   final Root<DB> root,
+																  											 	   final AA14OrganizationID orgId,final AA14OrgDivisionID divId,final AA14OrgDivisionServiceID srvcId,final AA14OrgDivisionServiceLocationID locId) {
+		Collection<Predicate> predicateList = Lists.newArrayList();
+		
+		if (orgId != null) {
+			predicateList.add(crBldr.equal(root.get("_organizationId"), 
+							  orgId.asString()));			
+		}
+		if (divId != null) {
+			predicateList.add(crBldr.equal(root.get("_orgDivisionId"), 
+							  divId.asString()));			
+		}
+		if (srvcId != null) {
+			predicateList.add(crBldr.equal(root.get("_orgDivisionServiceId"), 
+							  srvcId.asString())); 
+		}
+		if (locId != null) {
+			predicateList.add(crBldr.equal(root.get("_orgDivisionServiceLocationId"), 
+							  locId.asString())); 
+		}
+		return predicateList;
+	}
+	private static <DB extends AA14DBEntityForBookedSlotBase> Collection<Predicate> _buildDateRangePredicates(final CriteriaBuilder crBldr,
+																  											  final Root<DB> root,
+																  											  final Range<Date> dateRange) {
+		if (dateRange == null) return null;
+		Collection<Predicate> predicateList = Lists.newArrayList();
+		
+		if (dateRange.hasLowerBound() && dateRange.hasUpperBound()) {
+			predicateList.add(crBldr.between(root.get("_startDate").as(java.sql.Date.class), 
+											 dateRange.getLowerBound(),
+											 dateRange.getUpperBound()));
+		}
+		else if (dateRange.hasLowerBound() && !dateRange.hasUpperBound()) {
+			predicateList.add(crBldr.greaterThanOrEqualTo(root.get("_startDate").as(java.sql.Date.class), 
+										  				  dateRange.getLowerBound()));
+		}
+		else {
+			predicateList.add(crBldr.lessThanOrEqualTo(root.get("_startDate").as(java.sql.Date.class), 
+										  			   dateRange.getUpperBound()));
+		}
+		return predicateList;
+	}
+	private static <DB extends AA14DBEntityForBookedSlotBase> In<AA14BookedSlotType> _buildSlotTypePredicate(final CriteriaBuilder crBldr,
+																  											 final Root<DB> root,
+																  											 final Collection<AA14BookedSlotType> slotTypes) {
+		if (slotTypes == null) return null;
+		
+		In<AA14BookedSlotType> in = crBldr.in(root.get("_type").as(AA14BookedSlotType.class));
+		for (AA14BookedSlotType type : slotTypes) {
+			in.value(type);
+		}
+		return in;
 	}
 }

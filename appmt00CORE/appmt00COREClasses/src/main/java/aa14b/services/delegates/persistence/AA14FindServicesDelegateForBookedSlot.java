@@ -19,6 +19,7 @@ import aa14f.model.oids.AA14OIDs.AA14PeriodicSlotSerieOID;
 import aa14f.model.oids.AA14OIDs.AA14ScheduleOID;
 import aa14f.model.oids.AA14OIDs.AA14SlotOID;
 import aa14f.model.search.AA14AppointmentFilter;
+import aa14f.model.search.AA14BookedSlotFilter;
 import r01f.bootstrap.services.config.core.ServicesCoreBootstrapConfigWhenBeanExposed;
 import r01f.locale.Language;
 import r01f.model.persistence.FindOIDsResult;
@@ -179,16 +180,26 @@ public class AA14FindServicesDelegateForBookedSlot
 										         		 dateRange);
 	}
 /////////////////////////////////////////////////////////////////////////////////////////
-//  BY CUSTOMER / SUBJECT
+//  BOOKED SLOTS
 /////////////////////////////////////////////////////////////////////////////////////////	
 	@Override
 	public FindSummariesResult<AA14Appointment> findAppointmentsBy(final SecurityContext securityContext,
 																   final AA14AppointmentFilter filter,
 																   final Language lang) {
+		if (filter == null) throw new IllegalArgumentException("appointment filter is mandatory!");
+		Language theLang = lang != null ? lang : Language.DEFAULT;
 		return this.getServiceImplAs(AA14FindServicesForBookedSlot.class)
 				   .findAppointmentsBy(securityContext,
 						   		      filter,
-						   		      lang);
+						   		      theLang);
+	}
+	@Override
+	public FindOIDsResult<AA14SlotOID> findBookedSlotsBy(final SecurityContext securityContext,
+														 final AA14BookedSlotFilter filter) {
+		if (filter == null) throw new IllegalArgumentException("slot filter is mandatory!");
+		return this.getServiceImplAs(AA14FindServicesForBookedSlot.class)
+				   .findBookedSlotsBy(securityContext,
+						   		      filter);
 	}
 /////////////////////////////////////////////////////////////////////////////////////////
 //  

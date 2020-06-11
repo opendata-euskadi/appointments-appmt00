@@ -16,6 +16,7 @@ import aa14f.model.oids.AA14OIDs.AA14PeriodicSlotSerieOID;
 import aa14f.model.oids.AA14OIDs.AA14ScheduleOID;
 import aa14f.model.oids.AA14OIDs.AA14SlotOID;
 import aa14f.model.search.AA14AppointmentFilter;
+import aa14f.model.search.AA14BookedSlotFilter;
 import r01f.locale.Language;
 import r01f.model.annotations.ModelObjectsMarshaller;
 import r01f.model.persistence.FindOIDsResult;
@@ -113,6 +114,11 @@ public class AA14RESTFindServicesProxyForBookedSlot
 	public FindSummariesResult<AA14Appointment> findAppointmentsBy(final SecurityContext securityContext,
 																   final AA14AppointmentFilter filter,
 																   final Language lang) {
+		throw new UnsupportedOperationException("Not yet implemented!");			// TODO finish!
+	}
+	@Override
+	public FindOIDsResult<AA14SlotOID> findBookedSlotsBy(final SecurityContext securityContext,
+														 final AA14BookedSlotFilter filter) {
 		throw new UnsupportedOperationException("Not yet implemented!");			// TODO finish!
 	}
 /////////////////////////////////////////////////////////////////////////////////////////

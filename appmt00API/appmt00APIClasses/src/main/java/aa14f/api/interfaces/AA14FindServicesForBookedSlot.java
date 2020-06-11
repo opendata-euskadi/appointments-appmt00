@@ -12,6 +12,7 @@ import aa14f.model.oids.AA14OIDs.AA14PeriodicSlotSerieOID;
 import aa14f.model.oids.AA14OIDs.AA14ScheduleOID;
 import aa14f.model.oids.AA14OIDs.AA14SlotOID;
 import aa14f.model.search.AA14AppointmentFilter;
+import aa14f.model.search.AA14BookedSlotFilter;
 import r01f.locale.Language;
 import r01f.model.persistence.FindOIDsResult;
 import r01f.model.persistence.FindResult;
@@ -140,6 +141,14 @@ public interface AA14FindServicesForBookedSlot
 	public FindSummariesResult<AA14Appointment> findAppointmentsBy(final SecurityContext securityContext,
 																   final AA14AppointmentFilter filter,
 																   final Language lang);
+	/**
+	 * Returns the oids of the [booked slots] matching the given filter
+	 * @param securityContext
+	 * @param filter
+	 * @return
+	 */
+	public FindOIDsResult<AA14SlotOID> findBookedSlotsBy(final SecurityContext securityContext,
+														 final AA14BookedSlotFilter filter);
 /////////////////////////////////////////////////////////////////////////////////////////
 //  
 /////////////////////////////////////////////////////////////////////////////////////////

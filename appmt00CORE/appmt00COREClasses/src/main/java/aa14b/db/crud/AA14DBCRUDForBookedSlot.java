@@ -121,7 +121,7 @@ public class AA14DBCRUDForBookedSlot
 			// person
 			dbAppointment.setPersonId(appointment.getPerson().getId() != null ? appointment.getPerson().getId().asString() 
 																		 	  : null);
-			EMail contactEMail = appointment.getPersonLocatorEMailOrNull();
+			EMail contactEMail = appointment.getPersonLocatorEMail();
 			dbAppointment.setContactEMail(contactEMail != null ? contactEMail.asString() : null);
 			dbAppointment.setPersonLocatorId(appointment.getPersonLocatorId() != null ? appointment.getPersonLocatorId().asString()
 																				  	  : null);
