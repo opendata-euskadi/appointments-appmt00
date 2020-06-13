@@ -72,11 +72,13 @@ public class AA14BookedSlotSummarizerService {
 		// Complete data 
 		AA14Schedule sch = _configCache.getBusinessConfig()
 									   .getScheduleFor(appointment.getScheduleOid());
+		if (sch == null) throw new IllegalStateException("Could NOT find schedule oid=" + appointment.getScheduleOid());
 		outSummary.setSchedule(sch.getSummarizedIn(prefLang));
 		
 		AA14SummarizedOrgHierarchy orgInfo = _configCache.getBusinessConfig()
 														 .getSummarizedOrgHierarchyFor(appointment.getOrgDivisionServiceLocationOid(),
 																					   prefLang);
+		if (orgInfo == null) throw new IllegalStateException("Could NOT find org hierarchy for location=" + appointment.getOrgDivisionServiceLocationOid());
 		_setOrgData(orgInfo,
 					outSummary,
 					prefLang);
@@ -103,11 +105,14 @@ public class AA14BookedSlotSummarizerService {
 		// Complete the data
 		AA14Schedule sch = _configCache.getBusinessConfig()
 									   .getScheduleFor(slot.getScheduleOid());
+		if (sch == null) throw new IllegalStateException("Could NOT find schedule oid=" + slot.getScheduleOid());
 		outSummary.setSchedule(sch.getSummarizedIn(lang));
 		
-		AA14SummarizedOrgHierarchy orgInfo = _configCache.getBusinessConfig()
-														 .getSummarizedOrgHierarchyFor(slot.getOrgDivisionServiceLocationOid(),
-																					   lang);
+		AA14SummarizedOrgHierarchy orgInfo = slot.getOrgDivisionServiceLocationOid() != null 
+													? _configCache.getBusinessConfig()
+																  .getSummarizedOrgHierarchyFor(slot.getOrgDivisionServiceLocationOid(),
+																					   			lang)
+													: null;		// only appointments have location info: [non-bookable-slots] do NOT have org info
 		_setOrgData(orgInfo,
 					outSummary,
 					lang);
@@ -138,7 +143,9 @@ public class AA14BookedSlotSummarizerService {
 /////////////////////////////////////////////////////////////////////////////////////////
 	private static void _setOrgData(final AA14SummarizedOrgHierarchy hierarchy,
 						   	 		final AA14SummarizedBookedSlotBase<?,?> summary,
-						   	 		final Language prefLang) {		
+						   	 		final Language prefLang) {	
+		if (hierarchy == null) return;		// non-bookable-slots DO NOT have org data (just schedule info)
+		
 		// only appointments have hierarchy (non-bookable slots only have schedule)
 		if (hierarchy.getLocation() != null) summary.setLocation(hierarchy.getLocation());
 		if (hierarchy.getService() != null) summary.setService(hierarchy.getService());

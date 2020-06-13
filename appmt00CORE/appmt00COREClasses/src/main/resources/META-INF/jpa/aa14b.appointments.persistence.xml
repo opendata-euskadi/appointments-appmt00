@@ -22,6 +22,8 @@
 		<class>aa14b.db.entities.AA14DBEntityForOrgDivisionServiceLocation</class>
 		
 		<class>aa14b.db.entities.AA14DBEntityForSchedule</class>
+		
+		<class>aa14b.db.entities.AA14DBEntityForManyToManyBetweenOrgDivisionServiceLocationAndSchedule</class>
 
 		<class>aa14b.db.entities.AA14DBEntityForBookedSlotBase</class>		
 		<class>aa14b.db.entities.AA14DBEntityForAppointment</class>

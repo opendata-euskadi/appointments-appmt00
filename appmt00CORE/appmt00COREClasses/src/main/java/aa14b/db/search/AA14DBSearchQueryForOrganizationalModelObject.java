@@ -16,7 +16,7 @@ import aa14f.model.config.AA14OrgDivision;
 import aa14f.model.config.AA14OrgDivisionService;
 import aa14f.model.config.AA14OrgDivisionServiceLocation;
 import aa14f.model.config.AA14Organization;
-import aa14f.model.search.AA14SearchFilter;
+import aa14f.model.search.AA14SearchFilterForOrganizationalEntity;
 import lombok.extern.slf4j.Slf4j;
 import r01f.locale.Language;
 import r01f.model.metadata.FieldID;
@@ -34,7 +34,7 @@ import r01f.util.types.collections.CollectionUtils;
 
 @Slf4j
 public class AA14DBSearchQueryForOrganizationalModelObject 
-	 extends DBSearchQuery<AA14SearchFilter,
+	 extends DBSearchQuery<AA14SearchFilterForOrganizationalEntity,
 	 					   AA14DBEntityForOrganizationalEntityBase> {
 /////////////////////////////////////////////////////////////////////////////////////////
 //  
@@ -57,9 +57,9 @@ public class AA14DBSearchQueryForOrganizationalModelObject
 	 * An indexable field id to db entity field name translator
 	 */
 	private static class AA14IndexableFieldIDToDBEntityFieldTranslator
-		         extends IndexableFieldIDToDBEntityFieldTranslatorByDefault<AA14SearchFilter> {
+		         extends IndexableFieldIDToDBEntityFieldTranslatorByDefault<AA14SearchFilterForOrganizationalEntity> {
 		
-		public AA14IndexableFieldIDToDBEntityFieldTranslator(final AA14SearchFilter filter) {
+		public AA14IndexableFieldIDToDBEntityFieldTranslator(final AA14SearchFilterForOrganizationalEntity filter) {
 			super(filter);
 		}
 		@Override
@@ -84,7 +84,7 @@ public class AA14DBSearchQueryForOrganizationalModelObject
 //  JPQL QUERY COMPOSING
 /////////////////////////////////////////////////////////////////////////////////////////
 	private static class AA14DBSearchQueryToJPQLTranslator 
-			     extends DBSearchQueryToJPQLTranslator<AA14SearchFilter,
+			     extends DBSearchQueryToJPQLTranslator<AA14SearchFilterForOrganizationalEntity,
 	 					   							   AA14DBEntityForOrganizationalEntityBase> {
 		public AA14DBSearchQueryToJPQLTranslator(final Class<AA14DBEntityForOrganizationalEntityBase> dbEntityType,
 												 final DBModuleConfig dbModuleConfig, 
@@ -94,7 +94,7 @@ public class AA14DBSearchQueryForOrganizationalModelObject
 				  entityManager);
 		}
 		@Override
-		protected String _composeWhereJpqlPredicates(final AA14SearchFilter filter,
+		protected String _composeWhereJpqlPredicates(final AA14SearchFilterForOrganizationalEntity filter,
 													 final TranslatesSearchFilterClauseToJPQLWherePredicate filterClauseToJpqlPredicate) {
 			// [1] - Compose the list of entities to filter
 			Collection<String> filteredDBEntities = null;
@@ -158,12 +158,12 @@ public class AA14DBSearchQueryForOrganizationalModelObject
 			return jpql.toString();
 		}
 		@Override
-		public void setJPAQueryParameters(final AA14SearchFilter filter,final Query qry) {
+		public void setJPAQueryParameters(final AA14SearchFilterForOrganizationalEntity filter,final Query qry) {
 			if (filter.getOrganizationOid() != null) qry.setParameter("orgOid",filter.getOrganizationOid().asString());
 			if (filter.getOrgDivisionOid() != null)  qry.setParameter("locOid",filter.getOrgDivisionOid().asString());
 		}
 		@Override
-		protected String _composeJpqlOrderByClause(final AA14SearchFilter filter,
+		protected String _composeJpqlOrderByClause(final AA14SearchFilterForOrganizationalEntity filter,
 												   final Collection<SearchResultsOrdering> ordering,
 												   final TranslatesIndexableFieldIDToDBEntityField translatesFieldToDBEntityField) {
 			// order by _hierarchyLevel & name

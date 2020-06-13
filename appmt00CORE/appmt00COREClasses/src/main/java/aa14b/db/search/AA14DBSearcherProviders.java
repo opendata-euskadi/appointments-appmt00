@@ -7,7 +7,8 @@ import javax.persistence.EntityManager;
 
 import com.google.inject.TypeLiteral;
 
-import aa14f.model.search.AA14SearchFilter;
+import aa14f.api.cache.AA14BusinessConfigCache;
+import aa14f.model.search.AA14SearchFilterForOrganizationalEntity;
 import aa14f.model.search.AA14SearchResultItemForOrganizationalEntity;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -22,8 +23,9 @@ import r01f.persistence.search.Searcher;
 import r01f.persistence.search.SearcherProvider;
 import r01f.persistence.search.db.DBSearcherProviderBase;
 
+
 @NoArgsConstructor(access=AccessLevel.PRIVATE)
-public abstract class AA14DBSearcherProviderForOrganizationalEntity {
+public abstract class AA14DBSearcherProviders {
 /////////////////////////////////////////////////////////////////////////////////////////
 //	
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -44,25 +46,32 @@ public abstract class AA14DBSearcherProviderForOrganizationalEntity {
 /////////////////////////////////////////////////////////////////////////////////////////
 	@Singleton
 	@Accessors(prefix="_")
-	public static class AA14DBSearcherProvider
-	            extends AA14DBSearcherProviderBase<AA14SearchFilter,AA14SearchResultItemForOrganizationalEntity> {
+	public static class AA14DBSearcherProviderForOrganizationalEntity
+		        extends DBSearcherProviderBase<AA14SearchFilterForOrganizationalEntity,AA14SearchResultItemForOrganizationalEntity> {
+
+		private final AA14BusinessConfigCache _configCache;
+
 		@Inject
-		public AA14DBSearcherProvider(@ModelObjectsMarshaller final Marshaller marshaller,
-															  final DBModuleConfig dbModuleConfig,
-															  final Provider<EntityManager> entityManagerProvider) {
+		public AA14DBSearcherProviderForOrganizationalEntity( 	 final DBModuleConfig dbModuleConfig,
+																 final Provider<EntityManager> entityManagerProvider,
+										 @ModelObjectsMarshaller final Marshaller marshaller,
+																 // CRUD services
+																 final AA14BusinessConfigCache configCache) {
 			super(marshaller,
 				  dbModuleConfig,
 				  entityManagerProvider);
+			_configCache = configCache;
 		}
 		@Override
-		public Searcher<AA14SearchFilter,AA14SearchResultItemForOrganizationalEntity> get() {
+		public Searcher<AA14SearchFilterForOrganizationalEntity,AA14SearchResultItemForOrganizationalEntity> get() {
 			return new AA14DBSearcherForOrganizationalEntityModelObject(_dbModuleConfig,
-														  				_entityManagerProvider.get(),
-														  				_marshaller);
+																		_entityManagerProvider.get(),
+																		_marshaller,
+																		_configCache);
 		}
-		public static SearcherProviderBinding<AA14SearchFilter,AA14SearchResultItemForOrganizationalEntity> createGuiceBinding() {
-			return SearcherProviderBinding.of(new TypeLiteral<SearcherProvider<AA14SearchFilter,AA14SearchResultItemForOrganizationalEntity>>() { /* nothing */ },
-											  AA14DBSearcherProvider.class);
+		public static SearcherProviderBinding<AA14SearchFilterForOrganizationalEntity,AA14SearchResultItemForOrganizationalEntity> createGuiceBinding() {
+			return SearcherProviderBinding.of(new TypeLiteral<SearcherProvider<AA14SearchFilterForOrganizationalEntity,AA14SearchResultItemForOrganizationalEntity>>() { /* nothing */ },
+											  AA14DBSearcherProviderForOrganizationalEntity.class);
 		}
 	}
 }

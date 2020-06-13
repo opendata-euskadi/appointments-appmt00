@@ -5,10 +5,10 @@ import javax.inject.Singleton;
 
 import com.google.common.eventbus.EventBus;
 
-import aa14b.db.search.AA14DBSearcherProviderForOrganizationalEntity.AA14DBSearcherProvider;
+import aa14b.db.search.AA14DBSearcherProviders.AA14DBSearcherProviderForOrganizationalEntity;
 import aa14b.services.delegates.search.AA14SearchServicesDelegate;
 import aa14f.api.interfaces.AA14SearchServices;
-import aa14f.model.search.AA14SearchFilter;
+import aa14f.model.search.AA14SearchFilterForOrganizationalEntity;
 import aa14f.model.search.AA14SearchResultItemForOrganizationalEntity;
 import lombok.Getter;
 import lombok.experimental.Accessors;
@@ -26,7 +26,7 @@ import r01f.services.persistence.ServiceDelegateProvider;
 @Singleton
 @Accessors(prefix="_")
 public class AA14SearchServicesImpl 
-     extends CoreSearchServicesForModelObjectBase<AA14SearchFilter,AA14SearchResultItemForOrganizationalEntity>					  
+     extends CoreSearchServicesForModelObjectBase<AA14SearchFilterForOrganizationalEntity,AA14SearchResultItemForOrganizationalEntity>					  
   implements AA14SearchServices,
   			 AA14ServiceInterfaceImpl {
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -40,7 +40,7 @@ public class AA14SearchServicesImpl
 	public AA14SearchServicesImpl(							final ServicesCoreBootstrapConfigWhenBeanExposed coreCfg,
 								  @ModelObjectsMarshaller 	final Marshaller modelObjectsMarshaller,
 															final EventBus eventBus,
-			  											    final AA14DBSearcherProvider searcherFactory) {
+			  											    final AA14DBSearcherProviderForOrganizationalEntity searcherFactory) {
 		super(coreCfg,
 			  modelObjectsMarshaller,
 			  eventBus,

@@ -15,10 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinColumns;
 import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
@@ -193,53 +190,53 @@ public abstract class AA14DBEntityForBookedSlotBase
 /////////////////////////////////////////////////////////////////////////////////////////
 //  UNI-DIRECTIONAL RELATIONSHIP WITH location
 /////////////////////////////////////////////////////////////////////////////////////////
-	/**
-	 * Parent location
-	 */
-	@ManyToOne(targetEntity=AA14DBEntityForOrgDivisionServiceLocation.class,		// not required but informative
-			   fetch=FetchType.LAZY)
-	@JoinColumns({
-		@JoinColumn(name = "LOCATION_OID",
-					referencedColumnName = "OID",
-					updatable = false,insertable = false,nullable = true)
-	})
-	@Getter private AA14DBEntityForOrgDivisionServiceLocation _location;
-
-	public void setLocation(final AA14DBEntityForOrgDivisionServiceLocation dbLoc) {
-		_organizationOid = dbLoc.getOrganizationOid();
-		_orgDivisionOid = dbLoc.getOrgDivisionOid();
-		_orgDivisionServiceOid = dbLoc.getOrgDivisionServiceOid();
-		_orgDivisionServiceLocationOid = dbLoc.getOid();
-		
-		_organizationId = dbLoc.getOrganizationId();
-		_orgDivisionId = dbLoc.getOrgDivisionId();
-		_orgDivisionServiceId = dbLoc.getOrgDivisionServiceId();
-		_orgDivisionServiceLocationId = dbLoc.getId();
-		
-		_location = dbLoc;
-	}
+//	/**
+//	 * Parent location
+//	 */
+//	@ManyToOne(targetEntity=AA14DBEntityForOrgDivisionServiceLocation.class,		// not required but informative
+//			   fetch=FetchType.LAZY)
+//	@JoinColumns({
+//		@JoinColumn(name = "LOCATION_OID",
+//					referencedColumnName = "OID",
+//					updatable = false,insertable = false,nullable = true)
+//	})
+//	@Getter private AA14DBEntityForOrgDivisionServiceLocation _location;
+//
+//	public void setLocation(final AA14DBEntityForOrgDivisionServiceLocation dbLoc) {
+//		_organizationOid = dbLoc.getOrganizationOid();
+//		_orgDivisionOid = dbLoc.getOrgDivisionOid();
+//		_orgDivisionServiceOid = dbLoc.getOrgDivisionServiceOid();
+//		_orgDivisionServiceLocationOid = dbLoc.getOid();
+//		
+//		_organizationId = dbLoc.getOrganizationId();
+//		_orgDivisionId = dbLoc.getOrgDivisionId();
+//		_orgDivisionServiceId = dbLoc.getOrgDivisionServiceId();
+//		_orgDivisionServiceLocationId = dbLoc.getId();
+//		
+//		_location = dbLoc;
+//	}
 /////////////////////////////////////////////////////////////////////////////////////////
 //  UNI-DIRECTIONAL RELATIONSHIP WITH schedule
 /////////////////////////////////////////////////////////////////////////////////////////
-	/**
-	 * Parent schedule
-	 */
-	@ManyToOne(targetEntity=AA14DBEntityForSchedule.class,		// not required but informative
-			   fetch=FetchType.LAZY)
-	@JoinColumns({
-		@JoinColumn(name = "SCHEDULE_OID",
-					referencedColumnName = "OID",
-					updatable = false,insertable = false,nullable = true)
-	})
-	@Getter private AA14DBEntityForSchedule _schedule;
-
-	public void setSchedule(final AA14DBEntityForSchedule dbSched) {
-		_scheduleOid = dbSched.getOid();
-		
-		_scheduleId = dbSched.getId();
-		
-		_schedule = dbSched;
-	}
+//	/**
+//	 * Parent schedule
+//	 */
+//	@ManyToOne(targetEntity=AA14DBEntityForSchedule.class,		// not required but informative
+//			   fetch=FetchType.LAZY)
+//	@JoinColumns({
+//		@JoinColumn(name = "SCHEDULE_OID",
+//					referencedColumnName = "OID",
+//					updatable = false,insertable = false,nullable = true)
+//	})
+//	@Getter private AA14DBEntityForSchedule _schedule;
+//
+//	public void setSchedule(final AA14DBEntityForSchedule dbSched) {
+//		_scheduleOid = dbSched.getOid();
+//		
+//		_scheduleId = dbSched.getId();
+//		
+//		_schedule = dbSched;
+//	}
 /////////////////////////////////////////////////////////////////////////////////////////
 //
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -247,7 +244,6 @@ public abstract class AA14DBEntityForBookedSlotBase
 	public DBPrimaryKeyForModelObject getDBEntityPrimaryKey() {
 		return DBPrimaryKeyForModelObjectImpl.from(_oid);
 	}
-
 /////////////////////////////////////////////////////////////////////////////////////////
 //
 /////////////////////////////////////////////////////////////////////////////////////////

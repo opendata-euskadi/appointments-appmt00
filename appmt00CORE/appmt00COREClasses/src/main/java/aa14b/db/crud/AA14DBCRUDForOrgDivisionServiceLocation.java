@@ -6,6 +6,8 @@ import javax.persistence.EntityManager;
 
 import com.google.common.collect.Lists;
 
+import aa14b.db.entities.AA14DBEntityForManyToManyBetweenOrgDivisionServiceLocationAndSchedule;
+import aa14b.db.entities.AA14DBEntityForManyToManyBetweenOrgDivisionServiceLocationAndSchedulePrimaryKey;
 import aa14b.db.entities.AA14DBEntityForOrgDivision;
 import aa14b.db.entities.AA14DBEntityForOrgDivisionService;
 import aa14b.db.entities.AA14DBEntityForOrgDivisionServiceLocation;
@@ -78,18 +80,26 @@ public class AA14DBCRUDForOrgDivisionServiceLocation
 	@Override
 	public void completeDBEntityBeforeCreateOrUpdate(final SecurityContext securityContext,
 													 final PersistencePerformedOperation performedOp, 
-													 final AA14OrgDivisionServiceLocation loc,final AA14DBEntityForOrgDivisionServiceLocation locDBEntity) {
+													 final AA14OrgDivisionServiceLocation loc,final AA14DBEntityForOrgDivisionServiceLocation dbLoc) {
 		// load the organization, division & service entities
 		AA14DBEntityForOrganization dbOrg = this.getEntityManager().find(AA14DBEntityForOrganization.class,
-																		 new DBPrimaryKeyForModelObjectImpl(locDBEntity.getOrganizationOid()));
+																		 new DBPrimaryKeyForModelObjectImpl(dbLoc.getOrganizationOid()));
 		AA14DBEntityForOrgDivision dbDivision = this.getEntityManager().find(AA14DBEntityForOrgDivision.class,
-																	 		 new DBPrimaryKeyForModelObjectImpl(locDBEntity.getOrgDivisionOid()));
+																	 		 new DBPrimaryKeyForModelObjectImpl(dbLoc.getOrgDivisionOid()));
 		AA14DBEntityForOrgDivisionService dbService = this.getEntityManager().find(AA14DBEntityForOrgDivisionService.class,
-																	 		 	   new DBPrimaryKeyForModelObjectImpl(locDBEntity.getOrgDivisionServiceOid()));
+																	 		 	   new DBPrimaryKeyForModelObjectImpl(dbLoc.getOrgDivisionServiceOid()));
 		// set the dependencies
-		locDBEntity.setOrganization(dbOrg);
-		locDBEntity.setOrgDivision(dbDivision);
-		locDBEntity.setOrgDivisionService(dbService);
+		dbLoc.setOrganizationOid(dbOrg.getOrganizationOid());
+		dbLoc.setOrgDivisionOid(dbDivision.getOid());
+		dbLoc.setOrgDivisionServiceOid(dbService.getOid());
+		
+		dbLoc.setOrganizationId(dbOrg.getId());
+		dbLoc.setOrgDivisionId(dbDivision.getId());
+		dbLoc.setOrgDivisionServiceId(dbService.getId());
+		
+//		locDBEntity.setOrganization(dbOrg);
+//		locDBEntity.setOrgDivision(dbDivision);
+//		locDBEntity.setOrgDivisionService(dbService);
 		
 		// setting the location's dependent objects (org /division / service), also modifies the later since it's a BI-DIRECTIONAL relation
 		// ... so the entity manager MUST be refreshed in order to avoid an optimistic locking exception
@@ -102,28 +112,35 @@ public class AA14DBCRUDForOrgDivisionServiceLocation
 					  loc.getOid(),loc.getSchedulesOids());
 			for (AA14ModelObjectRef<AA14ScheduleOID,
 									AA14ScheduleID> ref : loc.getSchedulesRefs()) {			
-				AA14DBEntityForSchedule schDBEntity = _entityManager.find(AA14DBEntityForSchedule.class,
-																		  DBPrimaryKeyForModelObjectImpl.from(ref.getOid()));
-				if (schDBEntity == null) {
+				AA14DBEntityForSchedule dbSch = _entityManager.find(AA14DBEntityForSchedule.class,
+																    DBPrimaryKeyForModelObjectImpl.from(ref.getOid()));
+				if (dbSch == null) {
 					log.error("Cannot link the service location with oid={} to the schedule with oid={}: the schedule does NOT exists!!!",
 							  loc.getOid(),ref.getOid());
 					continue;	// skip
 				}
 				// add the reference to the location
-				locDBEntity.addSchedule(schDBEntity);
+				// (manually managing the many to many relation)
+				AA14DBEntityForManyToManyBetweenOrgDivisionServiceLocationAndSchedulePrimaryKey manyToManyPK = AA14DBEntityForManyToManyBetweenOrgDivisionServiceLocationAndSchedulePrimaryKey.from(dbLoc.getOid(),dbSch.getOid());
+				AA14DBEntityForManyToManyBetweenOrgDivisionServiceLocationAndSchedule manyToMany = _entityManager.find(AA14DBEntityForManyToManyBetweenOrgDivisionServiceLocationAndSchedule.class,
+																													   manyToManyPK);
+				if (manyToMany == null) {
+					manyToMany = new AA14DBEntityForManyToManyBetweenOrgDivisionServiceLocationAndSchedule(dbLoc.getOid(),dbSch.getOid());
+					_entityManager.persist(manyToMany);
+				}
 				
 				// BEWARE!!	the location <-> schedule it's a MANY-TO-MANY relation so the schedule descriptor 
 				//			also contains a reference to the schedule that MUST be updated
-				AA14Schedule sch = _modelObjectsMarshaller.forReading().fromXml(schDBEntity.getDescriptor(),
+				AA14Schedule sch = _modelObjectsMarshaller.forReading().fromXml(dbSch.getDescriptor(),
 																				AA14Schedule.class);
 				sch.addServiceLocationRef(loc.getReference());
-				schDBEntity.setDescriptor(_modelObjectsMarshaller.forWriting().toXml(sch));
-				_entityManager.persist(schDBEntity);
+				dbSch.setDescriptor(_modelObjectsMarshaller.forWriting().toXml(sch));
+				_entityManager.persist(dbSch);
 				_entityManager.flush();
 				
 				// setting the service location dependent schedule objs, also modifies the later since it's a BI-DIRECTIONAL relation
 				// ... so the entity manager MUST be refreshed in order to avoid an optimistic locking exception
-				_entityManager.refresh(schDBEntity);
+				_entityManager.refresh(dbSch);
 			}
 		}
 	}

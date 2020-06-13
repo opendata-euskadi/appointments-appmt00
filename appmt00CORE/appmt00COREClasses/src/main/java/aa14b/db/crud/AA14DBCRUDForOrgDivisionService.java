@@ -66,8 +66,14 @@ public class AA14DBCRUDForOrgDivisionService
 		AA14DBEntityForOrgDivision dbDivision = this.getEntityManager().find(AA14DBEntityForOrgDivision.class,
 																	 		 new DBPrimaryKeyForModelObjectImpl(dbService.getOrgDivisionOid()));
 		// set the dependencies
-		dbService.setOrganization(dbOrg);
-		dbService.setOrgDivision(dbDivision);	
+		dbService.setOrganizationOid(dbOrg.getOid());
+		dbService.setOrgDivisionOid(dbDivision.getOid());
+		
+		dbService.setOrganizationId(dbOrg.getId());
+		dbService.setOrgDivisionId(dbDivision.getId());
+		
+//		dbService.setOrganization(dbOrg);
+//		dbService.setOrgDivision(dbDivision);	
 		
 		// setting the service's dependent objects (org /division), also modifies the later since it's a BI-DIRECTIONAL relation
 		// ... so the entity manager MUST be refreshed in order to avoid an optimistic locking exception

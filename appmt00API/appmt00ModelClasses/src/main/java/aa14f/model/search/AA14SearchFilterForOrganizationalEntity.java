@@ -36,10 +36,10 @@ import r01f.util.types.collections.CollectionUtils;
  * 									.in(Language.ENGLISH);
  * </pre>
  */
-@MarshallType(as="searchFilter")
+@MarshallType(as="searchFilterForOrganizationalEntity")
 @Accessors(prefix="_")
-public class AA14SearchFilter 
-     extends SearchFilterForModelObjectBase<AA14SearchFilter> {
+public class AA14SearchFilterForOrganizationalEntity 
+     extends SearchFilterForModelObjectBase<AA14SearchFilterForOrganizationalEntity> {
 
 	private static final long serialVersionUID = -7328506874819631272L;
 
@@ -47,20 +47,20 @@ public class AA14SearchFilter
 //  BUILDER
 /////////////////////////////////////////////////////////////////////////////////////////
 	@SuppressWarnings("unchecked")
-	public AA14SearchFilter() {
+	public AA14SearchFilterForOrganizationalEntity() {
 		// a filter by all organizational entity model objects
 		super(AA14Organization.class,
 			  AA14OrgDivision.class,
 			  AA14OrgDivisionService.class);
 	}
-	public AA14SearchFilter(final Class<? extends ModelObject>... modelObjectTypes) {
+	public AA14SearchFilterForOrganizationalEntity(final Class<? extends ModelObject>... modelObjectTypes) {
 		super(modelObjectTypes);
 	}
 	/**
 	 * Constructor needed to build a filter from the criteria string
 	 * @param modelObjectType
 	 */
-	public AA14SearchFilter(final Collection<Class<? extends ModelObject>> modelObjectTypes) {
+	public AA14SearchFilterForOrganizationalEntity(final Collection<Class<? extends ModelObject>> modelObjectTypes) {
 		super(modelObjectTypes);
 	}
 	/**
@@ -72,7 +72,7 @@ public class AA14SearchFilter
 	 *			...
 	 *		}
  	 * </pre>
-	 * any of these methods are used at {@link AA14SearchFilter}:
+	 * any of these methods are used at {@link AA14SearchFilterForOrganizationalEntity}:
 	 * <ul>
 	 * 		<li>String based constructor</li>
 	 * 		<li>valueOf(String) static method</li>
@@ -80,14 +80,14 @@ public class AA14SearchFilter
 	 * </ul>
 	 * @param str
 	 */
-	public static AA14SearchFilter valueOf(final String str) {
-		return AA14SearchFilter.fromString(str);
+	public static AA14SearchFilterForOrganizationalEntity valueOf(final String str) {
+		return AA14SearchFilterForOrganizationalEntity.fromString(str);
 	}
-	public static AA14SearchFilter fromString(final String str) {
+	public static AA14SearchFilterForOrganizationalEntity fromString(final String str) {
 		return SearchFilterForModelObjectBase.fromCriteriaString(SearchFilterAsCriteriaString.of(str));
 	}
-	public static AA14SearchFilter create() {
-		return new AA14SearchFilter();
+	public static AA14SearchFilterForOrganizationalEntity create() {
+		return new AA14SearchFilterForOrganizationalEntity();
 	}
 /////////////////////////////////////////////////////////////////////////////////////////
 //  METHODS
@@ -97,7 +97,7 @@ public class AA14SearchFilter
 	 * @param modelObjectType
 	 * @return
 	 */
-	public AA14SearchFilter filterBy(final Class<? extends ModelObject>... modelObjTypes) {
+	public AA14SearchFilterForOrganizationalEntity filterBy(final Class<? extends ModelObject>... modelObjTypes) {
 		Collection<Class<? extends ModelObject>> modelObjTypesCol = CollectionUtils.of(modelObjTypes)
 																				   .asSet();
 		return this.filterBy(modelObjTypesCol);
@@ -107,7 +107,7 @@ public class AA14SearchFilter
 	 * @param modelObjectType
 	 * @return
 	 */
-	public AA14SearchFilter filterBy(final Collection<Class<? extends ModelObject>> modelObjTypesCol) {
+	public AA14SearchFilterForOrganizationalEntity filterBy(final Collection<Class<? extends ModelObject>> modelObjTypesCol) {
 		Preconditions.checkArgument(CollectionUtils.hasData(modelObjTypesCol),"The modelObjectTypes cannot be null or empty");
 		Preconditions.checkArgument(_checkModelObjType(modelObjTypesCol),"One of the received model object types to filter by is NOT valid: {}",modelObjTypesCol);
 		
@@ -136,7 +136,7 @@ public class AA14SearchFilter
 /////////////////////////////////////////////////////////////////////////////////////////
 //  
 /////////////////////////////////////////////////////////////////////////////////////////
-	public AA14SearchFilter belongingTo(final AA14OrganizationOID orgOid,
+	public AA14SearchFilterForOrganizationalEntity belongingTo(final AA14OrganizationOID orgOid,
 										final AA14OrgDivisionOID divisionOid,
 										final AA14OrgDivisionServiceOID serviceOid,
 										final AA14OrgDivisionServiceLocationOID locationOid) {
@@ -150,7 +150,7 @@ public class AA14SearchFilter
 											 locationOid,
 									 		 QueryClauseOccur.MUST);
 	}
-	public AA14SearchFilter belongingTo(final AA14OrganizationOID orgOid,
+	public AA14SearchFilterForOrganizationalEntity belongingTo(final AA14OrganizationOID orgOid,
 										final AA14OrgDivisionOID divisionOid,
 										final AA14OrgDivisionServiceOID serviceOid) {
 		Preconditions.checkArgument(orgOid != null && divisionOid != null && serviceOid != null,"The org, division or service oids cannot be null");
@@ -163,7 +163,7 @@ public class AA14SearchFilter
 									 			 serviceOid,
 									 			 QueryClauseOccur.MUST);
 	}
-	public AA14SearchFilter belongingTo(final AA14OrganizationOID orgOid,
+	public AA14SearchFilterForOrganizationalEntity belongingTo(final AA14OrganizationOID orgOid,
 										final AA14OrgDivisionOID orgDivisionOid) {
 		Preconditions.checkArgument(orgOid != null && orgDivisionOid != null,"The organization or division oids cannot be null");
 		FieldID fieldId = FieldID.from(AA14HasMetaDataForOrgDivision.SEARCHABLE_METADATA.OID);
@@ -174,7 +174,7 @@ public class AA14SearchFilter
 									 			 orgDivisionOid,
 									 			 QueryClauseOccur.MUST);
 	}
-	public AA14SearchFilter belongingTo(final AA14OrganizationOID orgOid) {
+	public AA14SearchFilterForOrganizationalEntity belongingTo(final AA14OrganizationOID orgOid) {
 		Preconditions.checkArgument(orgOid != null,"The organization oid cannot be null");
 		FieldID fieldId = FieldID.from(AA14HasMetaDataForOrganization.SEARCHABLE_METADATA.OID);
 		return this.getModifierWrapper()

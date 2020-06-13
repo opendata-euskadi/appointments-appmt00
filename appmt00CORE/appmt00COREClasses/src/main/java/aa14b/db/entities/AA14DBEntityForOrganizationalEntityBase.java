@@ -11,10 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinColumns;
 import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -150,98 +147,85 @@ public abstract class AA14DBEntityForOrganizationalEntityBase
 	
 	@Column(name="DESCRIPTOR") @Lob @Basic(fetch=FetchType.EAGER) 
 	@Getter @Setter protected String _descriptor;
-		
-/////////////////////////////////////////////////////////////////////////////////////////
-//
-/////////////////////////////////////////////////////////////////////////////////////////
-	@Override
-	protected void _preCreate() {
-		// nothing to do
-	}
-
-	@Override
-	protected void _preUpdate() {
-		// nothing to do
-	}
 /////////////////////////////////////////////////////////////////////////////////////////
 //  BI-DIRECTIONAL RELATIONSHIP WITH organization
 //	Beware to update BOTH SIDES of the relationship: http://en.wikibooks.org/wiki/Java_Persistence/Relationships#Object_corruption.2C_one_side_of_the_relationship_is_not_updated_after_updating_the_other_side
 /////////////////////////////////////////////////////////////////////////////////////////
-	/**
-	 * Parent organization
-	 */
-	@ManyToOne(targetEntity=AA14DBEntityForOrganization.class,		// not required but informative
-			   fetch=FetchType.LAZY)
-	@JoinColumns({
-		@JoinColumn(name = "ORGANIZATION_OID",
-					referencedColumnName = "OID",
-					updatable = false,insertable = false,nullable = true)
-	})
-	@Getter private AA14DBEntityForOrganization _organization;
-
-	public void setOrganization(final AA14DBEntityForOrganization dbOrg) {
-		_organizationOid = dbOrg.getOid();
-
-		if (this instanceof AA14DBEntityForOrgDivision) {
-			AA14DBEntityForOrgDivision dbDivision = this.as(AA14DBEntityForOrgDivision.class);
-			if (!dbOrg.containsOrgDivision(dbDivision)) {
-				dbOrg.addOrgDivision(dbDivision);		// update the other side of the relationship
-			}
-		} 
-		_organization = dbOrg;
-	}
+//	/**
+//	 * Parent organization
+//	 */
+//	@ManyToOne(targetEntity=AA14DBEntityForOrganization.class,		// not required but informative
+//			   fetch=FetchType.LAZY)
+//	@JoinColumns({
+//		@JoinColumn(name = "ORGANIZATION_OID",
+//					referencedColumnName = "OID",
+//					updatable = false,insertable = false,nullable = true)
+//	})
+//	@Getter private AA14DBEntityForOrganization _organization;
+//
+//	public void setOrganization(final AA14DBEntityForOrganization dbOrg) {
+//		_organizationOid = dbOrg.getOid();
+//
+//		if (this instanceof AA14DBEntityForOrgDivision) {
+//			AA14DBEntityForOrgDivision dbDivision = this.as(AA14DBEntityForOrgDivision.class);
+//			if (!dbOrg.containsOrgDivision(dbDivision)) {
+//				dbOrg.addOrgDivision(dbDivision);		// update the other side of the relationship
+//			}
+//		} 
+//		_organization = dbOrg;
+//	}
 /////////////////////////////////////////////////////////////////////////////////////////
 //  BI-DIRECTIONAL RELATIONSHIP WITH organizational divisions
 //	Beware to update BOTH SIDES of the relationship: http://en.wikibooks.org/wiki/Java_Persistence/Relationships#Object_corruption.2C_one_side_of_the_relationship_is_not_updated_after_updating_the_other_side
 /////////////////////////////////////////////////////////////////////////////////////////
-	/**
-	 * Parent division
-	 */
-	@ManyToOne(targetEntity=AA14DBEntityForOrgDivision.class,		// not required but informative
-			   fetch=FetchType.LAZY)
-	@JoinColumns({
-		@JoinColumn(name = "DIVISION_OID",
-					referencedColumnName = "OID",
-					updatable = false,insertable = false,nullable = true)
-	})
-	@Getter private AA14DBEntityForOrgDivision _orgDivision;
-
-	public void setOrgDivision(final AA14DBEntityForOrgDivision dbDivision) {
-		_orgDivisionOid = dbDivision.getOid();
-
-		if (this instanceof AA14DBEntityForOrgDivisionService) {
-			AA14DBEntityForOrgDivisionService dbService = this.as(AA14DBEntityForOrgDivisionService.class);
-			if (!dbDivision.containsService(dbService)) dbDivision.addService(dbService);	// update the other side of the relationship
-		}
-		_orgDivision = dbDivision;
-	}
+//	/**
+//	 * Parent division
+//	 */
+//	@ManyToOne(targetEntity=AA14DBEntityForOrgDivision.class,		// not required but informative
+//			   fetch=FetchType.LAZY)
+//	@JoinColumns({
+//		@JoinColumn(name = "DIVISION_OID",
+//					referencedColumnName = "OID",
+//					updatable = false,insertable = false,nullable = true)
+//	})
+//	@Getter private AA14DBEntityForOrgDivision _orgDivision;
+//
+//	public void setOrgDivision(final AA14DBEntityForOrgDivision dbDivision) {
+//		_orgDivisionOid = dbDivision.getOid();
+//
+//		if (this instanceof AA14DBEntityForOrgDivisionService) {
+//			AA14DBEntityForOrgDivisionService dbService = this.as(AA14DBEntityForOrgDivisionService.class);
+//			if (!dbDivision.containsService(dbService)) dbDivision.addService(dbService);	// update the other side of the relationship
+//		}
+//		_orgDivision = dbDivision;
+//	}
 /////////////////////////////////////////////////////////////////////////////////////////
 //  BI-DIRECTIONAL RELATIONSHIP WITH organizational division services
 //	Beware to update BOTH SIDES of the relationship: http://en.wikibooks.org/wiki/Java_Persistence/Relationships#Object_corruption.2C_one_side_of_the_relationship_is_not_updated_after_updating_the_other_side
 /////////////////////////////////////////////////////////////////////////////////////////
-	/**
-	 * Parent service
-	 */
-	@ManyToOne(targetEntity=AA14DBEntityForOrgDivisionService.class,		// not required but informative
-			   fetch=FetchType.LAZY)
-	@JoinColumns({
-		@JoinColumn(name = "SERVICE_OID",
-					referencedColumnName = "OID",
-					updatable = false,insertable = false,nullable = true)
-	})
-	@Getter private AA14DBEntityForOrgDivisionService _orgDivisionService;
-
-	public void setOrgDivisionService(final AA14DBEntityForOrgDivisionService dbService) {
-		_orgDivisionServiceOid = dbService.getOid();
-
-		if (this instanceof AA14DBEntityForOrgDivisionServiceLocation) {
-			AA14DBEntityForOrgDivisionServiceLocation dbLocation = this.as(AA14DBEntityForOrgDivisionServiceLocation.class);
-			if (!dbService.containsLocation(dbLocation)) dbService.addLocation(dbLocation);	// update the other side of the relationship
-		}
-		_orgDivisionService = dbService;
-	}
-/////////////////////////////////////////////////////////////////////////////////////////
+//	/**
+//	 * Parent service
+//	 */
+//	@ManyToOne(targetEntity=AA14DBEntityForOrgDivisionService.class,		// not required but informative
+//			   fetch=FetchType.LAZY)
+//	@JoinColumns({
+//		@JoinColumn(name = "SERVICE_OID",
+//					referencedColumnName = "OID",
+//					updatable = false,insertable = false,nullable = true)
+//	})
+//	@Getter private AA14DBEntityForOrgDivisionService _orgDivisionService;
 //
+//	public void setOrgDivisionService(final AA14DBEntityForOrgDivisionService dbService) {
+//		_orgDivisionServiceOid = dbService.getOid();
+//
+//		if (this instanceof AA14DBEntityForOrgDivisionServiceLocation) {
+//			AA14DBEntityForOrgDivisionServiceLocation dbLocation = this.as(AA14DBEntityForOrgDivisionServiceLocation.class);
+//			if (!dbService.containsLocation(dbLocation)) dbService.addLocation(dbLocation);	// update the other side of the relationship
+//		}
+//		_orgDivisionService = dbService;
+//	}
+/////////////////////////////////////////////////////////////////////////////////////////
+//	PRIMARY KEY
 /////////////////////////////////////////////////////////////////////////////////////////
 	@Override
 	public DBPrimaryKeyForModelObject getDBEntityPrimaryKey() {
@@ -259,6 +243,18 @@ public abstract class AA14DBEntityForOrganizationalEntityBase
 										.addForLang(Language.SPANISH,_nameSpanish)
 										.addForLang(Language.BASQUE,_nameBasque)
 										.build();
+	}
+/////////////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////////////
+	@Override
+	protected void _preCreate() {
+		// nothing to do
+	}
+
+	@Override
+	protected void _preUpdate() {
+		// nothing to do
 	}
 /////////////////////////////////////////////////////////////////////////////////////////
 //

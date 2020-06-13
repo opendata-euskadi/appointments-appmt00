@@ -215,8 +215,7 @@ public class AA14DBCRUDForBookedSlot
 			dbEntity.setOrgDivisionServiceId(dbLoc.getOrgDivisionServiceId());
 			dbEntity.setOrgDivisionServiceLocationId(dbLoc.getId());
 			
-			// set the db entities dependency
-			dbEntity.setLocation(dbLoc);
+//			dbEntity.setLocation(dbLoc);
 		}
 		
 		// set the schedule (mandatory in all cases)
@@ -224,7 +223,7 @@ public class AA14DBCRUDForBookedSlot
 		dbEntity.setScheduleId(dbSch.getId());
 		
 		// set the db entities dependency
-		dbEntity.setSchedule(dbSch);
+//		dbEntity.setSchedule(dbSch);
 		
 		// setting the appointment's dependent objects (location), COULD also modifies the later if it's a BI-DIRECTIONAL relation
 		// ... so the entity manager MUST be refreshed in order to avoid an optimistic locking exception

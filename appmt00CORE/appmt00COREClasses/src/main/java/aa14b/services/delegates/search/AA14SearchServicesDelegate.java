@@ -3,7 +3,7 @@ package aa14b.services.delegates.search;
 import com.google.common.eventbus.EventBus;
 
 import aa14f.api.interfaces.AA14SearchServices;
-import aa14f.model.search.AA14SearchFilter;
+import aa14f.model.search.AA14SearchFilterForOrganizationalEntity;
 import aa14f.model.search.AA14SearchResultItemForOrganizationalEntity;
 import r01f.bootstrap.services.config.core.ServicesCoreBootstrapConfigWhenBeanExposed;
 import r01f.objectstreamer.Marshaller;
@@ -16,14 +16,14 @@ import r01f.validation.ObjectValidationResultBuilder;
 
 
 public class AA14SearchServicesDelegate 
-     extends SearchServicesForModelObjectDelegateBase<AA14SearchFilter,AA14SearchResultItemForOrganizationalEntity>
+     extends SearchServicesForModelObjectDelegateBase<AA14SearchFilterForOrganizationalEntity,AA14SearchResultItemForOrganizationalEntity>
   implements AA14SearchServices,
-  			 ValidatesSearchFilter<AA14SearchFilter> {
+  			 ValidatesSearchFilter<AA14SearchFilterForOrganizationalEntity> {
 /////////////////////////////////////////////////////////////////////////////////////////
 //  CONSTRUCTOR & BUILDER
 /////////////////////////////////////////////////////////////////////////////////////////
 	public AA14SearchServicesDelegate(final ServicesCoreBootstrapConfigWhenBeanExposed coreCfg,
-							  	      final Searcher<AA14SearchFilter,AA14SearchResultItemForOrganizationalEntity> searcher,
+							  	      final Searcher<AA14SearchFilterForOrganizationalEntity,AA14SearchResultItemForOrganizationalEntity> searcher,
 							  	      final Marshaller modelObjectsMarshaller,
 							  	      final EventBus eventBus) {
 		super(coreCfg,
@@ -34,8 +34,8 @@ public class AA14SearchServicesDelegate
 //  
 /////////////////////////////////////////////////////////////////////////////////////////
 	@Override
-	public ObjectValidationResult<AA14SearchFilter> validateSearchFilter(final SecurityContext securityContext, 
-																		 final AA14SearchFilter filter) {
+	public ObjectValidationResult<AA14SearchFilterForOrganizationalEntity> validateSearchFilter(final SecurityContext securityContext, 
+																		 						final AA14SearchFilterForOrganizationalEntity filter) {
 		if (filter.getUILanguage() == null) return ObjectValidationResultBuilder.on(filter)
 																				.isNotValidBecause("The language is null");
 		return ObjectValidationResultBuilder.on(filter)
