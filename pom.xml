@@ -43,7 +43,8 @@
 		<module>appmt00SecurityClasses</module>
 		<module>appmt00UI</module>
 		<module>appmt00Config</module>
-	</modules>
+    <module>appmt00ImportExportClasses</module>
+  </modules>
 
 <!-- ====================================================================== -->
 <!-- DEPENDENCIES                                                           -->
@@ -295,7 +296,7 @@
 										</goals>
 									</pluginExecutionFilter>
 									<action>
-										<ignore></ignore>
+										<ignore/>
 									</action>
 								</pluginExecution>
 							</pluginExecutions>
