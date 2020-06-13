@@ -12,7 +12,7 @@ import aa14f.model.config.AA14OrgDivisionService;
 import aa14f.model.config.AA14OrgDivisionServiceLocation;
 import aa14f.model.config.AA14Organization;
 import aa14f.model.config.AA14OrganizationalModelObjectBase;
-import aa14f.model.search.AA14SearchResultItem;
+import aa14f.model.search.AA14SearchResultItemForOrganizationalEntity;
 import aa14f.model.summaries.AA14SummarizedModelObject;
 import aa14f.model.summaries.AA14SummarizedOrgDivision;
 import aa14f.model.summaries.AA14SummarizedOrgDivisionService;
@@ -27,8 +27,8 @@ import r01f.securitycontext.SecurityContext;
 
 @Slf4j
 @RequiredArgsConstructor
-public class AA14DBEntityToSearchResultItemTransformer
-  implements TransformsDBEntityToSearchResultItem<AA14DBEntityForOrganizationalEntityBase,AA14SearchResultItem> {
+public class AA14DBOrganizationalEntityToSearchResultItemTransformer
+  implements TransformsDBEntityToSearchResultItem<AA14DBEntityForOrganizationalEntityBase,AA14SearchResultItemForOrganizationalEntity> {
 /////////////////////////////////////////////////////////////////////////////////////////
 //  FIELDS
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -42,13 +42,13 @@ public class AA14DBEntityToSearchResultItemTransformer
 	 * @return
 	 */
 	public Function<AA14DBEntityForOrganizationalEntityBase,
-					AA14SearchResultItem> asTransformFuncion(final SecurityContext securityContext,
+					AA14SearchResultItemForOrganizationalEntity> asTransformFuncion(final SecurityContext securityContext,
 															 final Language uiLang) {
 		return new Function<AA14DBEntityForOrganizationalEntityBase,
-				 			AA14SearchResultItem>() {			
+				 			AA14SearchResultItemForOrganizationalEntity>() {			
 						@Override
-						public AA14SearchResultItem apply(final AA14DBEntityForOrganizationalEntityBase dbEntity) {
-							return AA14DBEntityToSearchResultItemTransformer.this.dbEntityToSearchResultItem(securityContext,
+						public AA14SearchResultItemForOrganizationalEntity apply(final AA14DBEntityForOrganizationalEntityBase dbEntity) {
+							return AA14DBOrganizationalEntityToSearchResultItemTransformer.this.dbEntityToSearchResultItem(securityContext,
 																		  									 dbEntity,
 																		  									 uiLang);
 						}
@@ -58,29 +58,29 @@ public class AA14DBEntityToSearchResultItemTransformer
 //  
 /////////////////////////////////////////////////////////////////////////////////////////
 	@Override
-	public AA14SearchResultItem dbEntityToSearchResultItem(final SecurityContext securityContext,
-														   final AA14DBEntityForOrganizationalEntityBase dbEntity,
-														   final Language uiLang) {
-		AA14SearchResultItem outItem = null;
+	public AA14SearchResultItemForOrganizationalEntity dbEntityToSearchResultItem(final SecurityContext securityContext,
+														   						  final AA14DBEntityForOrganizationalEntityBase dbEntity,
+														   						  final Language uiLang) {
+		AA14SearchResultItemForOrganizationalEntity outItem = null;
 
 		// [1] - object type & summaries
 		if (dbEntity instanceof AA14DBEntityForOrganization) {
-			outItem = new AA14SearchResultItem(AA14Organization.class);
+			outItem = new AA14SearchResultItemForOrganizationalEntity(AA14Organization.class);
 			outItem.setOrganization(_orgSummaryIn(dbEntity,uiLang));
 		}
 		else if (dbEntity instanceof AA14DBEntityForOrgDivision) {
-			outItem = new AA14SearchResultItem(AA14OrgDivision.class);
+			outItem = new AA14SearchResultItemForOrganizationalEntity(AA14OrgDivision.class);
 			outItem.setOrganization(_orgSummaryIn(dbEntity,uiLang));
 			outItem.setOrgDivision(_divisionSummaryIn(dbEntity,uiLang));
 		}
 		else if (dbEntity instanceof AA14DBEntityForOrgDivisionService) {
-			outItem = new AA14SearchResultItem(AA14OrgDivisionService.class);
+			outItem = new AA14SearchResultItemForOrganizationalEntity(AA14OrgDivisionService.class);
 			outItem.setOrganization(_orgSummaryIn(dbEntity,uiLang));
 			outItem.setOrgDivision(_divisionSummaryIn(dbEntity,uiLang));
 			outItem.setOrgDivisionService(_serviceSummaryIn(dbEntity,uiLang));
 		}
 		else if (dbEntity instanceof AA14DBEntityForOrgDivisionServiceLocation) {
-			outItem = new AA14SearchResultItem(AA14OrgDivisionServiceLocation.class);
+			outItem = new AA14SearchResultItemForOrganizationalEntity(AA14OrgDivisionServiceLocation.class);
 			outItem.setOrganization(_orgSummaryIn(dbEntity,uiLang));
 			outItem.setOrgDivision(_divisionSummaryIn(dbEntity,uiLang));
 			outItem.setOrgDivisionService(_serviceSummaryIn(dbEntity,uiLang));

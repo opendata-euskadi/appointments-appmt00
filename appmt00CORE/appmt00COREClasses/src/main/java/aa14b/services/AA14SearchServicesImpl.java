@@ -5,11 +5,11 @@ import javax.inject.Singleton;
 
 import com.google.common.eventbus.EventBus;
 
-import aa14b.db.search.AA14DBSearcherProviders.AA14DBSearcherProvider;
+import aa14b.db.search.AA14DBSearcherProviderForOrganizationalEntity.AA14DBSearcherProvider;
 import aa14b.services.delegates.search.AA14SearchServicesDelegate;
 import aa14f.api.interfaces.AA14SearchServices;
 import aa14f.model.search.AA14SearchFilter;
-import aa14f.model.search.AA14SearchResultItem;
+import aa14f.model.search.AA14SearchResultItemForOrganizationalEntity;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import r01f.bootstrap.services.config.core.ServicesCoreBootstrapConfigWhenBeanExposed;
@@ -26,7 +26,7 @@ import r01f.services.persistence.ServiceDelegateProvider;
 @Singleton
 @Accessors(prefix="_")
 public class AA14SearchServicesImpl 
-     extends CoreSearchServicesForModelObjectBase<AA14SearchFilter,AA14SearchResultItem>					  
+     extends CoreSearchServicesForModelObjectBase<AA14SearchFilter,AA14SearchResultItemForOrganizationalEntity>					  
   implements AA14SearchServices,
   			 AA14ServiceInterfaceImpl {
 /////////////////////////////////////////////////////////////////////////////////////////

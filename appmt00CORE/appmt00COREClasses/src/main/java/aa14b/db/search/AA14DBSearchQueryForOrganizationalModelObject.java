@@ -33,15 +33,15 @@ import r01f.util.types.Strings;
 import r01f.util.types.collections.CollectionUtils;
 
 @Slf4j
-public class AA14DBSearchQueryForModelObject 
+public class AA14DBSearchQueryForOrganizationalModelObject 
 	 extends DBSearchQuery<AA14SearchFilter,
 	 					   AA14DBEntityForOrganizationalEntityBase> {
 /////////////////////////////////////////////////////////////////////////////////////////
 //  
 /////////////////////////////////////////////////////////////////////////////////////////	
-	public AA14DBSearchQueryForModelObject(final DBModuleConfig dbConfig,
-									 	   final EntityManager entityManager,
-									 	   final Language uiLanguage) {
+	public AA14DBSearchQueryForOrganizationalModelObject(final DBModuleConfig dbConfig,
+									 	   				 final EntityManager entityManager,
+									 	   				 final Language uiLanguage) {
 		super(AA14DBEntityForOrganizationalEntityBase.class, 
 			  dbConfig,
 			  entityManager,

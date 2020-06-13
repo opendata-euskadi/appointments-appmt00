@@ -25,7 +25,7 @@ import r01f.objectstreamer.annotations.MarshallType;
 @MarshallType(as="searchResultItemForOrganizationalEntity")
 @Accessors(prefix="_")
 @NoArgsConstructor
-public class AA14SearchResultItem
+public class AA14SearchResultItemForOrganizationalEntity
 	 extends SearchResultItemForModelObjectBase<AA14OrganizationalModelObject<?,?>> {
 
 	private static final long serialVersionUID = 4169587420774250028L;
@@ -50,7 +50,7 @@ public class AA14SearchResultItem
 //  BUILDERS
 /////////////////////////////////////////////////////////////////////////////////////////
 	@SuppressWarnings("unchecked")
-	public AA14SearchResultItem(final Class<? extends AA14OrganizationalModelObject<?,?>> modelObjectType) {
+	public AA14SearchResultItemForOrganizationalEntity(final Class<? extends AA14OrganizationalModelObject<?,?>> modelObjectType) {
 		_modelObjectType = (Class<AA14OrganizationalModelObject<?,?>>)modelObjectType; 
 	}
 /////////////////////////////////////////////////////////////////////////////////////////

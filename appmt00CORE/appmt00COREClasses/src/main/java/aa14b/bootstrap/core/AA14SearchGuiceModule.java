@@ -1,7 +1,7 @@
 package aa14b.bootstrap.core;
 
 
-import aa14b.db.search.AA14DBSearcherProviders.AA14DBSearcherProvider;
+import aa14b.db.search.AA14DBSearcherProviderForOrganizationalEntity.AA14DBSearcherProvider;
 import lombok.EqualsAndHashCode;
 import r01f.bootstrap.persistence.SearchGuiceModuleBase;
 import r01f.bootstrap.persistence.SearcherProviderBinding;

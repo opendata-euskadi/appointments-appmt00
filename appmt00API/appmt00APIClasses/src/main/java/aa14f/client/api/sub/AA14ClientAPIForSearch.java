@@ -4,7 +4,7 @@ import com.google.inject.Provider;
 
 import aa14f.api.interfaces.AA14SearchServices;
 import aa14f.model.search.AA14SearchFilter;
-import aa14f.model.search.AA14SearchResultItem;
+import aa14f.model.search.AA14SearchResultItemForOrganizationalEntity;
 import lombok.experimental.Accessors;
 import r01f.objectstreamer.Marshaller;
 import r01f.securitycontext.SecurityContext;
@@ -16,7 +16,7 @@ import r01f.services.client.api.delegates.ClientAPIDelegateForModelObjectSearchS
 @Accessors(prefix="_")
 public class AA14ClientAPIForSearch
      extends ClientAPIDelegateForModelObjectSearchServices<AA14SearchFilter,			
-     													   AA14SearchResultItem> {		
+     													   AA14SearchResultItemForOrganizationalEntity> {		
 /////////////////////////////////////////////////////////////////////////////////////////
 //  CONSTRUCTOR
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -26,6 +26,6 @@ public class AA14ClientAPIForSearch
 		super(securityContextProvider,
 			  modelObjectsMarshaller,
 			  entitySearchServicesProxy,	// reference to other client apis
-			  AA14SearchFilter.class,AA14SearchResultItem.class);
+			  AA14SearchFilter.class,AA14SearchResultItemForOrganizationalEntity.class);
 	}
 }
