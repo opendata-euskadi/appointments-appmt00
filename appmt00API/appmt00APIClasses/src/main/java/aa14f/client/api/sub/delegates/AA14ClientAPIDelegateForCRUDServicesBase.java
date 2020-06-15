@@ -10,6 +10,7 @@ import r01f.model.persistence.CRUDResult;
 import r01f.objectstreamer.Marshaller;
 import r01f.securitycontext.SecurityContext;
 import r01f.services.client.api.delegates.ClientAPIDelegateForModelObjectCRUDServices;
+import r01f.services.client.api.delegates.ClientAPIModelObjectChangesTrack;
 
 public class AA14ClientAPIDelegateForCRUDServicesBase<O extends AA14ModelObjectOID,ID extends AA14ModelObjectID<O>,M extends PersistableModelObject<O>>
 	 extends ClientAPIDelegateForModelObjectCRUDServices<O,M> {
@@ -34,8 +35,9 @@ public class AA14ClientAPIDelegateForCRUDServicesBase<O extends AA14ModelObjectO
 	public M loadById(final ID id) {
 		CRUDResult<M> opResult = this.getServiceProxyAs(AA14CRUDServicesBase.class)
 											.loadById(this.getSecurityContext(),
-												   	  id);
+												   	  id);		
 		M outEntity = opResult.getOrThrow();
+		ClientAPIModelObjectChangesTrack.startTrackingChangesOnLoaded(outEntity);
 		return outEntity;
 	}	
 	public M loadByIdOrNull(final ID id) {
@@ -45,6 +47,7 @@ public class AA14ClientAPIDelegateForCRUDServicesBase<O extends AA14ModelObjectO
 		M outEntity = null;
 		if (opResult.hasSucceeded()) {
 			outEntity = opResult.getOrThrow();
+			ClientAPIModelObjectChangesTrack.startTrackingChangesOnLoaded(outEntity);
 		} else if (!opResult.asCRUDError()
 							.wasBecauseClientRequestedEntityWasNOTFound()) {
 			opResult.asCRUDError().throwAsPersistenceException();

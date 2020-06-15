@@ -143,6 +143,7 @@ public class AA14NonBookableSlotsImportProcess
 		
 		return outNonBookableSlots;
 	}
+	@SuppressWarnings("resource")
 	private static Collection<NonBookableSlotCSVData> _loadNonBookableSlotsFromCSVFile(final Path filePath) throws IOException {
 		@Cleanup
 		Reader in = Files.newReader(new File(filePath.asAbsoluteString()),

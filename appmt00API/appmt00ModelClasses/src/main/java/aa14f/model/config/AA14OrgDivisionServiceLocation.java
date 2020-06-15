@@ -3,6 +3,7 @@ package aa14f.model.config;
 import java.util.Collection;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
 
 import aa14f.model.AA14ModelObjectRef;
@@ -92,6 +93,33 @@ public class AA14OrgDivisionServiceLocation
 /////////////////////////////////////////////////////////////////////////////////////////
 //  
 /////////////////////////////////////////////////////////////////////////////////////////
+	public AA14ModelObjectRef<AA14ScheduleOID,AA14ScheduleID> getScheduleRef(final AA14ScheduleOID oid) {
+		if (CollectionUtils.isNullOrEmpty(_schedulesRefs)) return null;
+		return FluentIterable.from(_schedulesRefs)
+							 .firstMatch(new Predicate<AA14ModelObjectRef<AA14ScheduleOID,AA14ScheduleID>>() {
+												@Override
+												public boolean apply(final AA14ModelObjectRef<AA14ScheduleOID,AA14ScheduleID> ref) {
+													return ref.getOid() != null && ref.getOid().is(oid);
+												}
+							 			 })
+							 .orNull();
+	}
+	public AA14ModelObjectRef<AA14ScheduleOID,AA14ScheduleID> getScheduleRef(final AA14ScheduleID id) {
+		if (CollectionUtils.isNullOrEmpty(_schedulesRefs)) return null;
+		return FluentIterable.from(_schedulesRefs)
+							 .firstMatch(new Predicate<AA14ModelObjectRef<AA14ScheduleOID,AA14ScheduleID>>() {
+												@Override
+												public boolean apply(final AA14ModelObjectRef<AA14ScheduleOID,AA14ScheduleID> ref) {
+													return ref.getId() != null && ref.getId().is(id);
+												}
+							 			 })
+							 .orNull();
+	}
+	public void removeScheduleRef(final AA14ScheduleOID oid) {
+		if (CollectionUtils.isNullOrEmpty(_schedulesRefs)) return;
+		AA14ModelObjectRef<AA14ScheduleOID,AA14ScheduleID> ref = this.getScheduleRef(oid);
+		if (ref != null) _schedulesRefs.remove(ref);
+	}
 	/**
 	 * Adds a location reference
 	 * @param ref

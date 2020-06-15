@@ -26,6 +26,7 @@ import r01f.model.persistence.CRUDResultBuilder;
 import r01f.model.persistence.PersistencePerformedOperation;
 import r01f.model.persistence.PersistenceRequestedOperation;
 import r01f.objectstreamer.Marshaller;
+import r01f.persistence.db.ListensToDBEntityPersistenceEvents;
 import r01f.persistence.db.config.DBModuleConfig;
 import r01f.persistence.db.entities.primarykeys.DBPrimaryKeyForModelObjectImpl;
 import r01f.securitycontext.SecurityContext;
@@ -98,35 +99,43 @@ public class AA14DBCRUDForSchedule
 		return outSchedule;
 	}	
 /////////////////////////////////////////////////////////////////////////////////////////
-//  
+//	OVERRIDE THE CREATE & DELETE
 /////////////////////////////////////////////////////////////////////////////////////////
 	@Override
-	public void completeDBEntityBeforeCreateOrUpdate(final SecurityContext securityContext, 
-													 final PersistencePerformedOperation performedOp,
-													 final AA14Schedule sch,final AA14DBEntityForSchedule dbSch) {
-		if (CollectionUtils.isNullOrEmpty(sch.getServiceLocationsRefs())) return;
-		
-		// link the schedule to every location
-		if (CollectionUtils.hasData(sch.getServiceLocationsRefs())) {
+	protected CRUDResult<AA14Schedule> doCreateOrUpdateEntity(final SecurityContext securityContext,
+												   			  final AA14Schedule sch,
+												   			  final PersistenceRequestedOperation requestedOp,
+												   			  final ListensToDBEntityPersistenceEvents<AA14Schedule,AA14DBEntityForSchedule> singleUseDBEntityPersistenceEventListener) {
+		// Create the schedule
+		CRUDResult<AA14Schedule> outCRUDResult = super.doCreateOrUpdateEntity(securityContext,
+															  				  sch,
+															  				  requestedOp,
+															  				  singleUseDBEntityPersistenceEventListener);
+		// manually link the schedule to every location
+		if (outCRUDResult.hasSucceeded()
+		 && CollectionUtils.hasData(sch.getServiceLocationsRefs())) {
+			// get the created schedule
+			AA14Schedule createdSch = outCRUDResult.getOrThrow();
+			
 			log.debug("Linking schedule with oid={} to locations={}",
-					  sch.getOid(),sch.getServiceLocationsOids());
+					  createdSch.getOid(),createdSch.getServiceLocationsOids());
 			for (AA14OrganizationalModelObjectRef<AA14OrgDivisionServiceLocationOID,
-												  AA14OrgDivisionServiceLocationID> ref : sch.getServiceLocationsRefs()) {
+												  AA14OrgDivisionServiceLocationID> ref : createdSch.getServiceLocationsRefs()) {
 				
 				AA14DBEntityForOrgDivisionServiceLocation dbLoc = _entityManager.find(AA14DBEntityForOrgDivisionServiceLocation.class,
-																					  DBPrimaryKeyForModelObjectImpl.from(ref.getOid()));
+																				      DBPrimaryKeyForModelObjectImpl.from(ref.getOid()));
 				if (dbLoc == null) {
 					log.error("Cannot link the schedule with oid={} to the service location with oid={}: the location does NOT exists!!!",
-							  sch.getOid(),ref.getOid());
+							  createdSch.getOid(),ref.getOid());
 					continue;	// skip
 				}
 				// add the reference to the location
 				// (manually managing the many to many relation)
-				AA14DBEntityForManyToManyBetweenOrgDivisionServiceLocationAndSchedulePrimaryKey manyToManyPK = AA14DBEntityForManyToManyBetweenOrgDivisionServiceLocationAndSchedulePrimaryKey.from(dbLoc.getOid(),dbSch.getOid());
+				AA14DBEntityForManyToManyBetweenOrgDivisionServiceLocationAndSchedulePrimaryKey manyToManyPK = AA14DBEntityForManyToManyBetweenOrgDivisionServiceLocationAndSchedulePrimaryKey.from(dbLoc.getOid(),createdSch.getOid().asString());
 				AA14DBEntityForManyToManyBetweenOrgDivisionServiceLocationAndSchedule manyToMany = _entityManager.find(AA14DBEntityForManyToManyBetweenOrgDivisionServiceLocationAndSchedule.class,
 																													   manyToManyPK);
 				if (manyToMany == null) {
-					manyToMany = new AA14DBEntityForManyToManyBetweenOrgDivisionServiceLocationAndSchedule(dbLoc.getOid(),dbSch.getOid());
+					manyToMany = new AA14DBEntityForManyToManyBetweenOrgDivisionServiceLocationAndSchedule(dbLoc.getOid(),createdSch.getOid().asString());
 					_entityManager.persist(manyToMany);
 				}
 				
@@ -144,6 +153,63 @@ public class AA14DBCRUDForSchedule
 				_entityManager.refresh(dbLoc);
 			}
 		}
+		return outCRUDResult;
+	}
+	@Override
+	public void completeDBEntityBeforeCreateOrUpdate(final SecurityContext securityContext,
+													 final PersistencePerformedOperation performedOp, 
+													 final AA14Schedule modelOjb, 
+													 final AA14DBEntityForSchedule dbEntity) {
+		// nothing
+	}
+	@Override
+	protected CRUDResult<AA14Schedule> doDelete(final SecurityContext securityContext, 
+												final AA14ScheduleOID oid) {
+		// delete the schedule
+		CRUDResult<AA14Schedule> outCRUDResult = super.doDelete(securityContext,
+																oid);
+		// manually link the schedule to every location
+		if (outCRUDResult.hasSucceeded()) {
+			// Get the deleted schedule
+			AA14Schedule sch = outCRUDResult.getOrThrow();
+			
+			if (CollectionUtils.hasData(sch.getServiceLocationsRefs())) {
+				log.debug("un-linking schedule with oid={} from locations={}",
+						  sch.getOid(),sch.getServiceLocationsOids());
+				for (AA14OrganizationalModelObjectRef<AA14OrgDivisionServiceLocationOID,
+													  AA14OrgDivisionServiceLocationID> ref : sch.getServiceLocationsRefs()) {
+					AA14DBEntityForOrgDivisionServiceLocation dbLoc = _entityManager.find(AA14DBEntityForOrgDivisionServiceLocation.class,
+																					      DBPrimaryKeyForModelObjectImpl.from(ref.getOid()));
+					if (dbLoc == null) {
+						log.error("Cannot un-link the schedule with oid={} from the service location with oid={}: the location does NOT exists!!!",
+								  sch.getOid(),ref.getOid());
+						continue;	// skip
+					}
+					// remove the reference to the location
+					// (manually managing the many to many relation)
+					AA14DBEntityForManyToManyBetweenOrgDivisionServiceLocationAndSchedulePrimaryKey manyToManyPK = AA14DBEntityForManyToManyBetweenOrgDivisionServiceLocationAndSchedulePrimaryKey.from(dbLoc.getOid(),sch.getOid().asString());
+					AA14DBEntityForManyToManyBetweenOrgDivisionServiceLocationAndSchedule manyToMany = _entityManager.find(AA14DBEntityForManyToManyBetweenOrgDivisionServiceLocationAndSchedule.class,
+																														   manyToManyPK);
+					if (manyToMany != null) {
+						_entityManager.remove(manyToMany);
+					}
+					
+					// BEWARE!!	schedule <-> location it's a MANY-TO-MANY relation so the location descriptor 
+					//			also contains a reference to the schedule that MUST be updated
+					AA14OrgDivisionServiceLocation loc = _modelObjectsMarshaller.forReading().fromXml(dbLoc.getDescriptor(),
+																									  AA14OrgDivisionServiceLocation.class);
+					loc.removeScheduleRef(sch.getOid());
+					dbLoc.setDescriptor(_modelObjectsMarshaller.forWriting().toXml(loc));
+					_entityManager.persist(dbLoc);
+					_entityManager.flush();
+					
+					// setting the schedule dependent service location objs, also modifies the later since it's a BI-DIRECTIONAL relation
+					// ... so the entity manager MUST be refreshed in order to avoid an optimistic locking exception
+					_entityManager.refresh(dbLoc);
+				}
+			}
+		}
+		return outCRUDResult;
 	}
 /////////////////////////////////////////////////////////////////////////////////////////
 //  

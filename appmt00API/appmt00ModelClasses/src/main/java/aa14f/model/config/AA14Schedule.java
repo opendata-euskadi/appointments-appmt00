@@ -3,6 +3,7 @@ package aa14f.model.config;
 import java.util.Collection;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
 
 import aa14f.model.AA14EntityModelObjectBase;
@@ -28,6 +29,7 @@ import r01f.model.metadata.annotations.ModelObjectData;
 import r01f.objectstreamer.annotations.MarshallField;
 import r01f.objectstreamer.annotations.MarshallField.MarshallFieldAsXml;
 import r01f.objectstreamer.annotations.MarshallType;
+import r01f.util.types.collections.CollectionUtils;
 import r01f.util.types.collections.Lists;
 import r01f.validation.ObjectValidationResult;
 import r01f.validation.SelfValidates;
@@ -135,7 +137,7 @@ public class AA14Schedule
 //  HasLangDependentNamedFacet
 /////////////////////////////////////////////////////////////////////////////////////////
 	@SuppressWarnings("unchecked")
-	@Getter private final transient LanguageTextsWrapper<AA14Schedule> _name = LanguageTextsWrapper.atHasLang(this);
+	@Getter private final transient LanguageTextsWrapper<AA14Schedule> _name = LanguageTextsWrapper.atHasLangDependentNamedFacet(this);
 	
 	@Override
 	public LangDependentNamed asLangDependentNamed() {
@@ -144,6 +146,33 @@ public class AA14Schedule
 /////////////////////////////////////////////////////////////////////////////////////////
 //  
 /////////////////////////////////////////////////////////////////////////////////////////
+	public AA14ModelObjectRef<AA14OrgDivisionServiceLocationOID,AA14OrgDivisionServiceLocationID> getServiceLoctionRef(final AA14OrgDivisionServiceLocationOID oid) {
+		if (CollectionUtils.isNullOrEmpty(_serviceLocationsRefs)) return null;
+		return FluentIterable.from(_serviceLocationsRefs)
+							 .firstMatch(new Predicate<AA14ModelObjectRef<AA14OrgDivisionServiceLocationOID,AA14OrgDivisionServiceLocationID>>() {
+												@Override
+												public boolean apply(final AA14ModelObjectRef<AA14OrgDivisionServiceLocationOID,AA14OrgDivisionServiceLocationID> ref) {
+													return ref.getOid() != null && ref.getOid().is(oid);
+												}
+							 			 })
+							 .orNull();
+	}
+	public AA14ModelObjectRef<AA14OrgDivisionServiceLocationOID,AA14OrgDivisionServiceLocationID> getServiceLoctionRef(final AA14OrgDivisionServiceLocationID id) {
+		if (CollectionUtils.isNullOrEmpty(_serviceLocationsRefs)) return null;
+		return FluentIterable.from(_serviceLocationsRefs)
+							 .firstMatch(new Predicate<AA14ModelObjectRef<AA14OrgDivisionServiceLocationOID,AA14OrgDivisionServiceLocationID>>() {
+												@Override
+												public boolean apply(final AA14ModelObjectRef<AA14OrgDivisionServiceLocationOID,AA14OrgDivisionServiceLocationID> ref) {
+													return ref.getId() != null && ref.getId().is(id);
+												}
+							 			 })
+							 .orNull();
+	}
+	public void removeServiceLocationRef(final AA14OrgDivisionServiceLocationOID oid) {
+		if (CollectionUtils.isNullOrEmpty(_serviceLocationsRefs)) return;
+		AA14ModelObjectRef<AA14OrgDivisionServiceLocationOID,AA14OrgDivisionServiceLocationID> ref = this.getServiceLoctionRef(oid);
+		if (ref != null) _serviceLocationsRefs.remove(ref);
+	}
 	/**
 	 * Adds a location reference
 	 * @param ref
