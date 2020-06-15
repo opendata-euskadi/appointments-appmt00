@@ -11,6 +11,7 @@ import org.apache.commons.csv.CSVRecord;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Sets;
 import com.google.common.io.Files;
@@ -44,6 +45,7 @@ import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import r01f.types.Path;
 import r01f.util.types.Strings;
+import r01f.util.types.collections.CollectionUtils;
 
 /**
  * Imports business config from a CSV file (; delimited)
@@ -54,7 +56,7 @@ import r01f.util.types.Strings;
  * Config: test = true will only process the file
  * 		   test = false will process the file AND delete the entities and schedules 
  * Run:
- * 		JVM argument: -javaagent:d:/eclipse/local_libs/aspectj/lib/aspectjweaver.jar -Daj.weaving.verbose=true 
+ * 		JVM argument: -javaagent:{dev-home}/local_libs/aspectj/lib/aspectjweaver.jar -Daj.weaving.verbose=true 
  */
 @Slf4j
 public class AA14BusinessConfigDeleteProcess 
@@ -69,12 +71,18 @@ public class AA14BusinessConfigDeleteProcess
 			Injector injector = _createInjector();
 			AA14ClientAPI api = injector.getInstance(AA14ClientAPI.class);
 			
-			log.warn("Process is {}!!", (test? "SIMULATED (will not insert anything)" : "NOT SIMULATED. CHANGES will be MADE"));
+			log.warn("Process is {}!!", (test? "SIMULATED (will not deleting anything)" : "NOT SIMULATED. CHANGES will be MADE"));
 			// import
-			Path csvFilePath = Path.from("/home/develop/projects_aa14/aa14b/aa14bDocs/test_data/2020_aa14_justizia_srv_infor_config.csv");
-			Collection<AA14BusinessConfig> createdData = _createBusinessConfigFromCSVFile(api,
-																						 csvFilePath);
-			log.info("{} lines procesed!", createdData.size());
+			//Path csvFilePath = Path.from("/home/develop/projects_aa14/aa14b/aa14bDocs/test_data/justizia-delete.csv");
+			Path csvFilePath = Path.from("c:/develop/projects/legacy/aa14/aa14bDocs/test_data/2020_aa14_justizia_servicioInformacion_config.csv");
+			
+			// Load the business config from the csv file
+			AA14BusinessConfig businessConfig = _loadBusinessConfigFromCSVFile(api,
+																			   csvFilePath);
+			int deletedRecords = _deleteBusinessConfigFromDB(api,
+															 businessConfig);
+			log.info("{} lines procesed!",
+					 deletedRecords);
 		} catch(Throwable th) {
 			th.printStackTrace(System.out);
 			log.error("Error while importing CONFIG DATA: {}",
@@ -85,63 +93,65 @@ public class AA14BusinessConfigDeleteProcess
 /////////////////////////////////////////////////////////////////////////////////////////
 //  
 /////////////////////////////////////////////////////////////////////////////////////////
-	private static Collection<AA14BusinessConfig> _createBusinessConfigFromCSVFile(final AA14ClientAPI api,
-																			  	   final Path filePath) throws IOException {
+	private static AA14BusinessConfig _loadBusinessConfigFromCSVFile(final AA14ClientAPI api,
+																	 final Path filePath) throws IOException {
 		log.info("[Business config import] file {}",
 				 filePath.asAbsoluteString());
 		
 		// [1] - Load data from the CSV file
-		Collection<BusinessConfigCSVData> businessConfigAtCSV = _loadBusinessConfigFromCSVFile(filePath);
+		Collection<AA14BusinessConfigToDeleteCSVData> businessConfigAtCSV = _loadBusinessConfigFromCSVFile(filePath);
 		
 		log.info("...{} records will be imported",
 				 businessConfigAtCSV);
 		
 		// [2] - Create the appointments
-		Collection<AA14BusinessConfig> outAppointments = FluentIterable.from(businessConfigAtCSV)
-																	// filter nulls
-																	.filter(new Predicate<BusinessConfigCSVData>() {
+		Collection<AA14BusinessConfig> businessConfigs = FluentIterable.from(businessConfigAtCSV)
+																// filter nulls
+																.filter(new Predicate<AA14BusinessConfigToDeleteCSVData>() {
+																				@Override
+																				public boolean apply(final AA14BusinessConfigToDeleteCSVData csvData) {
+																					return csvData != null;
+																				}
+																		})
+																// Transform from CSV to business config
+																.transform(new Function<AA14BusinessConfigToDeleteCSVData,AA14BusinessConfig>() {
 																					@Override
-																					public boolean apply(final BusinessConfigCSVData csvData) {
-																						return csvData != null;
+																					public AA14BusinessConfig apply(final AA14BusinessConfigToDeleteCSVData appointmentCSVData) {
+																						return _createBussinesConfigFrom(api,
+																													  	appointmentCSVData);
 																					}
-																			})
-																	// Transform from CSV to appointment
-																	.transform(new Function<BusinessConfigCSVData,AA14BusinessConfig>() {
-																						@Override
-																						public AA14BusinessConfig apply(final BusinessConfigCSVData appointmentCSVData) {
-																							return _createBussinesConfigFrom(api,
-																														  	appointmentCSVData);
-																						}
-																			   })
-																	// filter nulls
-																	.filter(new Predicate<AA14BusinessConfig>() {
-																					@Override
-																					public boolean apply(final AA14BusinessConfig businessConfig) {
-																						return businessConfig != null;
-																					}
-																			})
-																	// Persist
-																	.transform(new Function<AA14BusinessConfig,AA14BusinessConfig>() {
-																						@Override
-																						public AA14BusinessConfig apply(final AA14BusinessConfig businessConfig) {
-//																							log.info("\t...appointment for schedule oid={} at location oid={} at {}/{}/{} ({}:{}) for dni={}",
-//																									 appointment.getScheduleOid(),appointment.getOrgDivisionServiceLocationOid(),
-//																									 appointment.getYear(),appointment.getMonthOfYear(),appointment.getDayOfMonth(),
-//																									 appointment.getHourOfDay(),appointment.getMinuteOfHour(),
-//																									 appointment.getSubject().getId());
-																							if (test) {
-																								return businessConfig;
-																							}
-																							else {
-																								return _deleteBusinessConfigFromDB(api, businessConfig);
-																							}
-																						}
-																			   })
-																	.toList();
+																		   })
+																// filter nulls
+																.filter(Predicates.notNull())
+																// return
+																.toList();
+		// [3] - Consolidate in a single [business config]
+		AA14BusinessConfig outCfg = new AA14BusinessConfig();
+		outCfg.setOrganization(null);
+		outCfg.setDivisions(Sets.newHashSet());
+		outCfg.setServices(Sets.newHashSet());
+		outCfg.setLocations(Sets.newHashSet());
+		outCfg.setSchedules(Sets.newHashSet());
 		
-		return outAppointments;
+		for (AA14BusinessConfig cfg : businessConfigs) {
+			if (outCfg.getId() == null) outCfg.setId(cfg.getId());	// all items should have the same id
+			
+			AA14Organization org = cfg.getOrganization();
+			AA14OrgDivision div = CollectionUtils.pickOneAndOnlyElement(cfg.getDivisions());
+			AA14OrgDivisionService srvc = CollectionUtils.pickOneAndOnlyElement(cfg.getServices());
+			AA14OrgDivisionServiceLocation loc = CollectionUtils.pickOneAndOnlyElement(cfg.getLocations());
+			AA14Schedule sch = CollectionUtils.pickOneAndOnlyElement(cfg.getSchedules());
+			
+			if (outCfg.getOrganization() == null) outCfg.setOrganization(org);
+			if (outCfg.getDivisionFor(div.getId()) == null) outCfg.getDivisions().add(div);
+			if (outCfg.getServiceFor(srvc.getId()) == null) outCfg.getServices().add(srvc);
+			if (outCfg.getLocationFor(loc.getId()) == null) outCfg.getLocations().add(loc);
+			if (outCfg.getScheduleFor(sch.getId()) == null) outCfg.getSchedules().add(sch);
+		}
+		return outCfg;
 	}
-	private static Collection<BusinessConfigCSVData> _loadBusinessConfigFromCSVFile(final Path filePath) throws IOException {
+	@SuppressWarnings("resource")
+	private static Collection<AA14BusinessConfigToDeleteCSVData> _loadBusinessConfigFromCSVFile(final Path filePath) throws IOException {
 		@Cleanup
 		Reader in = Files.newReader(new File(filePath.asAbsoluteString()),
 									Charset.defaultCharset());
@@ -150,11 +160,11 @@ public class AA14BusinessConfigDeleteProcess
 											   .withHeader()
 											   .parse(in);
 		return FluentIterable.from(csvRecords)
-							 .transform(new Function<CSVRecord,BusinessConfigCSVData>() {
+							 .transform(new Function<CSVRecord,AA14BusinessConfigToDeleteCSVData>() {
 												@Override
-												public BusinessConfigCSVData apply(final CSVRecord csvRecord) {
-													CSVRecordWrapper record = new CSVRecordWrapper(csvRecord);
-													BusinessConfigCSVData outCSVData = null;
+												public AA14BusinessConfigToDeleteCSVData apply(final CSVRecord csvRecord) {
+													AA14CSVRecordWrapper record = new AA14CSVRecordWrapper(csvRecord);
+													AA14BusinessConfigToDeleteCSVData outCSVData = null;
 													try {
 														String businessId = record.get("BUSINESS_ID");
 														String orgId = record.get("ORG_ID");
@@ -163,12 +173,12 @@ public class AA14BusinessConfigDeleteProcess
 														String locationId = record.get("LOCATION_ID");
 														String scheduleId = record.get("SCHEDULE_ID");
 													 	
-													    outCSVData = new BusinessConfigCSVData(businessId, 
-													    									   orgId, 
-													    									   divisionId, 
-													    									   serviceId, 
-													    									   locationId, 
-													    									   scheduleId);
+													    outCSVData = new AA14BusinessConfigToDeleteCSVData(businessId, 
+													    									   			   orgId, 
+													    									   			   divisionId, 
+													    									   			   serviceId, 
+													    									   			   locationId, 
+													    									   			   scheduleId);
 													} catch(Throwable th) {
 														th.printStackTrace(System.out);
 														log.error("Erroneous csv record: {}",th.getMessage(),th);
@@ -179,210 +189,161 @@ public class AA14BusinessConfigDeleteProcess
 							 .toList();
 	}
 	private static AA14BusinessConfig _createBussinesConfigFrom(final AA14ClientAPI api,
-														  final BusinessConfigCSVData businessConfigCSVData) {
+														  		final AA14BusinessConfigToDeleteCSVData businessConfigCSVData) {
 		if (!businessConfigCSVData.isValid()) {
 			log.info("\tNOT VALID RECORD!!");
 			return null;
 		}
 		
-		AA14BusinessConfig outBusinessConfig = null;
-		try {
-			// Id and organization
-			log.info("Preparing to delete data from [Business Config]: {}", businessConfigCSVData.getBusinessId());
-			outBusinessConfig = new AA14BusinessConfig();
-			outBusinessConfig.setId(AA14BusinessID.fromString(businessConfigCSVData.getBusinessId()));
-			AA14Organization outOrg = new AA14Organization();
-			outOrg.setOid(AA14OrganizationOID.supply());
-			outOrg.setId(AA14OrganizationID.fromString(businessConfigCSVData.getOrgId()));
-			outOrg.setBusinessId(outBusinessConfig.getId());
-			outBusinessConfig.setOrganization(outOrg);
-
-			// Division
-			AA14OrgDivision outDiv = null;
-			log.info("Preparing to delete [Division] {} from {} business config", 
-					businessConfigCSVData.getDivisionId(),
-					businessConfigCSVData.getBusinessId());
-			outDiv = new AA14OrgDivision();
-			outDiv.setOid(AA14OrgDivisionOID.supply());
-			outDiv.setId(AA14OrgDivisionID.fromString(businessConfigCSVData.getDivisionId()));
-			outDiv.setBusinessId(outBusinessConfig.getId());
-			outDiv.setOrgRef(new AA14OrganizationalModelObjectRef<AA14OrganizationOID,AA14OrganizationID>(
-					outBusinessConfig.getOrganization().getOid(),
-					outBusinessConfig.getOrganization().getId()));
-
-			Collection<AA14OrgDivision> divisions = Sets.newHashSet(); 
-			divisions.add(outDiv);
-			outBusinessConfig.setDivisions(divisions);
-			
-			// Service
-			AA14OrgDivisionService outSrv = null;
-			log.info("Preparing to delete [Service] {} from {} business config", 
-					businessConfigCSVData.getServiceId(),
-					businessConfigCSVData.getBusinessId());
-			outSrv = new AA14OrgDivisionService();
-			outSrv.setOid(AA14OrgDivisionServiceOID.supply());
-			outSrv.setId(AA14OrgDivisionServiceID.fromString(businessConfigCSVData.getServiceId()));
-			outSrv.setBusinessId(outBusinessConfig.getId());
-			outSrv.setOrgRef(new AA14OrganizationalModelObjectRef<AA14OrganizationOID,AA14OrganizationID>(
-					outBusinessConfig.getOrganization().getOid(),
-					outBusinessConfig.getOrganization().getId()));
-			outSrv.setOrgDivisionRef(new AA14OrganizationalModelObjectRef<AA14OrgDivisionOID,AA14OrgDivisionID>(
-					outDiv.getOid(),
-					outDiv.getId()));
-
-			Collection<AA14OrgDivisionService> services = Sets.newHashSet(); 
-			services.add(outSrv);
-			outBusinessConfig.setServices(services);
-
-			// Location 
-			AA14OrgDivisionServiceLocation outLoc = null;
-			log.info("Preparing to delete [Location] {} from {} business config", 
-					businessConfigCSVData.getLocationId(),
-					businessConfigCSVData.getBusinessId());
-			outLoc = new AA14OrgDivisionServiceLocation();
-			outLoc.setOid(AA14OrgDivisionServiceLocationOID.supply());
-			outLoc.setId(AA14OrgDivisionServiceLocationID.fromString(businessConfigCSVData.getLocationId()));
-			outLoc.setBusinessId(outBusinessConfig.getId());
-			outLoc.setOrgRef(new AA14OrganizationalModelObjectRef<AA14OrganizationOID,AA14OrganizationID>(
-					outBusinessConfig.getOrganization().getOid(),
-					outBusinessConfig.getOrganization().getId()));
-			outLoc.setOrgDivisionRef(new AA14OrganizationalModelObjectRef<AA14OrgDivisionOID,AA14OrgDivisionID>(
-					outDiv.getOid(),
-					outDiv.getId()));
-			outLoc.setOrgDivisionServiceRef(new AA14OrganizationalModelObjectRef<AA14OrgDivisionServiceOID,AA14OrgDivisionServiceID>(
-					outSrv.getOid(),
-					outSrv.getId()));		
-			Collection<AA14OrgDivisionServiceLocation> locations = Sets.newHashSet(); 
-			locations.add(outLoc);
-			outBusinessConfig.setLocations(locations);
-
-			// Schedule 
-			AA14Schedule outSch = null;
-			log.info("Preparing to delete [Schedule] {} from {} business config", 
-					businessConfigCSVData.getScheduleId(),
-					businessConfigCSVData.getBusinessId());
-			outSch = new AA14Schedule();
-			outSch.setOid(AA14ScheduleOID.supply());
-			outSch.setId(AA14ScheduleID.fromString(businessConfigCSVData.getScheduleId()));
-			outSch.setBusinessId(outBusinessConfig.getId());
-			outSch.addServiceLocationRef(new AA14OrganizationalModelObjectRef<AA14OrgDivisionServiceLocationOID,AA14OrgDivisionServiceLocationID>(
-					outLoc.getOid(),
-					outLoc.getId()));
-			Collection<AA14Schedule> schedules = Sets.newHashSet();
-			schedules.add(outSch);
-			outBusinessConfig.setSchedules(schedules);
-			
-		} catch(Throwable th) {
-			th.printStackTrace(System.out);
-			log.error("Error while transforming the csv record into a businessConfig: {}",th.getMessage(),th);
-			outBusinessConfig = null;
-		}
-		return outBusinessConfig;
-	}
-	
-	/**
-	 * Ensures the required config is present testing the presence at the DB
-	 * of the required records
-	 * @param businessId
-	 * @param builder
-	 */
-	private static AA14BusinessConfig _deleteBusinessConfigFromDB(final AA14ClientAPI api,
-													  			 final AA14BusinessConfig configToDelete) {
+		AA14BusinessConfig outCfg = new AA14BusinessConfig();
+		outCfg.setId(AA14BusinessID.fromString(businessConfigCSVData.getBusinessId()));
+		outCfg.setDivisions(Sets.newHashSet());
+		outCfg.setServices(Sets.newHashSet());
+		outCfg.setLocations(Sets.newHashSet());
+		outCfg.setSchedules(Sets.newHashSet());
 		
-		//boolean needsReloading = false;
-		//Business id //TODO delete if if no aditional configuration
-		AA14BusinessID businessId = configToDelete.getId();
-		log.info("Processing data to DELETE for businessId {}", businessId.asString());
+		// organization
+		AA14Organization org = new AA14Organization();
+		org.setBusinessId(outCfg.getId());
+		org.setOid(AA14OrganizationOID.supply());
+		org.setId(AA14OrganizationID.fromString(businessConfigCSVData.getOrgId()));
+		outCfg.setOrganization(org);
+
+		// Division
+		AA14OrgDivision div = new AA14OrgDivision();
+		div.setBusinessId(outCfg.getId());
+		div.setOid(AA14OrgDivisionOID.supply());
+		div.setId(AA14OrgDivisionID.fromString(businessConfigCSVData.getDivisionId()));
+		div.setOrgRef(new AA14OrganizationalModelObjectRef<AA14OrganizationOID,AA14OrganizationID>(outCfg.getOrganization().getOid(),
+																								   outCfg.getOrganization().getId()));
+		outCfg.getDivisions()
+						 .add(div);
+		
+		// Service
+		AA14OrgDivisionService srvc = new AA14OrgDivisionService();
+		srvc.setBusinessId(outCfg.getId());
+		srvc.setOid(AA14OrgDivisionServiceOID.supply());
+		srvc.setId(AA14OrgDivisionServiceID.fromString(businessConfigCSVData.getServiceId()));
+		srvc.setOrgRef(new AA14OrganizationalModelObjectRef<AA14OrganizationOID,AA14OrganizationID>(outCfg.getOrganization().getOid(),
+																									outCfg.getOrganization().getId()));
+		srvc.setOrgDivisionRef(new AA14OrganizationalModelObjectRef<AA14OrgDivisionOID,AA14OrgDivisionID>(div.getOid(),
+																										  div.getId()));
+		outCfg.getServices()
+						 .add(srvc);
+
+		// Location 
+		AA14OrgDivisionServiceLocation loc = new AA14OrgDivisionServiceLocation();
+		loc.setBusinessId(outCfg.getId());
+		loc.setOid(AA14OrgDivisionServiceLocationOID.supply());
+		loc.setId(AA14OrgDivisionServiceLocationID.fromString(businessConfigCSVData.getLocationId()));
+		loc.setOrgRef(new AA14OrganizationalModelObjectRef<AA14OrganizationOID,AA14OrganizationID>(outCfg.getOrganization().getOid(),
+																								   outCfg.getOrganization().getId()));
+		loc.setOrgDivisionRef(new AA14OrganizationalModelObjectRef<AA14OrgDivisionOID,AA14OrgDivisionID>(div.getOid(),
+																									     div.getId()));
+		loc.setOrgDivisionServiceRef(new AA14OrganizationalModelObjectRef<AA14OrgDivisionServiceOID,AA14OrgDivisionServiceID>(srvc.getOid(),
+																															  srvc.getId()));		
+		outCfg.getLocations()
+						 .add(loc);
+
+		// Schedule 
+		AA14Schedule sch = new AA14Schedule();
+		sch.setBusinessId(outCfg.getId());
+		sch.setOid(AA14ScheduleOID.supply());
+		sch.setId(AA14ScheduleID.fromString(businessConfigCSVData.getScheduleId()));
+		sch.addServiceLocationRef(new AA14OrganizationalModelObjectRef<AA14OrgDivisionServiceLocationOID,AA14OrgDivisionServiceLocationID>(loc.getOid(),
+																																		   loc.getId()));
+		outCfg.getSchedules()
+			  .add(sch);
+		return outCfg;
+	}
+	private static int _deleteBusinessConfigFromDB(final AA14ClientAPI api,
+												   final AA14BusinessConfig cfg) {
+		
+		AA14BusinessID businessId = cfg.getId();
+		log.info("DELETE businessId {} objects",
+				 businessId.asString());
 	
+		int numOfObjsDeleted = 0;
+		
 		// --- Schedules
-		for (AA14Schedule sch : configToDelete.getSchedules()) {
+		for (AA14Schedule sch : cfg.getSchedules()) {
 			AA14Schedule dbSch = api.schedulesAPI()
-								  		   .getForCRUD()
-								  		   .loadByIdOrNull(sch.getId());
+						  		    .getForCRUD()
+						  		    .loadByIdOrNull(sch.getId());
 			if (dbSch != null) {
-				log.info("\t\t\t[Schedule]: {} exists... detaching its locations",sch.getId());
-				dbSch.setServiceLocationsRefs(Sets.newHashSet());
-				dbSch.asDirtyStateTrackable().touch(); //force an update
-				System.out.println(dbSch.asDirtyStateTrackable().isThisDirty());
-				dbSch = api.schedulesAPI()
-								  .getForCRUD()
-								  .update(dbSch);
 				log.info("\t\t\t[Schedule]: {} exists... deleting it",sch.getId());
 				dbSch = api.schedulesAPI()
-								  .getForCRUD()
-								  .delete(sch);
+						   .getForCRUD()
+						   .delete(dbSch);
+				numOfObjsDeleted++;
 			} else {
-				log.info("\t\t\t[Schedule]: {} does not exist... skip it",sch.getId());
+				log.info("\t\t\t[Schedule]: {} does NOT exist... skip it",sch.getId());
 			}
-
 		}
 		// --- Locations
-		for (AA14OrgDivisionServiceLocation loc : configToDelete.getLocations()) {
+		for (AA14OrgDivisionServiceLocation loc : cfg.getLocations()) {
 			AA14OrgDivisionServiceLocation dbLoc = api.orgDivisionServiceLocationsAPI()
 													  		  .getForCRUD()
 													  		  .loadByIdOrNull(loc.getId());
 			if (dbLoc != null) {
 				log.info("\t\t\t[Location]: {}  exists... deleting it",loc.getId());
 				dbLoc = api.orgDivisionServiceLocationsAPI()
-										  .getForCRUD()
-										  .delete(loc);
+						   .getForCRUD()
+						   .delete(dbLoc);
+				numOfObjsDeleted++;
 			} else {
-				log.info("\t\t\t[Location]: {} does not exist... skip it",loc.getId());
+				log.info("\t\t\t[Location]: {} does NOT exist... skip it",loc.getId());
 			}
-			loc.setOid(dbLoc.getOid());// beware! use the returned object (the oid might change)
 		}
-				// --- Services
-//		for (AA14OrgDivisionService srvc : configToDelete.getServices()) {
-//			AA14OrgDivisionService dbSrvc = api.orgDivisionServicesAPI()
-//											  		  .getForCRUD()
-//											  		  .loadByIdOrNull(srvc.getId());
-//			if (dbSrvc == null) {
-//				log.info("\t\t[Service]: {} did NOT previously exists... creating it",srvc.getId());
-//				dbSrvc = api.orgDivisionServicesAPI()
-//										  .getForCRUD()
-//										  .delete(srvc);
-//				needsReloading = true;
-//			} else {
-//				log.info("\t\t[Service]: {} exists... skip it",srvc.getId());
-//			}
-//			srvc.setOid(dbSrvc.getOid());// beware! use the returned object (the oid might change)
-//		}
-//				// --- Divisions
-//		for (AA14OrgDivision div : configToDelete.getDivisions()) {
-//			AA14OrgDivision dbDiv = api.orgDivisionsAPI()
-//											  .getForCRUD()
-//											  .loadByIdOrNull(div.getId());
-//			if (dbDiv == null) {
-//				log.info("\t[Division]: {} did NOT previously exists... creating it",div.getId());
-//				dbDiv = api.orgDivisionsAPI()
-//										  .getForCRUD()
-//										  .save(div);
-//				needsReloading = true;
-//			} else {
-//				log.info("\t[Division]: {} exists... skip it",div.getId());
-//			}
-//			div.setOid(dbDiv.getOid());	// beware! use the returned object (the oid might change)
-//		}
-//
-//				// --- Organization
-//		AA14Organization org =  configToDelete.getOrganization();
+		// --- Services
+		for (AA14OrgDivisionService srvc : cfg.getServices()) {
+			AA14OrgDivisionService dbSrvc = api.orgDivisionServicesAPI()
+											  		  .getForCRUD()
+											  		  .loadByIdOrNull(srvc.getId());
+			if (dbSrvc != null) {
+				log.info("\t\t[Service]: {} exists... deleting it",srvc.getId());
+				dbSrvc = api.orgDivisionServicesAPI()
+								  .getForCRUD()
+								  .delete(dbSrvc);
+				numOfObjsDeleted++;
+			} else {
+				log.info("\t\t[Service]: {} does NOT exists... skip it",srvc.getId());
+			}
+		}
+		// --- Divisions
+		for (AA14OrgDivision div : cfg.getDivisions()) {
+			AA14OrgDivision dbDiv = api.orgDivisionsAPI()
+											  .getForCRUD()
+											  .loadByIdOrNull(div.getId());
+			if (dbDiv != null) {
+				log.info("\t[Division]: {} exists... deleting it",div.getId());
+				dbDiv = api.orgDivisionsAPI()
+										  .getForCRUD()
+										  .delete(dbDiv);
+				numOfObjsDeleted++;
+			} else {
+				log.info("\t[Division]: {} does NOT exists... skip it",div.getId());
+			}
+		}
+
+		// --- Organization
+//		AA14Organization org =  cfg.getOrganization();
 //		AA14Organization dbOrg = api.organizationsAPI()
 //				  						   .getForCRUD()
 //				  						   .loadByIdOrNull(org.getId());
-//		if (dbOrg == null) {
-//			log.info("[Org]: {} did NOT previously exists... creating it",org.getId());
+//		if (dbOrg != null) {
+//			log.info("[Org]: {} exists... deleting it",org.getId());
 //			dbOrg = api.organizationsAPI()		// beware! use the returned object (the oid might change)
 //								  .getForCRUD()
-//								  .save(org);
-//			needsReloading=true;
+//								  .delete(dbOrg);
+//			numOfObjsDeleted++;
 //		} else {
-//			log.info("[Org]: {} exists... skip it",org.getId());
+//			log.info("[Org]: {} does NOT exists... skip it",org.getId());
 //		}
-//		org.setOid(dbOrg.getOid());// beware! use the returned object (the oid might change)
-//		if (needsReloading) {
-//			api.configAPI().forceReloadConfig();
-//		}
-		return configToDelete;
+		if (numOfObjsDeleted > 0) {
+			api.configAPI().forceReloadConfig();
+		}
+		return numOfObjsDeleted;
 	}
 /////////////////////////////////////////////////////////////////////////////////////////
 //  
@@ -390,7 +351,7 @@ public class AA14BusinessConfigDeleteProcess
 	
 	@Accessors(prefix="_")
 	@RequiredArgsConstructor(access=AccessLevel.PRIVATE)
-	private static class BusinessConfigCSVData {
+	private static class AA14BusinessConfigToDeleteCSVData {
 		@Getter private final String _businessId;
 		@Getter private final String _orgId;
 		@Getter private final String _divisionId;
@@ -407,12 +368,4 @@ public class AA14BusinessConfigDeleteProcess
 					Strings.isNOTNullOrEmpty(_scheduleId);
 		}
 	}
-	@RequiredArgsConstructor(access=AccessLevel.PRIVATE)
-	private static class CSVRecordWrapper {
-		private final CSVRecord _record;
-		public String get(final String colName) {
-			String val = _record.get(colName);
-			return Strings.isNOTNullOrEmpty(val) ? val.trim() : null;
-		}
-	}	
 }
