@@ -23,7 +23,6 @@ Selects the favourite location using the security data
 		var locRadios = $('input:radio[name=serviceLocId]');
 	    if (locRadios.is(':checked') === false) {
 	        locRadios.filter('[value=<%=locId%>]').prop('checked',true);
-	        $("input:radio[name='serviceLocId']:checked").trigger("click");
 	    }
 	    // triger the click event
 	   	pintarDatosLocalizacionById('<%=locId%>');

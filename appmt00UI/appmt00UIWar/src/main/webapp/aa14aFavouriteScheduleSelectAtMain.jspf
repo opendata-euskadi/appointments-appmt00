@@ -9,7 +9,7 @@ Selects the favourite schedule using the security data
 	    // if the user has a single schedule, hide the selector	   	   
 	    <% if (securityAuthCtx.getFavoriteSheduleId() != null
 	   		&& securityAuthCtx.getAllowedScheduleIds().size() == 1) { %>
-		console.log("The user has a single available schema: hide the selector...");	   		
+		console.log("The user has a single available schedule: hide the selector...");	   		
 	 	$(".aa14a_calendar_location").hide();
 	 	<% } %>
 	</script>
